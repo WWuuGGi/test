@@ -1,0 +1,108 @@
+<html>
+<body>
+<pre>
+<h1>礦ision Build Log</h1>
+<h2>Tool Versions:</h2>
+IDE-Version: μVision V5.38.0.0
+Copyright (C) 2022 ARM Ltd and ARM Germany GmbH. All rights reserved.
+License Information: Yang Cai, HITSZ, LIC=9WSKC-7RGED-WFDI7-EM2ML-3ZTPZ-LBWWU
+ 
+Tool Versions:
+Toolchain:       MDK-ARM Plus  Version: 5.38.0.0
+Toolchain Path:  D:\keil5\ARM\ARMCC\Bin
+C Compiler:      Armcc.exe V5.06 update 7 (build 960)
+Assembler:       Armasm.exe V5.06 update 7 (build 960)
+Linker/Locator:  ArmLink.exe V5.06 update 7 (build 960)
+Library Manager: ArmAr.exe V5.06 update 7 (build 960)
+Hex Converter:   FromElf.exe V5.06 update 7 (build 960)
+CPU DLL:         SARMCM3.DLL V5.38.0.0
+Dialog DLL:      DCM.DLL V1.17.5.0
+Target DLL:      Segger\JL2CM3.dll V2.99.42.0
+Dialog DLL:      TCM.DLL V1.56.4.0
+ 
+<h2>Project:</h2>
+D:\STM32_dev\test\MDK-ARM\test.uvprojx
+Project File Date:  08/21/2025
+
+<h2>Output:</h2>
+*** Using Compiler 'V5.06 update 7 (build 960)', folder: 'D:\keil5\ARM\ARMCC\Bin'
+Rebuild target 'test'
+assembling startup_stm32f407xx.s...
+compiling gpio.c...
+compiling usart.c...
+compiling stm32f4xx_hal_flash.c...
+compiling can.c...
+compiling stm32f4xx_hal_rcc.c...
+compiling dma.c...
+compiling stm32f4xx_hal_msp.c...
+compiling stm32f4xx_hal_can.c...
+compiling main.c...
+compiling stm32f4xx_it.c...
+compiling tim.c...
+compiling stm32f4xx_hal_flash_ex.c...
+compiling stm32f4xx_hal_timebase_tim.c...
+compiling stm32f4xx_hal_rcc_ex.c...
+compiling stm32f4xx_hal_tim.c...
+compiling stm32f4xx_hal_tim_ex.c...
+compiling stm32f4xx_hal_dma.c...
+compiling stm32f4xx_hal_pwr.c...
+compiling stm32f4xx_hal_pwr_ex.c...
+compiling system_stm32f4xx.c...
+compiling stm32f4xx_hal_cortex.c...
+compiling stm32f4xx_hal_exti.c...
+compiling stm32f4xx_hal.c...
+compiling A1_motor_drive.c...
+..\Modules\Motor\Motor_A1\A1_motor_drive.c(35): warning:  #61-D: integer operation result is out of range
+          xbit = 1 << 31;
+..\Modules\Motor\Motor_A1\A1_motor_drive.c(35): warning:  #68-D: integer conversion resulted in a change of sign
+          xbit = 1 << 31;
+..\Modules\Motor\Motor_A1\A1_motor_drive.c(190): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+          Date_left.Pos      = (float) (Date_left.motor_recv_data.Mdata.Pos / (16384.0f/2.0f/PI));      
+..\Modules\Motor\Motor_A1\A1_motor_drive.c: 3 warnings, 0 errors
+compiling stm32f4xx_hal_flash_ramfunc.c...
+compiling joint.c...
+..\Modules\Joint\joint.c(18): warning:  #177-D: variable "home_speed"  was declared but never referenced
+  static float home_speed  = 0.4f;  // 减速后角速度 rad/s
+..\Modules\Joint\joint.c(19): warning:  #177-D: variable "home_torque"  was declared but never referenced
+  static float home_torque = 1.0f;  // 减速后力矩 Nm
+..\Modules\Joint\joint.c(20): warning:  #177-D: variable "UP_LIMIT"  was declared but never referenced
+  static float UP_LIMIT    = 20.0f; // 减速后角度 °
+..\Modules\Joint\joint.c(21): warning:  #177-D: variable "DOWN_LIMIT"  was declared but never referenced
+  static float DOWN_LIMIT  = 80.0f; // 减速后角度 °
+..\Modules\Joint\joint.c(22): warning:  #177-D: variable "TOLERANCE"  was declared but never referenced
+  static float TOLERANCE   = -5.0f;  // 容差 °
+..\Modules\Joint\joint.c: 5 warnings, 0 errors
+compiling stm32f4xx_hal_dma_ex.c...
+compiling stm32f4xx_hal_gpio.c...
+compiling stm32f4xx_hal_uart.c...
+linking...
+Program Size: Code=11850 RO-data=458 RW-data=56 ZI-data=67048  
+FromELF: creating hex file...
+"test\test.axf" - 0 Error(s), 8 Warning(s).
+
+<h2>Software Packages used:</h2>
+
+Package Vendor: ARM
+                http://www.keil.com/pack/ARM.CMSIS.5.9.0.pack
+                ARM.CMSIS.5.9.0
+                CMSIS (Common Microcontroller Software Interface Standard)
+   * Component: CORE Version: 5.6.0
+
+Package Vendor: Keil
+                http://www.keil.com/pack/Keil.STM32F4xx_DFP.2.16.0.pack
+                Keil.STM32F4xx_DFP.2.16.0
+                STMicroelectronics STM32F4 Series Device Support, Drivers and Examples
+
+<h2>Collection of Component include folders:</h2>
+  ./RTE/_test
+  C:/Users/caiyang/AppData/Local/Arm/Packs/ARM/CMSIS/5.9.0/CMSIS/Core/Include
+  C:/Users/caiyang/AppData/Local/Arm/Packs/Keil/STM32F4xx_DFP/2.16.0/Drivers/CMSIS/Device/ST/STM32F4xx/Include
+
+<h2>Collection of Component Files used:</h2>
+
+   * Component: ARM::CMSIS:CORE:5.6.0
+      Include file:  CMSIS/Core/Include/tz_context.h
+Build Time Elapsed:  00:00:12
+</pre>
+</body>
+</html>
