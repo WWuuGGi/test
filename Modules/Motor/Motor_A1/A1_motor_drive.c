@@ -1,4 +1,3 @@
-
 #include "A1_motor_drive.h"
 
 #define PI 3.14159
@@ -155,12 +154,12 @@ void unitreeA1_rxtx(UART_HandleTypeDef *huart)
         MotorA1_send_left.motor_send_data.CRCdata.u32 = crc32_core_Ver3((uint32_t *)(&MotorA1_send_left.motor_send_data), 7); // CRC校验
 
         memcpy(A1MotorA1_send_left, &MotorA1_send_left.motor_send_data, 34);
-        
+				
 				HAL_GPIO_WritePin(GPIOF,GPIO_PIN_9,GPIO_PIN_SET);
         // HAL库 DMA 发送数据 + 接收数据
-        trans_st = HAL_UART_Transmit_DMA(&huart1, A1MotorA1_send_left, 34);
+        trans_st = HAL_UART_Transmit(&huart1, A1MotorA1_send_left, 34,1);
 				HAL_GPIO_WritePin(GPIOF,GPIO_PIN_9,GPIO_PIN_RESET);
-        rec_st = HAL_UART_Receive_DMA(&huart1, Date, 78);
+        rec_st = HAL_UART_Receive(&huart1, Date, 78,1);
 				err_state = HAL_UART_GetError(&huart1);
 				received = 78 - huart1.RxXferCount;
 

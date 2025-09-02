@@ -22,6 +22,7 @@
 
 /* USER CODE BEGIN 0 */
 
+
 /* USER CODE END 0 */
 
 UART_HandleTypeDef huart1;
@@ -123,7 +124,7 @@ void HAL_UART_MspInit(UART_HandleTypeDef* uartHandle)
     hdma_usart1_rx.Init.MemInc = DMA_MINC_ENABLE;
     hdma_usart1_rx.Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE;
     hdma_usart1_rx.Init.MemDataAlignment = DMA_MDATAALIGN_BYTE;
-    hdma_usart1_rx.Init.Mode = DMA_NORMAL;
+    hdma_usart1_rx.Init.Mode = DMA_CIRCULAR;
     hdma_usart1_rx.Init.Priority = DMA_PRIORITY_LOW;
     hdma_usart1_rx.Init.FIFOMode = DMA_FIFOMODE_DISABLE;
     if (HAL_DMA_Init(&hdma_usart1_rx) != HAL_OK)
@@ -184,7 +185,7 @@ void HAL_UART_MspInit(UART_HandleTypeDef* uartHandle)
     hdma_usart2_rx.Init.MemInc = DMA_MINC_ENABLE;
     hdma_usart2_rx.Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE;
     hdma_usart2_rx.Init.MemDataAlignment = DMA_MDATAALIGN_BYTE;
-    hdma_usart2_rx.Init.Mode = DMA_NORMAL;
+    hdma_usart2_rx.Init.Mode = DMA_CIRCULAR;
     hdma_usart2_rx.Init.Priority = DMA_PRIORITY_LOW;
     hdma_usart2_rx.Init.FIFOMode = DMA_FIFOMODE_DISABLE;
     if (HAL_DMA_Init(&hdma_usart2_rx) != HAL_OK)
@@ -266,5 +267,36 @@ void HAL_UART_MspDeInit(UART_HandleTypeDef* uartHandle)
 }
 
 /* USER CODE BEGIN 1 */
+//void USART1_IRQHandler(void)
+//{
+//	HAL_UART_ReceiveIdle(&huart1);
+//	HAL_UART_IRQHandler(&huart1); //����HAL���жϴ����ú���
+//	
+//	/* 4.���´򿪴���DMA���� */
+//	while (HAL_UART_Receive_DMA(&huart1,(uint8_t *)usart1_rx_buffer, USART_DMA_RX_BUFFER_MAXIMUM)!=HAL_OK);
+//}
 
+//void HAL_UART_ReceiveIdle(UART_HandleTypeDef *huart)
+//{
+//	//�������˴��ڿ����ж�
+//    if((__HAL_UART_GET_FLAG(huart, UART_FLAG_IDLE) != RESET)) 
+//    {
+//		uint32_t tmp_flag = 0;
+//		uint32_t temp;
+//		if(huart->Instance == USART1)
+//		{
+//			/* 1.�����־ */
+//			__HAL_UART_CLEAR_IDLEFLAG(huart); //������б�־
+
+//			/* 2.��ȡDMA */
+//			HAL_UART_DMAStop(huart); //��ֹͣDMA����ͣ����
+//			//����Ӧע�����ݽ��ղ�Ҫ���� USART_DMA_RX_BUFFER_MAXIMUM
+//			usart1_rx_len = USART_DMA_RX_BUFFER_MAXIMUM - (__HAL_DMA_GET_COUNTER(&hdma_usart1_rx)); //���ո������ڽ��ջ������ܴ�С��ʣ�����
+//			
+//			/* 3.�������ݽ����������� */
+//			memcpy(receive_data, usart1_rx_buffer, usart1_rx_len); 
+//			usart1_rx_flag = 1; //��־�Ѿ��ɹ����յ�һ���ȴ�����
+//		}
+//    }
+//}
 /* USER CODE END 1 */

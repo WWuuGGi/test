@@ -371,26 +371,26 @@ int main(void)
 
 	j = 0;
 	k = 0;
-	pos_calc(position,speed,360.0f,5.0f);
-	data_logging = 1;  // 开始记录数据
-	error_idx = 0;     // 重置缓冲区
+//	pos_calc(position,speed,360.0f,5.0f);
+//	data_logging = 1;  // 开始记录数据
+//	error_idx = 0;     // 重置缓冲区
 	
 	//while((zero_left_ID0*zero_left_ID0 <= 0.000000000001f) || (zero_left_ID1*zero_left_ID1 <= 0.000000000001f))
-	while((zero_left_ID0*zero_left_ID0 <= 0.000000000001f))
-	{
-		//以上电位置为零点
-		modify_torque_cmd(&MotorA1_send_left, 0, 0);   
-		unitreeA1_rxtx(&huart1);
-//		modify_torque_cmd(&MotorA1_send_left, 1, 0);   
+//	while((zero_left_ID0*zero_left_ID0 <= 0.000000000001f))
+//	{
+//		//以上电位置为零点
+//		modify_torque_cmd(&MotorA1_send_left, 0, 0);   
 //		unitreeA1_rxtx(&huart1);
+////		modify_torque_cmd(&MotorA1_send_left, 1, 0);   
+////		unitreeA1_rxtx(&huart1);
 
-		zero_left_ID0  = (float) MotorA1_recv_left_id00.Pos ;
-//		zero_left_ID1  = (float) MotorA1_recv_left_id01.Pos ;
+//		zero_left_ID0  = (float) MotorA1_recv_left_id00.Pos ;
+////		zero_left_ID1  = (float) MotorA1_recv_left_id01.Pos ;
 
-	}
 	
-	HAL_TIM_Base_Start_IT(&htim2);
 	
+//  HAL_TIM_Base_Start_IT(&htim2);
+
 
   /* USER CODE END 2 */
 
@@ -404,7 +404,7 @@ int main(void)
 		
 
 		
-//		pos_spline(position,360.0f,5.0f);//pos xf tf
+		pos_spline(position,360.0f,5.0f);//pos xf tf
 		
 		//step(30.0f,0.006f,0.5f);
 		//kp0 = 0.0025 
