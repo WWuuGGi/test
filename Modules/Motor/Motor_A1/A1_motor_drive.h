@@ -22,6 +22,7 @@ extern motor_recv_t MotorA1_recv_right_id01;  // 右腿01号电机接收数据�
 extern motor_recv_t MotorA1_recv_right_id02;  // 右腿02号电机接收数据体
 extern uint8_t Date[78];
 extern HAL_StatusTypeDef rec_st;
+extern HAL_StatusTypeDef trans_st;
 
 /**
  @brief 对应电机参数修改

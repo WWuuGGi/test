@@ -18,6 +18,7 @@ motor_recv_t MotorA1_recv_right_id02; // 右腿02号电机接收数据体
 uint8_t Date[78];
 
 HAL_StatusTypeDef rec_st;
+HAL_StatusTypeDef trans_st;
 uint32_t err_state;
 uint32_t received;
 
@@ -157,10 +158,9 @@ void unitreeA1_rxtx(UART_HandleTypeDef *huart)
         
 				HAL_GPIO_WritePin(GPIOF,GPIO_PIN_9,GPIO_PIN_SET);
         // HAL库 DMA 发送数据 + 接收数据
-        HAL_UART_Transmit(&huart1, A1MotorA1_send_left, 34,1);
-				
+        trans_st = HAL_UART_Transmit_DMA(&huart1, A1MotorA1_send_left, 34);
 				HAL_GPIO_WritePin(GPIOF,GPIO_PIN_9,GPIO_PIN_RESET);
-        rec_st = HAL_UART_Receive(&huart1, Date, 78,1);
+        rec_st = HAL_UART_Receive_DMA(&huart1, Date, 78);
 				err_state = HAL_UART_GetError(&huart1);
 				received = 78 - huart1.RxXferCount;
 
