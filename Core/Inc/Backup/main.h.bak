@@ -53,7 +53,14 @@ extern "C" {
 void Error_Handler(void);
 
 /* USER CODE BEGIN EFP */
+void pos_calc(float * pos,float * speed,float xf, float tf);
 
+//void pos_speed_calc(float * pos,float * speed,float xf, float tf);
+
+
+void pos_spline(float * pos,float xf,float tf);
+
+void calculate_errors(float cmd_pos, float cmd_vel);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
