@@ -40,3 +40,5 @@ test\main.o: ../Modules/Motor/Motor_A1/motor_msg.h
 test\main.o: D:\keil5\ARM\ARMCC\Bin\..\include\string.h
 test\main.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdio.h
 test\main.o: ../Modules/Joint/joint.h
+test\main.o: ../Core/Inc/calc.h
+test\main.o: D:\keil5\ARM\ARMCC\Bin\..\include\math.h

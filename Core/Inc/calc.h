@@ -44,9 +44,31 @@ typedef struct {
     float32_t data[6]; // vx,vy,vz,va,vb,vg
 } Velocity;
 
+typedef struct {
+    float32_t data[6]; // ax,ay,az,aa,ab,ag
+} Acceleration;
+
+// 五次多项式系数结构体
+typedef struct {
+    float32_t a0; // 常数项
+    float32_t a1; // 一次项
+    float32_t a2; // 二次项
+    float32_t a3; // 三次项
+    float32_t a4; // 四次项
+    float32_t a5; // 五次项
+} Poly5Coeff;
+
+// 计算五次多项式系数
+static void calculate_poly5_coeff(Poly5Coeff *coeff, 
+                                 float32_t s0, float32_t v0, float32_t a0,  // 起点边界条件
+                                 float32_t s1, float32_t v1, float32_t a1,  // 终点边界条件
+                                 float32_t t_total);                          // 总时间
+
+
 // 系统参数宏定义
 #define CABLE_NUM 8       // 绳索数量
 #define STEP_NUM 501      // 轨迹总步数（0.01s步长，5s共501个点）
+#define MOTOR_PULLEY_RADIUS 0.0475f  // 电机 pulley 半径，单位：米 (47.5mm)
 
 // 外部全局变量声明
 extern float32_t t_vec[STEP_NUM];                  // 时间向量数组
@@ -54,6 +76,8 @@ extern Pose pose_trj[STEP_NUM];                    // 位姿轨迹数组（位置+姿态）
 extern Velocity v_trj[STEP_NUM];                   // 速度轨迹数组（线速度+角速度）
 extern float32_t cable_length[CABLE_NUM][STEP_NUM]; // 绳索长度数组（每个时刻的长度）
 extern float32_t cable_velocity[CABLE_NUM][STEP_NUM]; // 绳索速度数组（每个时刻的速度）
+extern float32_t cable_initial_length[CABLE_NUM];  // 每条绳索的初始长度(零点参考)
+extern float32_t motor_angle[CABLE_NUM][STEP_NUM]; // 电机角度轨迹(弧度)
 
 // 末端执行器物理参数（外部可见）
 extern const float32_t mass_ee;    // 末端执行器质量
@@ -124,20 +148,19 @@ float32_t vector_norm(const float32_t *v);
  * @param t_end 轨迹结束时间（s）
  * @param t_step 时间步长（s）
  */
-void generate_trajectory(float32_t t_start, float32_t t_end, float32_t t_step,
-                        const Pose *start_pose, const Pose *end_pose);
+void generate_trajectory_and_angles(float32_t t_start, float32_t t_end, float32_t t_step,
+                                         const Pose *start_pose, const Velocity *start_vel, const Acceleration *start_acc,
+                                         const Pose *end_pose, const Velocity *end_vel, const Acceleration *end_acc);
 
-/**
- * @brief 计算动力学参数（绳索长度和速度）
- * 根据位姿轨迹计算每个时刻的绳索长度和速度
- */
-void calculate_dynamics(void);
+
 
 /**
  * @brief 初始化CDPR系统
  * 生成轨迹并计算动力学参数，系统启动时调用
  */
-void cdpr_init(const Pose *start_pose, const Pose *end_pose);
+void cdpr_init(const Pose *start_pose, const Velocity *start_vel, const Acceleration *start_acc,
+              const Pose *end_pose, const Velocity *end_vel, const Acceleration *end_acc);
+
 
 /**
  * @brief 获取当前时刻的绳索状态
@@ -145,9 +168,8 @@ void cdpr_init(const Pose *start_pose, const Pose *end_pose);
  * @param length 输出参数，存储当前所有绳索的长度
  * @param velocity 输出参数，存储当前所有绳索的速度
  */
-void cdpr_get_current_state(uint16_t time_idx, 
-                           float32_t length[CABLE_NUM], 
-                           float32_t velocity[CABLE_NUM]);
+void cdpr_get_current_motor_angles(uint16_t time_idx, float32_t angles[CABLE_NUM]);
+
 
 #endif
 
