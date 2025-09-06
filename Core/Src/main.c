@@ -18,7 +18,6 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "dma.h"
 #include "tim.h"
 #include "usart.h"
 #include "gpio.h"
@@ -28,6 +27,7 @@
 #include "A1_motor_drive.h"
 #include "motor_msg.h"
 #include "joint.h"
+#include <stdio.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -87,26 +87,32 @@ float speed[t_num];
 
 uint8_t id = 0;
 
-typedef struct {
-    float pos_cmd;       // 期望位置(度)
-    float pos_fdb;       // 实际位置(度)
-    float pos_error;     // 位置误差(度)
-    float vel_cmd;       // 期望速度(rad/s)
-    float vel_fdb;       // 实际速度(rad/s)
-    float vel_error;     // 速度误差(rad/s)
-    uint32_t timestamp;  // 时间戳(ms)
-} ErrorData_t;
+//typedef struct {
+//    float pos_cmd;       // 期望位置(度)
+//    float pos_fdb;       // 实际位置(度)
+//    float pos_error;     // 位置误差(度)
+//    float vel_cmd;       // 期望速度(rad/s)
+//    float vel_fdb;       // 实际速度(rad/s)
+//    float vel_error;     // 速度误差(rad/s)
+//    uint32_t timestamp;  // 时间戳(ms)
+//} ErrorData_t;
 
-ErrorData_t error_buf0[1000];  // 误差数据缓冲区
-ErrorData_t error_buf1[1000];  // 误差数据缓冲区
-uint16_t error_idx = 0;       // 缓冲区索引
-uint8_t data_logging = 0;     // 数据记录使能标志
+//ErrorData_t error_buf0[1000];  // 误差数据缓冲区
+//ErrorData_t error_buf1[1000];  // 误差数据缓冲区
+//uint16_t error_idx = 0;       // 缓冲区索引
+//uint8_t data_logging = 0;     // 数据记录使能标志
 
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
+int fputc(int ch,FILE *f)
+{
+	HAL_UART_Transmit(&huart1,(uint8_t *)&ch,1,HAL_MAX_DELAY);
+	return ch;
+}
+
 void pos_calc(float * pos,float * speed, float xf, float tf)
 {
 	//float tf = 5;
@@ -130,47 +136,47 @@ void pos_calc(float * pos,float * speed, float xf, float tf)
 	
 }
 
-void calculate_errors(float cmd_pos, float cmd_vel)
-{
-    if (error_idx < t_num)  // 防止缓冲区溢出
-    {
-        // 获取实际反馈值
-        float act_pos0;  // 实际位置(度)
-        float act_vel0;  // 实际速度(rad/s)
-				float act_pos1;  // 实际位置(度)
-        float act_vel1;  // 实际速度(rad/s)
-        
-				act_pos0 = MotorA1_recv_left_id00.Pos - zero_left_ID0;
-				act_vel0 = MotorA1_recv_left_id00.W; 
+//void calculate_errors(float cmd_pos, float cmd_vel)
+//{
+//    if (error_idx < t_num)  // 防止缓冲区溢出
+//    {
+//        // 获取实际反馈值
+//        float act_pos0;  // 实际位置(度)
+//        float act_vel0;  // 实际速度(rad/s)
+//				float act_pos1;  // 实际位置(度)
+//        float act_vel1;  // 实际速度(rad/s)
+//        
+//				act_pos0 = MotorA1_recv_left_id00.Pos - zero_left_ID0;
+//				act_vel0 = MotorA1_recv_left_id00.W; 
 
-				act_pos1 = MotorA1_recv_left_id01.Pos - zero_left_ID1;
-				act_vel1 = MotorA1_recv_left_id01.W; 
-				
-        // 计算误差
-        error_buf0[error_idx].pos_cmd = cmd_pos;
-        error_buf0[error_idx].pos_fdb = act_pos0;
-        error_buf0[error_idx].pos_error = cmd_pos - act_pos0;//目标减去实际值
-        
-        error_buf0[error_idx].vel_cmd = cmd_vel;
-        error_buf0[error_idx].vel_fdb = act_vel0;
-        error_buf0[error_idx].vel_error = cmd_vel - act_vel0;//目标减去实际值
-        
-        error_buf0[error_idx].timestamp = HAL_GetTick();  // 记录时间戳
-        
-				// 计算误差
-        error_buf1[error_idx].pos_cmd = cmd_pos;
-        error_buf1[error_idx].pos_fdb = act_pos1;
-        error_buf1[error_idx].pos_error = cmd_pos - act_pos1;//目标减去实际值
-        
-        error_buf1[error_idx].vel_cmd = cmd_vel;
-        error_buf1[error_idx].vel_fdb = act_vel1;
-        error_buf1[error_idx].vel_error = cmd_vel - act_vel1;//目标减去实际值
-        
-        error_buf1[error_idx].timestamp = HAL_GetTick();  // 记录时间戳
-				
-        error_idx++;
-    }
-}
+//				act_pos1 = MotorA1_recv_left_id01.Pos - zero_left_ID1;
+//				act_vel1 = MotorA1_recv_left_id01.W; 
+//				
+//        // 计算误差
+//        error_buf0[error_idx].pos_cmd = cmd_pos;
+//        error_buf0[error_idx].pos_fdb = act_pos0;
+//        error_buf0[error_idx].pos_error = cmd_pos - act_pos0;//目标减去实际值
+//        
+//        error_buf0[error_idx].vel_cmd = cmd_vel;
+//        error_buf0[error_idx].vel_fdb = act_vel0;
+//        error_buf0[error_idx].vel_error = cmd_vel - act_vel0;//目标减去实际值
+//        
+//        error_buf0[error_idx].timestamp = HAL_GetTick();  // 记录时间戳
+//        
+//				// 计算误差
+//        error_buf1[error_idx].pos_cmd = cmd_pos;
+//        error_buf1[error_idx].pos_fdb = act_pos1;
+//        error_buf1[error_idx].pos_error = cmd_pos - act_pos1;//目标减去实际值
+//        
+//        error_buf1[error_idx].vel_cmd = cmd_vel;
+//        error_buf1[error_idx].vel_fdb = act_vel1;
+//        error_buf1[error_idx].vel_error = cmd_vel - act_vel1;//目标减去实际值
+//        
+//        error_buf1[error_idx].timestamp = HAL_GetTick();  // 记录时间戳
+//				
+//        error_idx++;
+//    }
+//}
 
 
 
@@ -183,8 +189,8 @@ void pos_spline(float * pos,float xf,float tf)
 			if ((j == 0) &&(k == 0))
 			{
 				pos_calc(pos,speed,xf,tf);
-				data_logging = 1;  // 开始记录数据
-				error_idx = 0;     // 重置缓冲区
+//				data_logging = 1;  // 开始记录数据
+//				error_idx = 0;     // 重置缓冲区
 			}
 			
 //			float* zero_point = NULL;
@@ -223,10 +229,10 @@ void pos_spline(float * pos,float xf,float tf)
 				
 //				HAL_Delay(1);
 //				Joint_PW_Control(position[j],speed[j],0.006f,0.50f);
-				if (data_logging)
-				{
-						calculate_errors(position[j], speed[j]);
-				}
+//				if (data_logging)
+//				{
+//						calculate_errors(position[j], speed[j]);
+//				}
 				
 //				if (id == 0)
 //				{
@@ -264,10 +270,10 @@ void pos_spline(float * pos,float xf,float tf)
 //					ang = (float) MotorA1_recv_left_id01.Pos - zero_left_ID1;
 //					spd = MotorA1_recv_left_id01.W - MotorA1_send_left.W;
 //				}
-			if (data_logging)
-			{
-					data_logging = 0;  // 停止记录
-			}
+//			if (data_logging)
+//			{
+//					data_logging = 0;  // 停止记录
+//			}
 		}
 }
 
@@ -277,8 +283,8 @@ void step(float pos,float kp,float kd)
 		{
 			if (j == 0)
 			{
-				data_logging = 1;  // 开始记录数据
-				error_idx = 0;     // 重置缓冲区
+//				data_logging = 1;  // 开始记录数据
+//				error_idx = 0;     // 重置缓冲区
 			}
 			while((zero_left_ID0*zero_left_ID0) <= 0.000000000001f)
 			{
@@ -292,10 +298,10 @@ void step(float pos,float kp,float kd)
 			//Joint_PW_Control(position[j],speed[j],0.025f,0.5f);//0.025 1.0
 			Joint_Position_Control(pos,kp,kd);//0.025 1.0
 			// 计算并记录误差
-			if (data_logging)
-			{
-					calculate_errors(position[j], speed[j]);
-			}
+//			if (data_logging)
+//			{
+//					calculate_errors(position[j], speed[j]);
+//			}
 			ang = (float) MotorA1_recv_left_id00.Pos - zero_left_ID0;
 			spd = MotorA1_recv_left_id00.W - MotorA1_send_left.W;
 			HAL_Delay(1);
@@ -308,10 +314,10 @@ void step(float pos,float kp,float kd)
 			ang = (float) MotorA1_recv_left_id00.Pos - zero_left_ID0;
 			spd = MotorA1_recv_left_id00.W - MotorA1_send_left.W;
 			
-			if (data_logging)
-			{
-					data_logging = 0;  // 停止记录
-			}
+//			if (data_logging)
+//			{
+//					data_logging = 0;  // 停止记录
+//			}
 		}
 }
 
@@ -355,7 +361,6 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  MX_DMA_Init();
   MX_USART1_UART_Init();
   MX_USART2_UART_Init();
   MX_TIM2_Init();
@@ -404,13 +409,15 @@ int main(void)
 		
 
 		
-		pos_spline(position,360.0f,5.0f);//pos xf tf
+		pos_spline(position,60.0f,5.0f);//pos xf tf
 		
 		//step(30.0f,0.006f,0.5f);
 		//kp0 = 0.0025 
 		
-		//modify_torque_cmd(&MotorA1_send_left,1,0);
-		//unitreeA1_rxtx(&huart1);     
+//		modify_torque_cmd(&MotorA1_send_left,0,0);
+//		unitreeA1_rxtx(&huart1);     
+//		modify_torque_cmd(&MotorA1_send_left,1,0);
+//		unitreeA1_rxtx(&huart1);     
 		//HAL_Delay(1);
   }
   /* USER CODE END 3 */
@@ -485,49 +492,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
   /* USER CODE BEGIN Callback 1 */
 	if (htim->Instance == TIM2)
   {
-		if (j < t_num)
-		{
-			// 每1ms进入一次中断，累计到5次即为5ms	
-				if(tim2_cnt == 0)
-				{
-					uint8_t ids[] = {0, 1}; // 电机ID
-					float poss[] = {position[j], position[j]}; // 目标位置（根据实际轨迹更新）
-					float spds[] = {speed[j],speed[j]};
-					float kps[] = {0.022f, 0.022f}; // 刚度系数
-					float kds[] = {0.1f, 0.1f}; // 速度系数
-
-					Joint_PW_Control(poss[0],spds[0],ids[0],kps[0],kds[0]);//0.025 1.0   0.015 0.3
-					Joint_PW_Control(poss[1],spds[1],ids[1],kps[1],kds[1]);//0.025 1.0   0.015 0.3
-
-					// 计算并记录误差
-				
-					if (data_logging)
-					{
-							calculate_errors(position[j], speed[j]);
-					}
-					tim2_cnt++;
-				}
-				else
-				{
-					tim2_cnt++;
-					if (tim2_cnt == 5)
-					{
-						tim2_cnt = 0;
-						j++;
-					}
-				}
-			}
-			else
-			{
-				modify_torque_cmd(&MotorA1_send_left, 0, 0);    
-				unitreeA1_rxtx(&huart1);   
-				modify_torque_cmd(&MotorA1_send_left, 1, 0);    
-				unitreeA1_rxtx(&huart1);    
-				if (data_logging)
-				{
-						data_logging = 0;  // 停止记录
-				}				
-			}
+		
 	}
 
   /* USER CODE END Callback 1 */

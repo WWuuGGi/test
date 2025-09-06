@@ -2,12 +2,12 @@
 "test\startup_stm32f407xx.o"
 "test\main.o"
 "test\gpio.o"
-"test\dma.o"
 "test\tim.o"
 "test\usart.o"
 "test\stm32f4xx_it.o"
 "test\stm32f4xx_hal_msp.o"
 "test\stm32f4xx_hal_timebase_tim.o"
+"test\calc.o"
 "test\stm32f4xx_hal_tim.o"
 "test\stm32f4xx_hal_tim_ex.o"
 "test\stm32f4xx_hal_rcc.o"
@@ -27,7 +27,7 @@
 "test\system_stm32f4xx.o"
 "test\a1_motor_drive.o"
 "test\joint.o"
---strict --scatter "test\test.sct"
+--library_type=microlib --strict --scatter "test\test.sct"
 --summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
 --info sizes --info totals --info unused --info veneers
 --list "test.map" -o test\test.axf
