@@ -88,6 +88,8 @@ float position[t_num];
 float speed[t_num];
 
 uint8_t id = 0;
+uint8_t cstate;
+uint8_t cmode;
 
 //typedef struct {
 //    float pos_cmd;       // 期望位置(度)
@@ -111,6 +113,7 @@ void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
 int fputc(int ch,FILE *f)
 {
+	//HAL_MAX_DELAY
 	HAL_UART_Transmit(&huart1,(uint8_t *)&ch,1,HAL_MAX_DELAY);
 	return ch;
 }
@@ -392,9 +395,13 @@ int main(void)
 	//	cdpr_init(&start, &end);
 	cdpr_init(&start_pose, &start_vel, &start_acc, &end_pose, &end_vel, &end_acc);
   
+	KeyTypeDef k0;
+	
 	HAL_TIM_Base_Start_IT(&htim2);
 	
-	/* USER CODE END 2 */
+	
+
+  /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
@@ -407,9 +414,15 @@ int main(void)
 
 		
 		//pos_spline(position,60.0f,5.0f);//pos xf tf
-	
 		
-		HAL_Delay(1);
+		cstate = Key_GetTaskState();
+		cmode = Key_GetCurrentMode();
+		
+		k0 = Key_scope();
+		printf("raw_state    = %d\r\n",k0.state);
+		printf("stable_state = %d\r\n",k0.stable_pin_state);
+		printf("click_count  = %d\r\n",k0.click_count);
+
 		
   }
   /* USER CODE END 3 */

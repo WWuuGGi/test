@@ -19,8 +19,9 @@
 #define K1_Pin GPIO_PIN_3
 
 // 按键参数定义
-#define KEY_LONG_PRESS_MS 1000    // 长按判定时间(ms)
-#define KEY_DOUBLE_CLICK_MS 300   // 双击判定时间间隔(ms)
+#define KEY_LONG_PRESS_MS 800    // 长按判定时间(ms)
+#define KEY_DOUBLE_CLICK_MS 200   // 双击判定时间间隔(ms)
+#define KEY_DEBOUNCE_MS 10        // 按键消抖时间（过滤机械抖动，约10-20ms）
 
 // LED定义(用于指示)，请根据实际硬件修改
 #define LED_GPIO_Port GPIOF
@@ -29,6 +30,7 @@
 // 函数声明
 void Key_Init(void);
 void Key_Process(void);
+void Task_Execute(void);
 uint8_t Key_GetTaskState(void);
 uint8_t Key_GetCurrentMode(void);
 

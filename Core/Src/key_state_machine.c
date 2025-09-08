@@ -12,37 +12,11 @@
 #include "calc.h"
 #include "A1_motor_drive.h"
 
-// 按键状态枚举
-typedef enum {
-    KEY_STATE_IDLE,         // 空闲状态
-    KEY_STATE_PRESSED,      // 按下状态
-    KEY_STATE_RELEASED,     // 释放状态
-    KEY_STATE_LONG_PRESS    // 长按状态
-} KeyStateTypeDef;
 
-// 按键事件枚举
-typedef enum {
-    KEY_EVENT_NONE,         // 无事件
-    KEY_EVENT_CLICK,        // 单击事件
-    KEY_EVENT_DOUBLE_CLICK, // 双击事件
-    KEY_EVENT_LONG_PRESS    // 长按事件
-} KeyEventTypeDef;
-
-// 按键结构体定义
-typedef struct {
-    GPIO_TypeDef* gpio_port;    // 按键GPIO端口
-    uint16_t gpio_pin;          // 按键GPIO引脚
-    KeyStateTypeDef state;      // 当前状态
-    uint32_t press_time;        // 按下时间戳
-    uint32_t release_time;      // 释放时间戳
-    uint8_t click_count;        // 点击计数
-    uint8_t long_press_flag;    // 长按标志
-    KeyEventTypeDef event;      // 按键事件
-} KeyTypeDef;
 
 // 按键实例化
-static KeyTypeDef key0 = {K0_GPIO_Port, K0_Pin, KEY_STATE_IDLE, 0, 0, 0, 0, KEY_EVENT_NONE};
-static KeyTypeDef key1 = {K1_GPIO_Port, K1_Pin, KEY_STATE_IDLE, 0, 0, 0, 0, KEY_EVENT_NONE};
+static KeyTypeDef key0 = {K0_GPIO_Port, K0_Pin, KEY_STATE_IDLE, 0, 0, 0, 0, KEY_EVENT_NONE,0,0};
+static KeyTypeDef key1 = {K1_GPIO_Port, K1_Pin, KEY_STATE_IDLE, 0, 0, 0, 0, KEY_EVENT_NONE,0,0};
 
 // 全局变量
 static uint8_t task_running = 0;    // 任务运行标志
@@ -69,7 +43,7 @@ void Key_Init(void) {
   * @retval 1: 按键按下, 0: 按键释放
   */
 static uint8_t Key_ReadPin(KeyTypeDef* key) {
-    // 假设按键按下为高电平(上拉输入)
+    // 假设按键按下为低电平(上拉输入)
     return (HAL_GPIO_ReadPin(key->gpio_port, key->gpio_pin) == GPIO_PIN_RESET) ? 1 : 0;
 }
 
@@ -79,54 +53,74 @@ static uint8_t Key_ReadPin(KeyTypeDef* key) {
   * @retval 无
   */
 static void Key_StateMachine(KeyTypeDef* key) {
-    uint8_t pin_state = Key_ReadPin(key);
+    uint8_t raw_pin_state = Key_ReadPin(key);
     uint32_t current_time = HAL_GetTick();
     
-    key->event = KEY_EVENT_NONE;  // 默认为无事件
-    
+    key->event = KEY_EVENT_NONE;
+
+    // 按键消抖：检测到引脚状态变化后，等待KEY_DEBOUNCE_MS再确认
+    if (raw_pin_state != key->stable_pin_state) {
+        // 首次检测到变化，记录时间
+        if (key->state_change_time == 0) {
+            key->state_change_time = current_time;
+        }
+        // 等待消抖时间后，确认状态变化
+        else if (current_time - key->state_change_time >= KEY_DEBOUNCE_MS) {
+            key->stable_pin_state = raw_pin_state;  // 更新稳定状态
+            key->state_change_time = 0;             // 重置消抖计时
+        }
+//        return;  // 消抖期间不处理状态切换
+    } else {
+        // 状态未变化，重置消抖计时
+        key->state_change_time = 0;
+    }
+
+    // 以下使用消抖后的stable_pin_state进行状态判断
+    uint8_t pin_state = key->stable_pin_state;
+
     switch (key->state) {
         case KEY_STATE_IDLE:
-            if (pin_state) {  // 按键按下
+            if (pin_state) {  // 按键按下（消抖后确认）
                 key->state = KEY_STATE_PRESSED;
                 key->press_time = current_time;
+                key->click_count = 0;  // 重置点击计数
                 key->long_press_flag = 0;
             }
             break;
-            
+
         case KEY_STATE_PRESSED:
-            // 检测长按
-            if (current_time - key->press_time > KEY_LONG_PRESS_MS) {
+            // 检测长按（消抖后确认按下状态持续时间）
+            if (current_time - key->press_time >= KEY_LONG_PRESS_MS) {
                 key->state = KEY_STATE_LONG_PRESS;
                 key->long_press_flag = 1;
                 key->event = KEY_EVENT_LONG_PRESS;
             }
-            // 检测释放
+            // 检测释放（消抖后确认释放）
             else if (!pin_state) {
                 key->state = KEY_STATE_RELEASED;
                 key->release_time = current_time;
-                key->click_count++;
+                key->click_count++;  // 计数+1（可能是单击或双击的第一次）
             }
             break;
-            
+
         case KEY_STATE_RELEASED:
-            // 等待双击
-            if (current_time - key->release_time > KEY_DOUBLE_CLICK_MS) {
+            // 双击窗口超时：确认单击/双击
+            if (current_time - key->release_time >= KEY_DOUBLE_CLICK_MS) {
                 if (key->click_count == 1) {
-                    key->event = KEY_EVENT_CLICK;
+                    key->event = KEY_EVENT_CLICK;  // 单击事件（快速响应）
                 } else if (key->click_count == 2) {
-                    key->event = KEY_EVENT_DOUBLE_CLICK;
+                    key->event = KEY_EVENT_DOUBLE_CLICK;  // 双击事件
                 }
-                // 重置状态
                 key->state = KEY_STATE_IDLE;
                 key->click_count = 0;
             }
-            // 检测再次按下(双击)
+            // 双击窗口内再次按下：计数+1
             else if (pin_state) {
                 key->state = KEY_STATE_PRESSED;
                 key->press_time = current_time;
             }
             break;
-            
+
         case KEY_STATE_LONG_PRESS:
             // 长按后释放
             if (!pin_state) {
@@ -134,7 +128,7 @@ static void Key_StateMachine(KeyTypeDef* key) {
                 key->click_count = 0;
             }
             break;
-            
+
         default:
             key->state = KEY_STATE_IDLE;
             break;
@@ -153,13 +147,13 @@ static void Key_HandleEvents(void) {
             // 急停任务
             task_running = 0;
             // 急停相关代码
-            HAL_GPIO_WritePin(LED_GPIO_Port, LED_PIN, GPIO_PIN_RESET); // 关闭LED指示
+            HAL_GPIO_WritePin(LED_GPIO_Port, LED_PIN, GPIO_PIN_SET); // 关闭LED指示
         } else {
             // 启动任务
             task_running = 1;
             current_mode = 1;  // 启动时默认进入模式1
             // 启动任务相关代码
-            HAL_GPIO_WritePin(LED_GPIO_Port, LED_PIN, GPIO_PIN_SET); // 打开LED指示
+            HAL_GPIO_WritePin(LED_GPIO_Port, LED_PIN, GPIO_PIN_RESET); // 打开LED指示
         }
     }
     
@@ -189,15 +183,18 @@ static void Task_Execute(void) {
     switch (current_mode) {
         case 1:
             // 模式1的任务逻辑
-            // ...
+            //
+						HAL_GPIO_WritePin(LED_GPIO_Port, LED_PIN, GPIO_PIN_SET); // 关闭LED指示
             break;
         case 2:
             // 模式2的任务逻辑
             // ...
+						HAL_GPIO_WritePin(LED_GPIO_Port, LED_PIN, GPIO_PIN_RESET); // 打开LED指示
             break;
         case 3:
             // 模式3的任务逻辑
             // ...
+						HAL_GPIO_WritePin(LED_GPIO_Port, LED_PIN, GPIO_PIN_SET); // 关闭LED指示
             break;
         default:
             // 默认模式处理
@@ -238,4 +235,8 @@ uint8_t Key_GetTaskState(void) {
   */
 uint8_t Key_GetCurrentMode(void) {
     return current_mode;
+}
+
+KeyTypeDef Key_scope(void) {
+		return key0;
 }
