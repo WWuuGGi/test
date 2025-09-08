@@ -373,6 +373,8 @@ int main(void)
 //		printf("raw_state    = %d\r\n",k0.state);
 //		printf("stable_state = %d\r\n",k0.stable_pin_state);
 //		printf("click_count  = %d\r\n",k0.click_count);
+//		modify_torque_cmd(&MotorA1_send_left, 0, 0);    
+//		unitreeA1_rxtx(&huart1);   
 
 		
   }

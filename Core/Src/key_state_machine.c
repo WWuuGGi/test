@@ -154,7 +154,7 @@ static void Key_HandleEvents(void) {
 						step_mode_2 = 0;
 						step_mode_3 = 0;
 						//调成零力矩模式，等待拖拽回中
-						motor_relax();
+						//motor_relax();
 					
         } else {
             // 启动任务
@@ -164,7 +164,7 @@ static void Key_HandleEvents(void) {
 						step_mode_2 = 0;
 						step_mode_3 = 0;
 						//调成零力矩模式，等待接收指令
-						motor_relax();
+						//motor_relax();
             
         }
     }
@@ -238,7 +238,7 @@ void Task_Execute(void) {
 						}
 						else
 						{
-							motor_relax();
+							//motor_relax();
 						}
             break;
         case 2:
@@ -278,7 +278,7 @@ void Task_Execute(void) {
 						}
 						else
 						{
-							motor_relax();
+							//motor_relax();
 						}
             break;
         case 3:
@@ -318,7 +318,7 @@ void Task_Execute(void) {
 						}
 						else
 						{
-							motor_relax();
+							//motor_relax();
 						}
             break;
         default:
