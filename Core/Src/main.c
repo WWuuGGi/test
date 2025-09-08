@@ -373,9 +373,7 @@ int main(void)
 //		printf("raw_state    = %d\r\n",k0.state);
 //		printf("stable_state = %d\r\n",k0.stable_pin_state);
 //		printf("click_count  = %d\r\n",k0.click_count);
-    if (Key_GetTaskState()) {
-        Task_Execute();
-    }
+
 		
   }
   /* USER CODE END 3 */

@@ -145,7 +145,7 @@ static void Key_StateMachine(KeyTypeDef* key) {
   */
 static void Key_HandleEvents(void) {
     // 处理K0按键事件 - 控制任务启动/停止
-    if (key0.event == KEY_EVENT_CLICK) {
+    if (key0.event == KEY_EVENT_LONG_PRESS) {
         if (task_running) {
             // 急停任务
             task_running = 0;
@@ -221,20 +221,20 @@ void Task_Execute(void) {
 							cdpr_init(&start_pose, &start_vel, &start_acc, &end_pose, &end_vel, &end_acc);
 						}
 						
-						while((zero_left_ID0*zero_left_ID0 <= 0.000000000001f))
-						{
-							//以上电位置为零点
-							modify_torque_cmd(&MotorA1_send_left, 0, 0);   
-							unitreeA1_rxtx(&huart1);
-							zero_left_ID0  = (float) MotorA1_recv_left_id00.Pos ;
+//						while((zero_left_ID0*zero_left_ID0 <= 0.000000000001f))
+//						{
+//							//以上电位置为零点
+//							modify_torque_cmd(&MotorA1_send_left, 0, 0);   
+//							unitreeA1_rxtx(&huart1);
+//							zero_left_ID0  = (float) MotorA1_recv_left_id00.Pos ;
 
-						}
+//						}
 						if(step_mode_1 < STEP_NUM)
 						{
 							
 							Joint_Position_Control(motor_angle,0.025,0.1,step_mode_1);
 							step_mode_1++;
-							HAL_Delay(10);
+
 						}
 						else
 						{
@@ -251,8 +251,8 @@ void Task_Execute(void) {
 							step_mode_3 = 0;
 							
 							//初次进入时，计算轨迹路径
-							Pose start_pose = {-0.25f, -0.25f, 0.135f, 0, 0, 0};
-							Pose end_pose = {0.25f, 0.25f, 0.635f, 0, 0, 0};
+							Pose start_pose = {0.25f, 0.25f, 0.135f, 0, 0, 0};
+							Pose end_pose = {0.25f, 0.25f, 0.335f, 0, 0, 0};
 
 							// 初始速度和加速度为零
 							Velocity start_vel = {0};
@@ -274,7 +274,7 @@ void Task_Execute(void) {
 							
 							Joint_Position_Control(motor_angle,0.025,0.1,step_mode_2);
 							step_mode_2++;
-							HAL_Delay(10);
+
 						}
 						else
 						{
@@ -314,7 +314,7 @@ void Task_Execute(void) {
 							
 							Joint_Position_Control(motor_angle,0.025,0.1,step_mode_3);
 							step_mode_3++;
-							HAL_Delay(10);
+
 						}
 						else
 						{
@@ -340,6 +340,9 @@ void Key_Process(void) {
     Key_HandleEvents();
     
     // 如果任务运行中，执行任务逻辑
+	    if (Key_GetTaskState()) {
+        Task_Execute();
+    }
 }
 
 /**
