@@ -11,40 +11,12 @@
 #include "main.h"
 #include "calc.h"
 #include "A1_motor_drive.h"
+#include "joint.h"
 
-// 按键状态枚举
-typedef enum {
-    KEY_STATE_IDLE,         // 空闲状态
-    KEY_STATE_PRESSED,      // 按下状态
-    KEY_STATE_RELEASED,     // 释放状态
-    KEY_STATE_LONG_PRESS    // 长按状态
-} KeyStateTypeDef;
-
-// 按键事件枚举
-typedef enum {
-    KEY_EVENT_NONE,         // 无事件
-    KEY_EVENT_CLICK,        // 单击事件
-    KEY_EVENT_DOUBLE_CLICK, // 双击事件
-    KEY_EVENT_LONG_PRESS    // 长按事件
-} KeyEventTypeDef;
-
-// 按键结构体定义
-typedef struct {
-    GPIO_TypeDef* gpio_port;    // 按键GPIO端口
-    uint16_t gpio_pin;          // 按键GPIO引脚
-    KeyStateTypeDef state;      // 当前状态
-    uint32_t press_time;        // 按下时间戳
-    uint32_t release_time;      // 释放时间戳
-    uint8_t click_count;        // 点击计数
-    uint8_t long_press_flag;    // 长按标志
-    KeyEventTypeDef event;      // 按键事件
-//		uint32_t state_change_time;  // 状态变化的时间戳（用于消抖）
-//    uint8_t stable_pin_state;    // 经过消抖后的稳定引脚状态
-} KeyTypeDef;
 
 // 按键实例化
-static KeyTypeDef key0 = {K0_GPIO_Port, K0_Pin, KEY_STATE_IDLE, 0, 0, 0, 0, KEY_EVENT_NONE};
-static KeyTypeDef key1 = {K1_GPIO_Port, K1_Pin, KEY_STATE_IDLE, 0, 0, 0, 0, KEY_EVENT_NONE};
+static KeyTypeDef key0 = {K0_GPIO_Port, K0_Pin, KEY_STATE_IDLE, 0, 0, 0, 0, KEY_EVENT_NONE,0,0};
+static KeyTypeDef key1 = {K1_GPIO_Port, K1_Pin, KEY_STATE_IDLE, 0, 0, 0, 0, KEY_EVENT_NONE,0,0};
 
 // 全局变量
 static uint8_t task_running = 0;    // 任务运行标志
@@ -55,6 +27,9 @@ static uint8_t Key_ReadPin(KeyTypeDef* key);
 static void Key_StateMachine(KeyTypeDef* key);
 static void Key_HandleEvents(void);
 
+static uint16_t step_mode_1 = 0;
+static uint16_t step_mode_2 = 0;
+static uint16_t step_mode_3 = 0;
 /**
   * @brief  初始化按键
   * @param  无
@@ -81,30 +56,30 @@ static uint8_t Key_ReadPin(KeyTypeDef* key) {
   * @retval 无
   */
 static void Key_StateMachine(KeyTypeDef* key) {
-    uint8_t pin_state = Key_ReadPin(key);
+    uint8_t raw_pin_state = Key_ReadPin(key);
     uint32_t current_time = HAL_GetTick();
     
     key->event = KEY_EVENT_NONE;
 
-//    // 按键消抖：检测到引脚状态变化后，等待KEY_DEBOUNCE_MS再确认
-//    if (raw_pin_state != key->stable_pin_state) {
-//        // 首次检测到变化，记录时间
-//        if (key->state_change_time == 0) {
-//            key->state_change_time = current_time;
-//        }
-//        // 等待消抖时间后，确认状态变化
-//        else if (current_time - key->state_change_time >= KEY_DEBOUNCE_MS) {
-//            key->stable_pin_state = raw_pin_state;  // 更新稳定状态
-//            key->state_change_time = 0;             // 重置消抖计时
-//        }
-////        return;  // 消抖期间不处理状态切换
-//    } else {
-//        // 状态未变化，重置消抖计时
-//        key->state_change_time = 0;
-//    }
+    // 按键消抖：检测到引脚状态变化后，等待KEY_DEBOUNCE_MS再确认
+    if (raw_pin_state != key->stable_pin_state) {
+        // 首次检测到变化，记录时间
+        if (key->state_change_time == 0) {
+            key->state_change_time = current_time;
+        }
+        // 等待消抖时间后，确认状态变化
+        else if (current_time - key->state_change_time >= KEY_DEBOUNCE_MS) {
+            key->stable_pin_state = raw_pin_state;  // 更新稳定状态
+            key->state_change_time = 0;             // 重置消抖计时
+        }
+//        return;  // 消抖期间不处理状态切换
+    } else {
+        // 状态未变化，重置消抖计时
+        key->state_change_time = 0;
+    }
 
-//    // 以下使用消抖后的stable_pin_state进行状态判断
-//    uint8_t pin_state = key->stable_pin_state;
+    // 以下使用消抖后的stable_pin_state进行状态判断
+    uint8_t pin_state = key->stable_pin_state;
 
     switch (key->state) {
         case KEY_STATE_IDLE:
@@ -170,18 +145,27 @@ static void Key_StateMachine(KeyTypeDef* key) {
   */
 static void Key_HandleEvents(void) {
     // 处理K0按键事件 - 控制任务启动/停止
-    if (key0.event == KEY_EVENT_LONG_PRESS) {
+    if (key0.event == KEY_EVENT_CLICK) {
         if (task_running) {
             // 急停任务
             task_running = 0;
             // 急停相关代码
-            HAL_GPIO_WritePin(LED_GPIO_Port, LED_PIN, GPIO_PIN_SET); // 关闭LED指示
+            step_mode_1 = 0;
+						step_mode_2 = 0;
+						step_mode_3 = 0;
+						//调成零力矩模式，等待拖拽回中
+						motor_relax();
+					
         } else {
             // 启动任务
             task_running = 1;
-            current_mode = 1;  // 启动时默认进入模式1
-            // 启动任务相关代码
-            HAL_GPIO_WritePin(LED_GPIO_Port, LED_PIN, GPIO_PIN_RESET); // 打开LED指示
+            current_mode = 0;  // 启动时默认进入模式0
+						step_mode_1 = 0;
+						step_mode_2 = 0;
+						step_mode_3 = 0;
+						//调成零力矩模式，等待接收指令
+						motor_relax();
+            
         }
     }
     
@@ -212,24 +196,127 @@ static void Task_Execute(void) {
         case 1:
             // 模式1的任务逻辑
             //
-						HAL_GPIO_WritePin(LED_GPIO_Port, LED_PIN, GPIO_PIN_SET); // 关闭LED指示
+						if(step_mode_1 == 0)
+						{
+							//初次进入任务时，把其他标志位清零
+							step_mode_2 = 0;
+							step_mode_3 = 0;
+							
+							//初次进入时，计算轨迹路径
+							Pose start_pose = {-0.25f, -0.25f, 0.135f, 0, 0, 0};
+							Pose end_pose = {0.25f, 0.25f, 0.635f, 0, 0, 0};
+
+							// 初始速度和加速度为零
+							Velocity start_vel = {0};
+							Velocity end_vel = {0};
+							Acceleration start_acc = {0};
+							Acceleration end_acc = {0};
+
+							// 或者设置非零的初始和末尾速度
+							// Velocity start_vel = {0.1f, 0.1f, 0, 0, 0, 0};  // 初始有小速度
+							// Velocity end_vel = {0.1f, 0.1f, 0, 0, 0, 0};    // 末尾有小速度
+
+							// 初始化CDPR系统
+							//	cdpr_init(&start, &end);
+							cdpr_init(&start_pose, &start_vel, &start_acc, &end_pose, &end_vel, &end_acc);
+						}
+						
+						if(step_mode_1 < STEP_NUM)
+						{
+							
+							Joint_Position_Control(motor_angle,0.025,0.1,step_mode_1);
+							step_mode_1++;
+						}
+						else
+						{
+							motor_relax();
+						}
             break;
         case 2:
             // 模式2的任务逻辑
-            // ...
-						HAL_GPIO_WritePin(LED_GPIO_Port, LED_PIN, GPIO_PIN_RESET); // 打开LED指示
+            //
+						if(step_mode_2 == 0)
+						{
+							//初次进入任务时，把其他标志位清零
+							step_mode_1 = 0;
+							step_mode_3 = 0;
+							
+							//初次进入时，计算轨迹路径
+							Pose start_pose = {-0.25f, -0.25f, 0.135f, 0, 0, 0};
+							Pose end_pose = {0.25f, 0.25f, 0.635f, 0, 0, 0};
+
+							// 初始速度和加速度为零
+							Velocity start_vel = {0};
+							Velocity end_vel = {0};
+							Acceleration start_acc = {0};
+							Acceleration end_acc = {0};
+
+							// 或者设置非零的初始和末尾速度
+							// Velocity start_vel = {0.1f, 0.1f, 0, 0, 0, 0};  // 初始有小速度
+							// Velocity end_vel = {0.1f, 0.1f, 0, 0, 0, 0};    // 末尾有小速度
+
+							// 初始化CDPR系统
+							//	cdpr_init(&start, &end);
+							cdpr_init(&start_pose, &start_vel, &start_acc, &end_pose, &end_vel, &end_acc);
+						}
+						
+						if(step_mode_2 < STEP_NUM)
+						{
+							
+							Joint_Position_Control(motor_angle,0.025,0.1,step_mode_2);
+							step_mode_2++;
+						}
+						else
+						{
+							motor_relax();
+						}
             break;
         case 3:
             // 模式3的任务逻辑
-            // ...
-						HAL_GPIO_WritePin(LED_GPIO_Port, LED_PIN, GPIO_PIN_SET); // 关闭LED指示
+           //
+						if(step_mode_3 == 0)
+						{
+							//初次进入任务时，把其他标志位清零
+							step_mode_1 = 0;
+							step_mode_2 = 0;
+							
+							//初次进入时，计算轨迹路径
+							Pose start_pose = {-0.25f, -0.25f, 0.135f, 0, 0, 0};
+							Pose end_pose = {0.25f, 0.25f, 0.635f, 0, 0, 0};
+
+							// 初始速度和加速度为零
+							Velocity start_vel = {0};
+							Velocity end_vel = {0};
+							Acceleration start_acc = {0};
+							Acceleration end_acc = {0};
+
+							// 或者设置非零的初始和末尾速度
+							// Velocity start_vel = {0.1f, 0.1f, 0, 0, 0, 0};  // 初始有小速度
+							// Velocity end_vel = {0.1f, 0.1f, 0, 0, 0, 0};    // 末尾有小速度
+
+							// 初始化CDPR系统
+							//	cdpr_init(&start, &end);
+							cdpr_init(&start_pose, &start_vel, &start_acc, &end_pose, &end_vel, &end_acc);
+						}
+						
+						if(step_mode_3 < STEP_NUM)
+						{
+							
+							Joint_Position_Control(motor_angle,0.025,0.1,step_mode_3);
+							step_mode_3++;
+						}
+						else
+						{
+							motor_relax();
+						}
             break;
         default:
             // 默认模式处理
-            current_mode = 1;
+            current_mode = 0;
             break;
     }
 }
+
 
 /**
   * @brief  按键处理主函数，需周期性调用(建议10ms)
@@ -265,3 +352,6 @@ uint8_t Key_GetCurrentMode(void) {
     return current_mode;
 }
 
+KeyTypeDef Key_scope(void) {
+		return key0;
+}

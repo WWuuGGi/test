@@ -11,7 +11,7 @@
 #include "main.h"
 #include "calc.h"
 #include "A1_motor_drive.h"
-
+#include "joint.h"
 
 
 // 按键实例化
@@ -27,6 +27,9 @@ static uint8_t Key_ReadPin(KeyTypeDef* key);
 static void Key_StateMachine(KeyTypeDef* key);
 static void Key_HandleEvents(void);
 
+uint16_t step_mode_1 = 0;
+uint16_t step_mode_2 = 0;
+uint16_t step_mode_3 = 0;
 /**
   * @brief  初始化按键
   * @param  无
@@ -147,13 +150,22 @@ static void Key_HandleEvents(void) {
             // 急停任务
             task_running = 0;
             // 急停相关代码
-            HAL_GPIO_WritePin(LED_GPIO_Port, LED_PIN, GPIO_PIN_SET); // 关闭LED指示
+            step_mode_1 = 0;
+						step_mode_2 = 0;
+						step_mode_3 = 0;
+						//调成零力矩模式，等待拖拽回中
+						motor_relax();
+					
         } else {
             // 启动任务
             task_running = 1;
-            current_mode = 1;  // 启动时默认进入模式1
-            // 启动任务相关代码
-            HAL_GPIO_WritePin(LED_GPIO_Port, LED_PIN, GPIO_PIN_RESET); // 打开LED指示
+            current_mode = 0;  // 启动时默认进入模式0
+						step_mode_1 = 0;
+						step_mode_2 = 0;
+						step_mode_3 = 0;
+						//调成零力矩模式，等待接收指令
+						motor_relax();
+            
         }
     }
     
@@ -179,29 +191,143 @@ static void Key_HandleEvents(void) {
   * @retval 无
   * @note   根据当前模式执行不同的任务逻辑
   */
-static void Task_Execute(void) {
+void Task_Execute(void) {
     switch (current_mode) {
         case 1:
             // 模式1的任务逻辑
             //
-						HAL_GPIO_WritePin(LED_GPIO_Port, LED_PIN, GPIO_PIN_SET); // 关闭LED指示
+						if(step_mode_1 == 0)
+						{
+							//初次进入任务时，把其他标志位清零
+							step_mode_2 = 0;
+							step_mode_3 = 0;
+							
+							//初次进入时，计算轨迹路径
+							Pose start_pose = {-0.25f, -0.25f, 0.135f, 0, 0, 0};
+							Pose end_pose = {0.25f, 0.25f, 0.635f, 0, 0, 0};
+
+							// 初始速度和加速度为零
+							Velocity start_vel = {0};
+							Velocity end_vel = {0};
+							Acceleration start_acc = {0};
+							Acceleration end_acc = {0};
+
+							// 或者设置非零的初始和末尾速度
+							// Velocity start_vel = {0.1f, 0.1f, 0, 0, 0, 0};  // 初始有小速度
+							// Velocity end_vel = {0.1f, 0.1f, 0, 0, 0, 0};    // 末尾有小速度
+
+							// 初始化CDPR系统
+							//	cdpr_init(&start, &end);
+							cdpr_init(&start_pose, &start_vel, &start_acc, &end_pose, &end_vel, &end_acc);
+						}
+						
+						while((zero_left_ID0*zero_left_ID0 <= 0.000000000001f))
+						{
+							//以上电位置为零点
+							modify_torque_cmd(&MotorA1_send_left, 0, 0);   
+							unitreeA1_rxtx(&huart1);
+							zero_left_ID0  = (float) MotorA1_recv_left_id00.Pos ;
+
+						}
+						if(step_mode_1 < STEP_NUM)
+						{
+							
+							Joint_Position_Control(motor_angle,0.025,0.1,step_mode_1);
+							step_mode_1++;
+							HAL_Delay(10);
+						}
+						else
+						{
+							motor_relax();
+						}
             break;
         case 2:
             // 模式2的任务逻辑
-            // ...
-						HAL_GPIO_WritePin(LED_GPIO_Port, LED_PIN, GPIO_PIN_RESET); // 打开LED指示
+            //
+						if(step_mode_2 == 0)
+						{
+							//初次进入任务时，把其他标志位清零
+							step_mode_1 = 0;
+							step_mode_3 = 0;
+							
+							//初次进入时，计算轨迹路径
+							Pose start_pose = {-0.25f, -0.25f, 0.135f, 0, 0, 0};
+							Pose end_pose = {0.25f, 0.25f, 0.635f, 0, 0, 0};
+
+							// 初始速度和加速度为零
+							Velocity start_vel = {0};
+							Velocity end_vel = {0};
+							Acceleration start_acc = {0};
+							Acceleration end_acc = {0};
+
+							// 或者设置非零的初始和末尾速度
+							// Velocity start_vel = {0.1f, 0.1f, 0, 0, 0, 0};  // 初始有小速度
+							// Velocity end_vel = {0.1f, 0.1f, 0, 0, 0, 0};    // 末尾有小速度
+
+							// 初始化CDPR系统
+							//	cdpr_init(&start, &end);
+							cdpr_init(&start_pose, &start_vel, &start_acc, &end_pose, &end_vel, &end_acc);
+						}
+						
+						if(step_mode_2 < STEP_NUM)
+						{
+							
+							Joint_Position_Control(motor_angle,0.025,0.1,step_mode_2);
+							step_mode_2++;
+							HAL_Delay(10);
+						}
+						else
+						{
+							motor_relax();
+						}
             break;
         case 3:
             // 模式3的任务逻辑
-            // ...
-						HAL_GPIO_WritePin(LED_GPIO_Port, LED_PIN, GPIO_PIN_SET); // 关闭LED指示
+           //
+						if(step_mode_3 == 0)
+						{
+							//初次进入任务时，把其他标志位清零
+							step_mode_1 = 0;
+							step_mode_2 = 0;
+							
+							//初次进入时，计算轨迹路径
+							Pose start_pose = {-0.25f, -0.25f, 0.135f, 0, 0, 0};
+							Pose end_pose = {0.25f, 0.25f, 0.635f, 0, 0, 0};
+
+							// 初始速度和加速度为零
+							Velocity start_vel = {0};
+							Velocity end_vel = {0};
+							Acceleration start_acc = {0};
+							Acceleration end_acc = {0};
+
+							// 或者设置非零的初始和末尾速度
+							// Velocity start_vel = {0.1f, 0.1f, 0, 0, 0, 0};  // 初始有小速度
+							// Velocity end_vel = {0.1f, 0.1f, 0, 0, 0, 0};    // 末尾有小速度
+
+							// 初始化CDPR系统
+							//	cdpr_init(&start, &end);
+							cdpr_init(&start_pose, &start_vel, &start_acc, &end_pose, &end_vel, &end_acc);
+						}
+						
+						if(step_mode_3 < STEP_NUM)
+						{
+							
+							Joint_Position_Control(motor_angle,0.025,0.1,step_mode_3);
+							step_mode_3++;
+							HAL_Delay(10);
+						}
+						else
+						{
+							motor_relax();
+						}
             break;
         default:
             // 默认模式处理
-            current_mode = 1;
+            current_mode = 0;
             break;
     }
 }
+
 
 /**
   * @brief  按键处理主函数，需周期性调用(建议10ms)
@@ -214,9 +340,6 @@ void Key_Process(void) {
     Key_HandleEvents();
     
     // 如果任务运行中，执行任务逻辑
-    if (task_running) {
-        Task_Execute();
-    }
 }
 
 /**

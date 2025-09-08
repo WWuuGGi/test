@@ -3,6 +3,7 @@
 
 #include "main.h"
 #include "A1_motor_drive.h"
+#include "calc.h"
 
 // 宏定义
 #define PI 3.1415926535f
@@ -60,7 +61,7 @@ void Joint_GOTO_zero(void);
 void Joint_Monitor(void);
 
 // 底盘位置控制
-void Joint_Position_Control(float Pos_Front,float kp,float kw);// float Pos_Back
+void Joint_Position_Control(float Pos_Front[][STEP_NUM],float kp,float kw,uint16_t step);
 
 void Joint_PW_Control(float Pos_Front,float Omega,uint8_t id,float kp,float kw);
 

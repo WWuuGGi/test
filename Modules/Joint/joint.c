@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include "joint.h"
 
+
 #define LIMIT_RANGE(Pos, Min, Max) ((Pos) = ((Pos) > (Max) ? (Max) : (Pos) < (Min) ? (Min) : (Pos)))
 
 // 默认电机初始零点
@@ -50,7 +51,7 @@ void Joint_Zero_init_Type1()
   // 使用while循环确保0位正确
 
   // 自检不通过 D2亮起
-  HAL_GPIO_WritePin(GPIOF,GPIO_PIN_10,GPIO_PIN_RESET); //
+//  HAL_GPIO_WritePin(GPIOF,GPIO_PIN_10,GPIO_PIN_RESET); //
 
   while (Joint_Zero_OK() == False) {
 
@@ -82,8 +83,7 @@ void Joint_Zero_init_Type1()
 // 电机零位获取 (初始位置 = 限位位置)
 //void Joint_Zero_init_Type2()
 //{
-//// 自检不通过 红灯亮起
-//HAL_GPIO_WritePin(GPIOH,GPIO_PIN_12,GPIO_PIN_SET); //
+
 
 //while (Joint_Zero_OK() == False) {
 
@@ -113,7 +113,6 @@ void Joint_Zero_init_Type1()
 //  modify_speed_cmd(&MotorA1_send_left,  1, 0);    
 //  modify_speed_cmd(&MotorA1_send_right, 1, 0);
 //  osDelay(1);
-//  HAL_GPIO_WritePin(GPIOH,GPIO_PIN_12,GPIO_PIN_RESET); //
 //}
 
 // 回归零点
@@ -152,12 +151,12 @@ void Joint_GOTO_zero()
   * @param[in]      Pos_Front: 减速后-角度制 正值前腿向上摆动
   * @param[in]      Pos_Back: 减速后-角度制 正值后腿向上摆动
   */
-void Joint_Position_Control(float Pos_Front,float kp,float kw)//, float Pos_Back
+void Joint_Position_Control(float Pos_Front[][STEP_NUM],float kp,float kw,uint16_t step)//, float Pos_Back
 {   
     // 角度 限幅处理
-    LIMIT_RANGE(Pos_Front, -400, +400);
+    //LIMIT_RANGE(Pos_Front, -400, +400);
     //LIMIT_RANGE(Pos_Back,  -79, +19);
-    modify_pos_cmd(&MotorA1_send_left,0, (float) Pos_Front + zero_left_ID0, kp, kw);  // 0.005 0.5     0.006 1.0
+    modify_pos_cmd(&MotorA1_send_left,0, (float) Pos_Front[0][step] + zero_left_ID0, kp, kw);  // 0.005 0.5     0.006 1.0
     //modify_pos_cmd(&MotorA1_send_right,0,(float) +Pos_Front + zero_right_ID0, 0.006,1.0); 
     unitreeA1_rxtx(&huart1); 
     //unitreeA1_rxtx(&huart6);

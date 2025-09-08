@@ -53,9 +53,9 @@ typedef struct {
     uint8_t stable_pin_state;    // 经过消抖后的稳定引脚状态
 } KeyTypeDef;
 
-// LED定义(用于指示)，请根据实际硬件修改
-#define LED_GPIO_Port GPIOF
-#define LED_PIN GPIO_PIN_10
+extern uint16_t step_mode_1;
+extern uint16_t step_mode_2;
+extern uint16_t step_mode_3;
 
 // 函数声明
 void Key_Init(void);
@@ -65,4 +65,6 @@ uint8_t Key_GetTaskState(void);
 uint8_t Key_GetCurrentMode(void);
 KeyTypeDef Key_scope(void);
 
+
 #endif /* __KEY_STATE_MACHINE_H */
+

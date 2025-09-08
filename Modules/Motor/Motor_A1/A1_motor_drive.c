@@ -325,3 +325,11 @@ void unitreeA1_rxtx(UART_HandleTypeDef *huart)
 }
 
 // 电机0位函数
+
+void motor_relax(void)
+{
+	modify_torque_cmd(&MotorA1_send_left,0, 0.0f);
+	unitreeA1_rxtx(&huart1);
+	//后续加入其他的电机测试，暂时先用一个
+}
+

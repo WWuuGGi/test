@@ -306,5 +306,6 @@ void cdpr_get_current_motor_angles(uint16_t time_idx, float32_t angles[CABLE_NUM
         }
     }
 }
-													 
+		
+
 

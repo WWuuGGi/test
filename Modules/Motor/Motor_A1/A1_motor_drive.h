@@ -47,6 +47,8 @@ void modify_PW_cmd(motor_send_t *send,uint8_t id, float Pos, float Omega, float 
 
 void unitreeA1_rxtx(UART_HandleTypeDef *huart);
 
+void motor_relax(void);
+
 uint32_t rc32_core_Ver3(uint32_t *ptr, uint32_t len);
 
 #endif

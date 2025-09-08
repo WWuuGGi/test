@@ -395,7 +395,10 @@ int main(void)
 	//	cdpr_init(&start, &end);
 	cdpr_init(&start_pose, &start_vel, &start_acc, &end_pose, &end_vel, &end_acc);
   
+	KeyTypeDef k0;
+	
 	HAL_TIM_Base_Start_IT(&htim2);
+	
 	
 
   /* USER CODE END 2 */
@@ -411,10 +414,14 @@ int main(void)
 
 		
 		//pos_spline(position,60.0f,5.0f);//pos xf tf
-	
+		
 		cstate = Key_GetTaskState();
 		cmode = Key_GetCurrentMode();
-		printf("task_running = %u  mode = %u\n",cstate,cmode);
+		
+		k0 = Key_scope();
+		printf("raw_state    = %d\r\n",k0.state);
+		printf("stable_state = %d\r\n",k0.stable_pin_state);
+		printf("click_count  = %d\r\n",k0.click_count);
 
 		
   }

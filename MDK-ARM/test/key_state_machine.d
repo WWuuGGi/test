@@ -40,3 +40,4 @@ test\key_state_machine.o: ../Modules/Motor/Motor_A1/motor_msg.h
 test\key_state_machine.o: ../Core/Inc/usart.h
 test\key_state_machine.o: D:\keil5\ARM\ARMCC\Bin\..\include\string.h
 test\key_state_machine.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdio.h
+test\key_state_machine.o: ../Modules/Joint/joint.h

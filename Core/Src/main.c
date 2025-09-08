@@ -282,53 +282,6 @@ void pos_spline(float * pos,float xf,float tf)
 		}
 }
 
-void step(float pos,float kp,float kd)
-{
-	if (j < t_num)
-		{
-			if (j == 0)
-			{
-//				data_logging = 1;  // 开始记录数据
-//				error_idx = 0;     // 重置缓冲区
-			}
-			while((zero_left_ID0*zero_left_ID0) <= 0.000000000001f)
-			{
-				//以上电位置为零点
-				modify_torque_cmd(&MotorA1_send_left, 0, 0);   
-				unitreeA1_rxtx(&huart1);
-				zero_left_ID0  = (float) MotorA1_recv_left_id00.Pos ;
-				HAL_Delay(1);
-			}
-			
-			//Joint_PW_Control(position[j],speed[j],0.025f,0.5f);//0.025 1.0
-			Joint_Position_Control(pos,kp,kd);//0.025 1.0
-			// 计算并记录误差
-//			if (data_logging)
-//			{
-//					calculate_errors(position[j], speed[j]);
-//			}
-			ang = (float) MotorA1_recv_left_id00.Pos - zero_left_ID0;
-			spd = MotorA1_recv_left_id00.W - MotorA1_send_left.W;
-			HAL_Delay(1);
-			j++;
-		}
-		else
-		{
-			modify_torque_cmd(&MotorA1_send_left, 0, 0);    
-			unitreeA1_rxtx(&huart1);               
-			ang = (float) MotorA1_recv_left_id00.Pos - zero_left_ID0;
-			spd = MotorA1_recv_left_id00.W - MotorA1_send_left.W;
-			
-//			if (data_logging)
-//			{
-//					data_logging = 0;  // 停止记录
-//			}
-		}
-}
-
-
-
-
 
 /* USER CODE END PFP */
 
@@ -376,24 +329,22 @@ int main(void)
 	j = 0;
 	k = 0;
 	
-	
+//	Pose start_pose = {-0.25f, -0.25f, 0.135f, 0, 0, 0};
+//	Pose end_pose = {0.25f, 0.25f, 0.635f, 0, 0, 0};
 
-	Pose start_pose = {-0.25f, -0.25f, 0.135f, 0, 0, 0};
-	Pose end_pose = {0.25f, 0.25f, 0.635f, 0, 0, 0};
+//	// 初始速度和加速度为零
+//	Velocity start_vel = {0};
+//	Velocity end_vel = {0};
+//	Acceleration start_acc = {0};
+//	Acceleration end_acc = {0};
 
-	// 初始速度和加速度为零
-	Velocity start_vel = {0};
-	Velocity end_vel = {0};
-	Acceleration start_acc = {0};
-	Acceleration end_acc = {0};
+//	// 或者设置非零的初始和末尾速度
+//	// Velocity start_vel = {0.1f, 0.1f, 0, 0, 0, 0};  // 初始有小速度
+//	// Velocity end_vel = {0.1f, 0.1f, 0, 0, 0, 0};    // 末尾有小速度
 
-	// 或者设置非零的初始和末尾速度
-	// Velocity start_vel = {0.1f, 0.1f, 0, 0, 0, 0};  // 初始有小速度
-	// Velocity end_vel = {0.1f, 0.1f, 0, 0, 0, 0};    // 末尾有小速度
-
-	// 初始化CDPR系统
-	//	cdpr_init(&start, &end);
-	cdpr_init(&start_pose, &start_vel, &start_acc, &end_pose, &end_vel, &end_acc);
+//	// 初始化CDPR系统
+//	//	cdpr_init(&start, &end);
+//	cdpr_init(&start_pose, &start_vel, &start_acc, &end_pose, &end_vel, &end_acc);
   
 	KeyTypeDef k0;
 	
@@ -419,10 +370,12 @@ int main(void)
 		cmode = Key_GetCurrentMode();
 		
 		k0 = Key_scope();
-		printf("raw_state    = %d\r\n",k0.state);
-		printf("stable_state = %d\r\n",k0.stable_pin_state);
-		printf("click_count  = %d\r\n",k0.click_count);
-
+//		printf("raw_state    = %d\r\n",k0.state);
+//		printf("stable_state = %d\r\n",k0.stable_pin_state);
+//		printf("click_count  = %d\r\n",k0.click_count);
+    if (Key_GetTaskState()) {
+        Task_Execute();
+    }
 		
   }
   /* USER CODE END 3 */
