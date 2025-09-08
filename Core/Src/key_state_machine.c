@@ -149,6 +149,7 @@ static void Key_HandleEvents(void) {
         if (task_running) {
             // 急停任务
             task_running = 0;
+					current_mode = 0;
             // 急停相关代码
             step_mode_1 = 0;
 						step_mode_2 = 0;
