@@ -1,5 +1,7 @@
 --cpu=Cortex-M4.fp.sp
 "test\startup_stm32f407xx.o"
+"test\calc.o"
+"test\key_state_machine.o"
 "test\main.o"
 "test\gpio.o"
 "test\tim.o"
@@ -7,7 +9,6 @@
 "test\stm32f4xx_it.o"
 "test\stm32f4xx_hal_msp.o"
 "test\stm32f4xx_hal_timebase_tim.o"
-"test\calc.o"
 "test\stm32f4xx_hal_tim.o"
 "test\stm32f4xx_hal_tim_ex.o"
 "test\stm32f4xx_hal_rcc.o"

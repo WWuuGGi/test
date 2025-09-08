@@ -27,6 +27,8 @@
 #include "A1_motor_drive.h"
 #include "motor_msg.h"
 #include "joint.h"
+#include <stdio.h>
+#include "calc.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -106,6 +108,12 @@ uint8_t id = 0;
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
+int fputc(int ch,FILE *f)
+{
+	HAL_UART_Transmit(&huart1,(uint8_t *)&ch,1,HAL_MAX_DELAY);
+	return ch;
+}
+
 void pos_calc(float * pos,float * speed, float xf, float tf)
 {
 	//float tf = 5;
@@ -361,35 +369,27 @@ int main(void)
 	
 	//Joint_Zero_init_Type1();
 
-//	modify_torque_cmd(&MotorA1_send_left, 0, 0);   
-//	unitreeA1_rxtx(&huart1);
-//	HAL_Delay(100);
-//	zero_left_ID0  = (float) MotorA1_recv_left_id00.Pos ;
-//	pos_calc(position,-120.0f,10.0f);
-
 	j = 0;
 	k = 0;
-//	pos_calc(position,speed,360.0f,5.0f);
-//	data_logging = 1;  // 开始记录数据
-//	error_idx = 0;     // 重置缓冲区
 	
-	//while((zero_left_ID0*zero_left_ID0 <= 0.000000000001f) || (zero_left_ID1*zero_left_ID1 <= 0.000000000001f))
-//	while((zero_left_ID0*zero_left_ID0 <= 0.000000000001f))
-//	{
-//		//以上电位置为零点
-//		modify_torque_cmd(&MotorA1_send_left, 0, 0);   
-//		unitreeA1_rxtx(&huart1);
-////		modify_torque_cmd(&MotorA1_send_left, 1, 0);   
-////		unitreeA1_rxtx(&huart1);
+	//  HAL_TIM_Base_Start_IT(&htim2);
 
-//		zero_left_ID0  = (float) MotorA1_recv_left_id00.Pos ;
-////		zero_left_ID1  = (float) MotorA1_recv_left_id01.Pos ;
+	Pose start_pose = {-0.25f, -0.25f, 0.135f, 0, 0, 0};
+	Pose end_pose = {0.25f, 0.25f, 0.635f, 0, 0, 0};
 
-	
-	
-//  HAL_TIM_Base_Start_IT(&htim2);
+	// 初始速度和加速度为零
+	Velocity start_vel = {0};
+	Velocity end_vel = {0};
+	Acceleration start_acc = {0};
+	Acceleration end_acc = {0};
 
+	// 或者设置非零的初始和末尾速度
+	// Velocity start_vel = {0.1f, 0.1f, 0, 0, 0, 0};  // 初始有小速度
+	// Velocity end_vel = {0.1f, 0.1f, 0, 0, 0, 0};    // 末尾有小速度
 
+	// 初始化CDPR系统
+	//	cdpr_init(&start, &end);
+	cdpr_init(&start_pose, &start_vel, &start_acc, &end_pose, &end_vel, &end_acc);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -402,16 +402,13 @@ int main(void)
 		
 
 		
-		pos_spline(position,60.0f,5.0f);//pos xf tf
+		//pos_spline(position,60.0f,5.0f);//pos xf tf
 		
 		//step(30.0f,0.006f,0.5f);
-		//kp0 = 0.0025 
+		//kp0 = 0.0025 '
 		
-//		modify_torque_cmd(&MotorA1_send_left,0,0);
-//		unitreeA1_rxtx(&huart1);     
-//		modify_torque_cmd(&MotorA1_send_left,1,0);
-//		unitreeA1_rxtx(&huart1);     
-		//HAL_Delay(1);
+		HAL_Delay(1);
+		
   }
   /* USER CODE END 3 */
 }

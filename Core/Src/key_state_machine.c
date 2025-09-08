@@ -1,0 +1,241 @@
+/* USER CODE BEGIN Header */
+/**
+  ******************************************************************************
+  * @file    key_state_machine.c
+  * @brief   按键状态机实现文件
+  ******************************************************************************
+  */
+/* USER CODE END Header */
+
+#include "key_state_machine.h"
+#include "main.h"
+#include "calc.h"
+#include "A1_motor_drive.h"
+
+// 按键状态枚举
+typedef enum {
+    KEY_STATE_IDLE,         // 空闲状态
+    KEY_STATE_PRESSED,      // 按下状态
+    KEY_STATE_RELEASED,     // 释放状态
+    KEY_STATE_LONG_PRESS    // 长按状态
+} KeyStateTypeDef;
+
+// 按键事件枚举
+typedef enum {
+    KEY_EVENT_NONE,         // 无事件
+    KEY_EVENT_CLICK,        // 单击事件
+    KEY_EVENT_DOUBLE_CLICK, // 双击事件
+    KEY_EVENT_LONG_PRESS    // 长按事件
+} KeyEventTypeDef;
+
+// 按键结构体定义
+typedef struct {
+    GPIO_TypeDef* gpio_port;    // 按键GPIO端口
+    uint16_t gpio_pin;          // 按键GPIO引脚
+    KeyStateTypeDef state;      // 当前状态
+    uint32_t press_time;        // 按下时间戳
+    uint32_t release_time;      // 释放时间戳
+    uint8_t click_count;        // 点击计数
+    uint8_t long_press_flag;    // 长按标志
+    KeyEventTypeDef event;      // 按键事件
+} KeyTypeDef;
+
+// 按键实例化
+static KeyTypeDef key0 = {K0_GPIO_Port, K0_Pin, KEY_STATE_IDLE, 0, 0, 0, 0, KEY_EVENT_NONE};
+static KeyTypeDef key1 = {K1_GPIO_Port, K1_Pin, KEY_STATE_IDLE, 0, 0, 0, 0, KEY_EVENT_NONE};
+
+// 全局变量
+static uint8_t task_running = 0;    // 任务运行标志
+static uint8_t current_mode = 0;    // 当前模式
+
+// 函数声明
+static uint8_t Key_ReadPin(KeyTypeDef* key);
+static void Key_StateMachine(KeyTypeDef* key);
+static void Key_HandleEvents(void);
+
+/**
+  * @brief  初始化按键
+  * @param  无
+  * @retval 无
+  */
+void Key_Init(void) {
+    // 确保GPIO已在MX_GPIO_Init中初始化
+    // K0和K1应配置为输入模式，带下拉电阻
+}
+
+/**
+  * @brief  读取按键引脚状态
+  * @param  key: 按键结构体指针
+  * @retval 1: 按键按下, 0: 按键释放
+  */
+static uint8_t Key_ReadPin(KeyTypeDef* key) {
+    // 假设按键按下为高电平(上拉输入)
+    return (HAL_GPIO_ReadPin(key->gpio_port, key->gpio_pin) == GPIO_PIN_RESET) ? 1 : 0;
+}
+
+/**
+  * @brief  按键状态机处理
+  * @param  key: 按键结构体指针
+  * @retval 无
+  */
+static void Key_StateMachine(KeyTypeDef* key) {
+    uint8_t pin_state = Key_ReadPin(key);
+    uint32_t current_time = HAL_GetTick();
+    
+    key->event = KEY_EVENT_NONE;  // 默认为无事件
+    
+    switch (key->state) {
+        case KEY_STATE_IDLE:
+            if (pin_state) {  // 按键按下
+                key->state = KEY_STATE_PRESSED;
+                key->press_time = current_time;
+                key->long_press_flag = 0;
+            }
+            break;
+            
+        case KEY_STATE_PRESSED:
+            // 检测长按
+            if (current_time - key->press_time > KEY_LONG_PRESS_MS) {
+                key->state = KEY_STATE_LONG_PRESS;
+                key->long_press_flag = 1;
+                key->event = KEY_EVENT_LONG_PRESS;
+            }
+            // 检测释放
+            else if (!pin_state) {
+                key->state = KEY_STATE_RELEASED;
+                key->release_time = current_time;
+                key->click_count++;
+            }
+            break;
+            
+        case KEY_STATE_RELEASED:
+            // 等待双击
+            if (current_time - key->release_time > KEY_DOUBLE_CLICK_MS) {
+                if (key->click_count == 1) {
+                    key->event = KEY_EVENT_CLICK;
+                } else if (key->click_count == 2) {
+                    key->event = KEY_EVENT_DOUBLE_CLICK;
+                }
+                // 重置状态
+                key->state = KEY_STATE_IDLE;
+                key->click_count = 0;
+            }
+            // 检测再次按下(双击)
+            else if (pin_state) {
+                key->state = KEY_STATE_PRESSED;
+                key->press_time = current_time;
+            }
+            break;
+            
+        case KEY_STATE_LONG_PRESS:
+            // 长按后释放
+            if (!pin_state) {
+                key->state = KEY_STATE_IDLE;
+                key->click_count = 0;
+            }
+            break;
+            
+        default:
+            key->state = KEY_STATE_IDLE;
+            break;
+    }
+}
+
+/**
+  * @brief  按键事件处理
+  * @param  无
+  * @retval 无
+  */
+static void Key_HandleEvents(void) {
+    // 处理K0按键事件 - 控制任务启动/停止
+    if (key0.event == KEY_EVENT_CLICK) {
+        if (task_running) {
+            // 急停任务
+            task_running = 0;
+            // 急停相关代码
+            HAL_GPIO_WritePin(LED_GPIO_Port, LED_PIN, GPIO_PIN_RESET); // 关闭LED指示
+        } else {
+            // 启动任务
+            task_running = 1;
+            current_mode = 1;  // 启动时默认进入模式1
+            // 启动任务相关代码
+            HAL_GPIO_WritePin(LED_GPIO_Port, LED_PIN, GPIO_PIN_SET); // 打开LED指示
+        }
+    }
+    
+    // 只有任务运行时，才处理K1的模式切换
+    if (task_running) {
+        // 处理K1按键事件 - 模式切换
+        if (key1.event == KEY_EVENT_CLICK) {
+            // 单击切换到模式1
+            current_mode = 1;
+        } else if (key1.event == KEY_EVENT_DOUBLE_CLICK) {
+            // 双击切换到模式2
+            current_mode = 2;
+        } else if (key1.event == KEY_EVENT_LONG_PRESS) {
+            // 长按切换到模式3
+            current_mode = 3;
+        }
+    }
+}
+
+/**
+  * @brief  任务执行函数
+  * @param  无
+  * @retval 无
+  * @note   根据当前模式执行不同的任务逻辑
+  */
+static void Task_Execute(void) {
+    switch (current_mode) {
+        case 1:
+            // 模式1的任务逻辑
+            // ...
+            break;
+        case 2:
+            // 模式2的任务逻辑
+            // ...
+            break;
+        case 3:
+            // 模式3的任务逻辑
+            // ...
+            break;
+        default:
+            // 默认模式处理
+            current_mode = 1;
+            break;
+    }
+}
+
+/**
+  * @brief  按键处理主函数，需周期性调用(建议10ms)
+  * @param  无
+  * @retval 无
+  */
+void Key_Process(void) {
+    Key_StateMachine(&key0);
+    Key_StateMachine(&key1);
+    Key_HandleEvents();
+    
+    // 如果任务运行中，执行任务逻辑
+    if (task_running) {
+        Task_Execute();
+    }
+}
+
+/**
+  * @brief  获取任务运行状态
+  * @param  无
+  * @retval 1: 任务运行中, 0: 任务已停止
+  */
+uint8_t Key_GetTaskState(void) {
+    return task_running;
+}
+
+/**
+  * @brief  获取当前模式
+  * @param  无
+  * @retval 当前模式值
+  */
+uint8_t Key_GetCurrentMode(void) {
+    return current_mode;
+}

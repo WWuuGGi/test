@@ -395,6 +395,16 @@
           <GroupName>Application/User/Core</GroupName>
           <Files>
             <File>
+              <FileName>calc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Core\Src\calc.c</FilePath>
+            </File>
+            <File>
+              <FileName>key_state_machine.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Core\Src\key_state_machine.c</FilePath>
+            </File>
+            <File>
               <FileName>main.c</FileName>
               <FileType>1</FileType>
               <FilePath>../Core/Src/main.c</FilePath>
@@ -479,11 +489,6 @@
               <FileName>stm32f4xx_hal_timebase_tim.c</FileName>
               <FileType>1</FileType>
               <FilePath>../Core/Src/stm32f4xx_hal_timebase_tim.c</FilePath>
-            </File>
-            <File>
-              <FileName>calc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Core\Src\calc.c</FilePath>
             </File>
           </Files>
         </Group>

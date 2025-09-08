@@ -111,6 +111,9 @@ void HAL_UART_MspInit(UART_HandleTypeDef* uartHandle)
     GPIO_InitStruct.Alternate = GPIO_AF7_USART1;
     HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
+    /* USART1 interrupt Init */
+    HAL_NVIC_SetPriority(USART1_IRQn, 1, 0);
+    HAL_NVIC_EnableIRQ(USART1_IRQn);
   /* USER CODE BEGIN USART1_MspInit 1 */
 
   /* USER CODE END USART1_MspInit 1 */
@@ -158,6 +161,8 @@ void HAL_UART_MspDeInit(UART_HandleTypeDef* uartHandle)
     */
     HAL_GPIO_DeInit(GPIOA, GPIO_PIN_9|GPIO_PIN_10);
 
+    /* USART1 interrupt Deinit */
+    HAL_NVIC_DisableIRQ(USART1_IRQn);
   /* USER CODE BEGIN USART1_MspDeInit 1 */
 
   /* USER CODE END USART1_MspDeInit 1 */
@@ -183,36 +188,5 @@ void HAL_UART_MspDeInit(UART_HandleTypeDef* uartHandle)
 }
 
 /* USER CODE BEGIN 1 */
-//void USART1_IRQHandler(void)
-//{
-//	HAL_UART_ReceiveIdle(&huart1);
-//	HAL_UART_IRQHandler(&huart1); //����HAL���жϴ����ú���
-//	
-//	/* 4.���´򿪴���DMA���� */
-//	while (HAL_UART_Receive_DMA(&huart1,(uint8_t *)usart1_rx_buffer, USART_DMA_RX_BUFFER_MAXIMUM)!=HAL_OK);
-//}
 
-//void HAL_UART_ReceiveIdle(UART_HandleTypeDef *huart)
-//{
-//	//�������˴��ڿ����ж�
-//    if((__HAL_UART_GET_FLAG(huart, UART_FLAG_IDLE) != RESET)) 
-//    {
-//		uint32_t tmp_flag = 0;
-//		uint32_t temp;
-//		if(huart->Instance == USART1)
-//		{
-//			/* 1.�����־ */
-//			__HAL_UART_CLEAR_IDLEFLAG(huart); //������б�־
-
-//			/* 2.��ȡDMA */
-//			HAL_UART_DMAStop(huart); //��ֹͣDMA����ͣ����
-//			//����Ӧע�����ݽ��ղ�Ҫ���� USART_DMA_RX_BUFFER_MAXIMUM
-//			usart1_rx_len = USART_DMA_RX_BUFFER_MAXIMUM - (__HAL_DMA_GET_COUNTER(&hdma_usart1_rx)); //���ո������ڽ��ջ������ܴ�С��ʣ�����
-//			
-//			/* 3.�������ݽ����������� */
-//			memcpy(receive_data, usart1_rx_buffer, usart1_rx_len); 
-//			usart1_rx_flag = 1; //��־�Ѿ��ɹ����յ�һ���ȴ�����
-//		}
-//    }
-//}
 /* USER CODE END 1 */

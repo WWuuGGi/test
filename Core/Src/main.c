@@ -29,6 +29,7 @@
 #include "joint.h"
 #include <stdio.h>
 #include "calc.h"
+#include "key_state_machine.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -372,7 +373,7 @@ int main(void)
 	j = 0;
 	k = 0;
 	
-	//  HAL_TIM_Base_Start_IT(&htim2);
+	
 
 	Pose start_pose = {-0.25f, -0.25f, 0.135f, 0, 0, 0};
 	Pose end_pose = {0.25f, 0.25f, 0.635f, 0, 0, 0};
@@ -390,6 +391,9 @@ int main(void)
 	// 初始化CDPR系统
 	//	cdpr_init(&start, &end);
 	cdpr_init(&start_pose, &start_vel, &start_acc, &end_pose, &end_vel, &end_acc);
+  
+	HAL_TIM_Base_Start_IT(&htim2);
+	
 	/* USER CODE END 2 */
 
   /* Infinite loop */
@@ -403,9 +407,7 @@ int main(void)
 
 		
 		//pos_spline(position,60.0f,5.0f);//pos xf tf
-		
-		//step(30.0f,0.006f,0.5f);
-		//kp0 = 0.0025 '
+	
 		
 		HAL_Delay(1);
 		
@@ -482,7 +484,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
   /* USER CODE BEGIN Callback 1 */
 	if (htim->Instance == TIM2)
   {
-		
+		Key_Process();
 	}
 
   /* USER CODE END Callback 1 */

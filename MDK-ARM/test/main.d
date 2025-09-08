@@ -42,3 +42,4 @@ test\main.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdio.h
 test\main.o: ../Modules/Joint/joint.h
 test\main.o: ../Core/Inc/calc.h
 test\main.o: D:\keil5\ARM\ARMCC\Bin\..\include\math.h
+test\main.o: ../Core/Inc/key_state_machine.h
