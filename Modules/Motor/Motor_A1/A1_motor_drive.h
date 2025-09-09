@@ -52,6 +52,17 @@ extern uint8_t Date_group4[78];
 extern HAL_StatusTypeDef rec_st[4];  // 4组接收状态
 extern HAL_StatusTypeDef trans_st[4];// 4组发送状态
 
+#define GROUP_PORT_1 GPIOA
+#define GROUP_PORT_2 GPIOA
+#define GROUP_PORT_3 GPIOE
+#define GROUP_PORT_4 GPIOC
+
+#define GROUP_PIN_1 GPIO_PIN_8
+#define GROUP_PIN_2 GPIO_PIN_1
+#define GROUP_PIN_3 GPIO_PIN_15
+#define GROUP_PIN_4 GPIO_PIN_8
+
+
 /**
  @brief 对应电机参数修改
  @param send 为MotorA1_send_left或MotorA1_send_right，分别控制左右侧腿部

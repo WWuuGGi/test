@@ -229,19 +229,10 @@ void Task_Execute(void) {
 							cdpr_init(&start_pose, &start_vel, &start_acc, &end_pose, &end_vel, &end_acc);
 						}
 						
-//						while((zero_left_ID0*zero_left_ID0 <= 0.000000000001f))
-//						{
-//							//以上电位置为零点
-//							modify_torque_cmd(&MotorA1_send_left, 0, 0);   
-//							unitreeA1_rxtx(&huart1);
-//							zero_left_ID0  = (float) MotorA1_recv_left_id00.Pos ;
-
-//						}
 						if(step_mode_1 < STEP_NUM && task_running)
 						{
 							
-							Joint_PW_Control(motor_angle,motor_omega,0.015f,0.1f,step_mode_1);
-							//modify_pos_cmd();
+							Joint_Full_PW_Control(step_mode_1);
 							step_mode_1++;
 
 						}
@@ -288,7 +279,7 @@ void Task_Execute(void) {
 							if(step_mode_2 < STEP_NUM && task_running)
 							{
 								
-								Joint_PW_Control(motor_angle,motor_omega,0.015f,0.1f,step_mode_2);
+								Joint_Full_PW_Control(step_mode_2);
 								step_mode_2++;
 
 							}
@@ -335,9 +326,8 @@ void Task_Execute(void) {
 						if(step_mode_3 < STEP_NUM && task_running)
 						{
 							
-							Joint_PW_Control(motor_angle,motor_omega,0.015f,0.1f,step_mode_3);
+							Joint_Full_PW_Control(step_mode_3);
 							step_mode_3++;
-
 						}
 						else
 						{

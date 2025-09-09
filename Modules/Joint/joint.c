@@ -23,11 +23,11 @@ float zero_group4_ID1 = 0.0f;
 
 uint8_t STOP = False;
 
-static float home_speed  = 0.4f;  // 减速后角速度 rad/s
-static float home_torque = 1.0f;  // 减速后力矩 Nm
-static float UP_LIMIT    = 20.0f; // 减速后角度 °
-static float DOWN_LIMIT  = 80.0f; // 减速后角度 °
-static float TOLERANCE   = -5.0f;  // 容差 °
+//static float home_speed  = 0.4f;  // 减速后角速度 rad/s
+//static float home_torque = 1.0f;  // 减速后力矩 Nm
+//static float UP_LIMIT    = 20.0f; // 减速后角度 °
+//static float DOWN_LIMIT  = 80.0f; // 减速后角度 °
+//static float TOLERANCE   = -5.0f;  // 容差 °
 
 // 创建底盘结构体
 //Chassis_ME_t *Chassis_Init()
@@ -42,10 +42,10 @@ static float TOLERANCE   = -5.0f;  // 容差 °
 // 电机零点自检
 int Joint_Zero_OK() {
     
-    if (fabsf(zero_group1_ID0) <= 1e-6 || fabsf(zero_group1_ID1) <= 1e-6 ||
-				fabsf(zero_group2_ID0) <= 1e-6 || fabsf(zero_group2_ID1) <= 1e-6 || 
-				fabsf(zero_group3_ID0) <= 1e-6 || fabsf(zero_group3_ID1) <= 1e-6 ||
-				fabsf(zero_group4_ID0) <= 1e-6 || fabsf(zero_group4_ID1) <= 1e-6)
+    if (fabsf(zero_group1_ID0) <= 1e-6f || fabsf(zero_group1_ID1) <= 1e-6f ||
+				fabsf(zero_group2_ID0) <= 1e-6f || fabsf(zero_group2_ID1) <= 1e-6f || 
+				fabsf(zero_group3_ID0) <= 1e-6f || fabsf(zero_group3_ID1) <= 1e-6f ||
+				fabsf(zero_group4_ID0) <= 1e-6f || fabsf(zero_group4_ID1) <= 1e-6f)
 			{
         return 0;  //有零位没有被设置，返回false
 			}

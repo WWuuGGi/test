@@ -213,10 +213,42 @@ void unitreeA1_rxtx(UART_HandleTypeDef *huart, uint8_t group)
 //        memcpy(A1MotorA1_send_left, &send_struct->motor_send_data, 34);
 				
 				// 发送与接收
-				HAL_GPIO_WritePin(GPIOF, GPIO_PIN_9, GPIO_PIN_SET);  // 使能发送（根据硬件调整引脚）
+				switch(group)	//使能
+				{
+					case 1:
+						HAL_GPIO_WritePin(GROUP_PORT_1, GROUP_PIN_1, GPIO_PIN_SET);  // 使能发送（根据硬件调整引脚）
+						break;
+					case 2:
+						HAL_GPIO_WritePin(GROUP_PORT_2, GROUP_PIN_2, GPIO_PIN_SET);  // 使能发送（根据硬件调整引脚）
+						break;
+					case 3:
+						HAL_GPIO_WritePin(GROUP_PORT_3, GROUP_PIN_3, GPIO_PIN_SET);  // 使能发送（根据硬件调整引脚）
+						break;
+					case 4:
+						HAL_GPIO_WritePin(GROUP_PORT_4, GROUP_PIN_4, GPIO_PIN_SET);  // 使能发送（根据硬件调整引脚）
+						break;
+				}
+				
 				trans_st[group-1] = HAL_UART_Transmit(huart, send_buf, 34, 1);
-				HAL_GPIO_WritePin(GPIOF, GPIO_PIN_9, GPIO_PIN_RESET);
+				
+				switch(group)	//使能
+				{
+					case 1:
+						HAL_GPIO_WritePin(GROUP_PORT_1, GROUP_PIN_1, GPIO_PIN_RESET);  // 使能发送（根据硬件调整引脚）
+						break;
+					case 2:
+						HAL_GPIO_WritePin(GROUP_PORT_2, GROUP_PIN_2, GPIO_PIN_RESET);  // 使能发送（根据硬件调整引脚）
+						break;
+					case 3:
+						HAL_GPIO_WritePin(GROUP_PORT_3, GROUP_PIN_3, GPIO_PIN_RESET);  // 使能发送（根据硬件调整引脚）
+						break;
+					case 4:
+						HAL_GPIO_WritePin(GROUP_PORT_4, GROUP_PIN_4, GPIO_PIN_RESET);  // 使能发送（根据硬件调整引脚）
+						break;
+				}
+				
 				rec_st[group-1] = HAL_UART_Receive(huart, recv_buf, 78, 1);
+				
 				err_state = HAL_UART_GetError(huart);
 				received = 78 - huart->RxXferCount;
 
