@@ -2,22 +2,45 @@
 
 #define PI 3.14159
 
-motor_send_t MotorA1_send_left;       // 左腿一号电机数据体
-motor_send_t MotorA1_send_right;      // 右腿一号电机数据体
+//motor_send_t MotorA1_send_left;       // 左腿一号电机数据体
+//motor_send_t MotorA1_send_right;      // 右腿一号电机数据体
 
-motor_recv_t Date_left;               // 左腿电机接收数据体
-motor_recv_t MotorA1_recv_left_id00;  // 左腿00号电机接收数据体
-motor_recv_t MotorA1_recv_left_id01;  // 左腿01号电机接收数据体
-motor_recv_t MotorA1_recv_left_id02;  // 左腿02号电机接收数据体
+//motor_recv_t Date_left;               // 左腿电机接收数据体
+//motor_recv_t MotorA1_recv_left_id00;  // 左腿00号电机接收数据体
+//motor_recv_t MotorA1_recv_left_id01;  // 左腿01号电机接收数据体
+//motor_recv_t MotorA1_recv_left_id02;  // 左腿02号电机接收数据体
 
-motor_recv_t Date_right;              // 右腿电机接收数据体
-motor_recv_t MotorA1_recv_right_id00; // 右腿00号电机接收数据体
-motor_recv_t MotorA1_recv_right_id01; // 右腿01号电机接收数据体
-motor_recv_t MotorA1_recv_right_id02; // 右腿02号电机接收数据体
-uint8_t Date[78];
+//motor_recv_t Date_right;              // 右腿电机接收数据体
+//motor_recv_t MotorA1_recv_right_id00; // 右腿00号电机接收数据体
+//motor_recv_t MotorA1_recv_right_id01; // 右腿01号电机接收数据体
+//motor_recv_t MotorA1_recv_right_id02; // 右腿02号电机接收数据体
+//uint8_t Date[78];
 
-HAL_StatusTypeDef rec_st;
-HAL_StatusTypeDef trans_st;
+// 4组电机发送结构体初始化
+motor_send_t MotorA1_send_group1 = {0};
+motor_send_t MotorA1_send_group2 = {0};
+motor_send_t MotorA1_send_group3 = {0};
+motor_send_t MotorA1_send_group4 = {0};
+
+// 4组电机接收结构体初始化
+motor_recv_t MotorA1_recv_group1_id0 = {0};
+motor_recv_t MotorA1_recv_group1_id1 = {0};
+motor_recv_t MotorA1_recv_group2_id0 = {0};
+motor_recv_t MotorA1_recv_group2_id1 = {0};
+motor_recv_t MotorA1_recv_group3_id0 = {0};
+motor_recv_t MotorA1_recv_group3_id1 = {0};
+motor_recv_t MotorA1_recv_group4_id0 = {0};
+motor_recv_t MotorA1_recv_group4_id1 = {0};
+
+// 接收缓冲区
+uint8_t Date_group1[78] = {0};
+uint8_t Date_group2[78] = {0};
+uint8_t Date_group3[78] = {0};
+uint8_t Date_group4[78] = {0};
+
+// 通信状态
+HAL_StatusTypeDef rec_st[4] = {HAL_OK};
+HAL_StatusTypeDef trans_st[4] = {HAL_OK};
 uint32_t err_state;
 uint32_t received;
 
@@ -121,215 +144,131 @@ void modify_PW_cmd(motor_send_t *send,uint8_t id, float Pos, float Omega, float 
 }
 
 // 电机发送接收函数
-void unitreeA1_rxtx(UART_HandleTypeDef *huart)
+void unitreeA1_rxtx(UART_HandleTypeDef *huart, uint8_t group)
 {
-    /*—————————————————————————————————————————左腿代码范围————————————————————————————————————————————————*/
-    if (huart == &huart1)
-    {
-        uint8_t A1MotorA1_send_left[34]; // 发送数据
-               // 接收数据
+        //uint8_t A1MotorA1_send_left[34]; // 发送数据
+				uint8_t *send_buf = NULL;
+				uint8_t *recv_buf = NULL;
+				motor_send_t *send_struct = NULL;
+				motor_recv_t *recv_id0 = NULL;
+				motor_recv_t *recv_id1 = NULL;
+
+					// 根据组别绑定缓冲区和结构体
+				switch(group) {
+						case 1:
+								send_struct = &MotorA1_send_group1;
+								send_buf = (uint8_t*)&MotorA1_send_group1.motor_send_data;
+								recv_buf = Date_group1;
+								recv_id0 = &MotorA1_recv_group1_id0;
+								recv_id1 = &MotorA1_recv_group1_id1;
+								break;
+						case 2:
+								send_struct = &MotorA1_send_group2;
+								send_buf = (uint8_t*)&MotorA1_send_group2.motor_send_data;
+								recv_buf = Date_group2;
+								recv_id0 = &MotorA1_recv_group2_id0;
+								recv_id1 = &MotorA1_recv_group2_id1;
+								break;
+						case 3:
+								send_struct = &MotorA1_send_group3;
+								send_buf = (uint8_t*)&MotorA1_send_group3.motor_send_data;
+								recv_buf = Date_group3;
+								recv_id0 = &MotorA1_recv_group3_id0;
+								recv_id1 = &MotorA1_recv_group3_id1;
+								break;
+						case 4:
+								send_struct = &MotorA1_send_group4;
+								send_buf = (uint8_t*)&MotorA1_send_group4.motor_send_data;
+								recv_buf = Date_group4;
+								recv_id0 = &MotorA1_recv_group4_id0;
+								recv_id1 = &MotorA1_recv_group4_id1;
+								break;
+						default: return;
+				}
 
         // 此处为左腿电机结构体//
-        MotorA1_send_left.motor_send_data.head.start[0] = 0xFE;
-        MotorA1_send_left.motor_send_data.head.start[1] = 0xEE;
-        MotorA1_send_left.motor_send_data.head.motorID  = MotorA1_send_left.id;
-        MotorA1_send_left.motor_send_data.head.reserved = 0x00;
+        send_struct->motor_send_data.head.start[0] = 0xFE;
+        send_struct->motor_send_data.head.start[1] = 0xEE;
+        send_struct->motor_send_data.head.motorID  = send_struct->id;
+        send_struct->motor_send_data.head.reserved = 0x00;
 
-        MotorA1_send_left.motor_send_data.Mdata.mode      = MotorA1_send_left.mode;  // mode = 10
-        MotorA1_send_left.motor_send_data.Mdata.ModifyBit = 0xFF;
-        MotorA1_send_left.motor_send_data.Mdata.ReadBit   = 0x00;
-        MotorA1_send_left.motor_send_data.Mdata.reserved  = 0x00;
-        MotorA1_send_left.motor_send_data.Mdata.Modify.F  = 0;
-        MotorA1_send_left.motor_send_data.Mdata.T         = MotorA1_send_left.T * 256;
-        MotorA1_send_left.motor_send_data.Mdata.W         = MotorA1_send_left.W * 128;
-        MotorA1_send_left.motor_send_data.Mdata.Pos       = (int)((MotorA1_send_left.Pos / 6.2832f) * 16384.0f); // 单位 rad
+        send_struct->motor_send_data.Mdata.mode      = send_struct->mode;  // mode = 10
+        send_struct->motor_send_data.Mdata.ModifyBit = 0xFF;
+        send_struct->motor_send_data.Mdata.ReadBit   = 0x00;
+        send_struct->motor_send_data.Mdata.reserved  = 0x00;
+        send_struct->motor_send_data.Mdata.Modify.F  = 0;
+        send_struct->motor_send_data.Mdata.T         = send_struct->T * 256;
+        send_struct->motor_send_data.Mdata.W         = send_struct->W * 128;
+        send_struct->motor_send_data.Mdata.Pos       = (int)((send_struct->Pos / 6.2832f) * 16384.0f); // 单位 rad
 			//Mdata里存的是期望为减速弧度的16384/2/pi描述
-        MotorA1_send_left.motor_send_data.Mdata.K_P       = MotorA1_send_left.K_P * 2048;
-        MotorA1_send_left.motor_send_data.Mdata.K_W       = MotorA1_send_left.K_W * 1024;
+        send_struct->motor_send_data.Mdata.K_P       = send_struct->K_P * 2048;
+        send_struct->motor_send_data.Mdata.K_W       = send_struct->K_W * 1024;
 
-        MotorA1_send_left.motor_send_data.Mdata.LowHzMotorCmdIndex = 0;
-        MotorA1_send_left.motor_send_data.Mdata.LowHzMotorCmdByte  = 0;
-        MotorA1_send_left.motor_send_data.Mdata.Res[0] = MotorA1_send_left.Res;
+        send_struct->motor_send_data.Mdata.LowHzMotorCmdIndex = 0;
+        send_struct->motor_send_data.Mdata.LowHzMotorCmdByte  = 0;
+        send_struct->motor_send_data.Mdata.Res[0] = send_struct->Res;
 
-        MotorA1_send_left.motor_send_data.CRCdata.u32 = crc32_core_Ver3((uint32_t *)(&MotorA1_send_left.motor_send_data), 7); // CRC校验
+        send_struct->motor_send_data.CRCdata.u32 = crc32_core_Ver3((uint32_t *)(&send_struct->motor_send_data), 7); // CRC校验
 
-        memcpy(A1MotorA1_send_left, &MotorA1_send_left.motor_send_data, 34);
+//        memcpy(A1MotorA1_send_left, &send_struct->motor_send_data, 34);
 				
-				HAL_GPIO_WritePin(GPIOF,GPIO_PIN_9,GPIO_PIN_SET);
-        // HAL库 DMA 发送数据 + 接收数据
-        trans_st = HAL_UART_Transmit(&huart1, A1MotorA1_send_left, 34,1);
-				HAL_GPIO_WritePin(GPIOF,GPIO_PIN_9,GPIO_PIN_RESET);
-        rec_st = HAL_UART_Receive(&huart1, Date, 78,1);
-				err_state = HAL_UART_GetError(&huart1);
-				received = 78 - huart1.RxXferCount;
+				// 发送与接收
+				HAL_GPIO_WritePin(GPIOF, GPIO_PIN_9, GPIO_PIN_SET);  // 使能发送（根据硬件调整引脚）
+				trans_st[group-1] = HAL_UART_Transmit(huart, send_buf, 34, 1);
+				HAL_GPIO_WritePin(GPIOF, GPIO_PIN_9, GPIO_PIN_RESET);
+				rec_st[group-1] = HAL_UART_Receive(huart, recv_buf, 78, 1);
+				err_state = HAL_UART_GetError(huart);
+				received = 78 - huart->RxXferCount;
 
+				// 解析接收数据（根据ID存入对应结构体）
+				motor_recv_t temp_recv;
+				temp_recv.motor_recv_data.head.motorID = recv_buf[2];
+				temp_recv.motor_recv_data.Mdata.mode = recv_buf[4];
+				temp_recv.motor_recv_data.Mdata.Temp = recv_buf[6];
+				temp_recv.motor_recv_data.Mdata.MError = recv_buf[7];
+				temp_recv.motor_recv_data.Mdata.T = recv_buf[13] << 8 | recv_buf[12];
+				temp_recv.motor_recv_data.Mdata.W = recv_buf[15] << 8 | recv_buf[14];
+				temp_recv.motor_recv_data.Mdata.Acc = recv_buf[27] << 8 | recv_buf[26];
+				temp_recv.motor_recv_data.Mdata.Pos = recv_buf[33] << 24 | recv_buf[32] << 16 | recv_buf[31] << 8 | recv_buf[30];
+				// 转换物理量（与原有逻辑一致）
+				temp_recv.motor_id = temp_recv.motor_recv_data.head.motorID;
+				temp_recv.mode = temp_recv.motor_recv_data.Mdata.mode;
+				temp_recv.Temp = temp_recv.motor_recv_data.Mdata.Temp;
+				temp_recv.MError = temp_recv.motor_recv_data.Mdata.MError;
+				temp_recv.T = (float)temp_recv.motor_recv_data.Mdata.T / 256 * 9.1f;  // 减速后扭矩
+				temp_recv.W = (float)temp_recv.motor_recv_data.Mdata.W / 128 / 9.1f;  // 减速后角速度
+				temp_recv.Pos = (float)temp_recv.motor_recv_data.Mdata.Pos / (16384.0f/2.0f/PI) * (180/PI/9.1f);  // 减速后角度
+				temp_recv.Acc = temp_recv.motor_recv_data.Mdata.Acc;
 
-        // 接受数据处理
-        // 1.没有处理温度数据 (可能正确，因为是整数?)
-        // 2.检查数据类型是否都正确
-        Date_left.motor_recv_data.head.motorID = Date[2];  
-        Date_left.motor_recv_data.Mdata.mode   = Date[4];  
-        Date_left.motor_recv_data.Mdata.Temp   = Date[6];
-        Date_left.motor_recv_data.Mdata.MError = Date[7]; 
-        Date_left.motor_recv_data.Mdata.T      = Date[13] << 8  | Date[12]; // 反拼
-        Date_left.motor_recv_data.Mdata.W      = Date[15] << 8  | Date[14]; // 反拼
-        Date_left.motor_recv_data.Mdata.Acc    = Date[27] << 8  | Date[26]; // 反拼
-        Date_left.motor_recv_data.Mdata.Pos    = Date[33] << 24 | Date[32] << 16 | Date[31] << 8 | Date[30];  // 反拼
-
-        Date_left.motor_id = Date_left.motor_recv_data.head.motorID;                               
-				// ID     正确
-        Date_left.mode     = Date_left.motor_recv_data.Mdata.mode;                                 
-				// mode   正确
-        Date_left.Temp     = Date_left.motor_recv_data.Mdata.Temp;                                 
-				// Temp   正确 (整数)
-        Date_left.MError   = Date_left.motor_recv_data.Mdata.MError;                               
-				// MError 正确
-        Date_left.T        = (float) Date_left.motor_recv_data.Mdata.T / 256;                      
-				// T      正确
-        Date_left.Pos      = (float) (Date_left.motor_recv_data.Mdata.Pos / (16384.0f/2.0f/PI));      
-				// Pos    正确  接收到的是期望的未减速弧度
-        Date_left.W        = (float) Date_left.motor_recv_data.Mdata.W / 128;                      
-				// W      正确 (小数)
-        Date_left.Acc      = (float) Date_left.motor_recv_data.Mdata.Acc;                          
-				// Acc    貌似正确 (需要VOFA打印测试看是否连续)
-
-        if (Date_left.motor_id == 0x00)
-        {
-            MotorA1_recv_left_id00.motor_id = Date_left.motor_id;
-            MotorA1_recv_left_id00.mode     = Date_left.mode; 
-            MotorA1_recv_left_id00.Temp     = Date_left.Temp;
-            MotorA1_recv_left_id00.MError   = Date_left.MError;
-            MotorA1_recv_left_id00.T        = Date_left.T * 9.1f;            // 减速后的扭矩
-            MotorA1_recv_left_id00.W        = Date_left.W / 9.1f;            // 减速后的角速度
-            MotorA1_recv_left_id00.Pos      = Date_left.Pos * (180/PI/9.1f); // 减速后的角度     Date_left.Pos = 减速前的弧度
-            MotorA1_recv_left_id00.Acc      = Date_left.Acc; 
-        }
-
-        if (Date_left.motor_id == 0x01)
-        {
-            MotorA1_recv_left_id01.motor_id = Date_left.motor_id;
-            MotorA1_recv_left_id01.mode     = Date_left.mode; 
-            MotorA1_recv_left_id01.Temp     = Date_left.Temp;
-            MotorA1_recv_left_id01.MError   = Date_left.MError;
-            MotorA1_recv_left_id01.T        = Date_left.T * 9.1f;
-            MotorA1_recv_left_id01.W        = Date_left.W / 9.1f;   
-            MotorA1_recv_left_id01.Pos      = Date_left.Pos*(180/PI/9.1f);
-            MotorA1_recv_left_id01.Acc      = Date_left.Acc; 
-
-        }
-
-        if (Date_left.motor_id == 0x02)
-        {
-            MotorA1_recv_left_id02.motor_id = Date_left.motor_id;
-            MotorA1_recv_left_id02.mode     = Date_left.mode; 
-            MotorA1_recv_left_id02.Temp     = Date_left.Temp;
-            MotorA1_recv_left_id02.MError   = Date_left.MError;
-            MotorA1_recv_left_id02.T        = Date_left.T * 9.1f;
-            MotorA1_recv_left_id02.W        = Date_left.W / 9.1f;  
-            MotorA1_recv_left_id02.Pos      = Date_left.Pos*(180/PI/9.1f);
-            MotorA1_recv_left_id02.Acc      = Date_left.Acc; 
-        }
-    }
-
-    /*—————————————————————————————————————————右腿代码范围————————————————————————————————————————————————————————*/
- /*   if (huart == &huart6)
-    {
-        uint8_t A1MotorA1_send_right[34]; // 发送数据
-        uint8_t Date[78];        // 接收数据
-
-        // 此处为右腿一号电机结构体//
-        MotorA1_send_right.motor_send_data.head.start[0] = 0xFE;
-        MotorA1_send_right.motor_send_data.head.start[1] = 0xEE;
-        MotorA1_send_right.motor_send_data.head.motorID  = MotorA1_send_right.id;
-        MotorA1_send_right.motor_send_data.head.reserved = 0x00;
-
-        MotorA1_send_right.motor_send_data.Mdata.mode = MotorA1_send_right.mode; // mode = 10
-        MotorA1_send_right.motor_send_data.Mdata.ModifyBit = 0xFF;
-        MotorA1_send_right.motor_send_data.Mdata.ReadBit   = 0x00;
-        MotorA1_send_right.motor_send_data.Mdata.reserved  = 0x00;
-        MotorA1_send_right.motor_send_data.Mdata.Modify.F  = 0;
-        MotorA1_send_right.motor_send_data.Mdata.T         = MotorA1_send_right.T * 256;
-        MotorA1_send_right.motor_send_data.Mdata.W         = MotorA1_send_right.W * 128;
-        MotorA1_send_right.motor_send_data.Mdata.Pos       = (int)((MotorA1_send_right.Pos / 6.2832f) * 16384.0f);
-        MotorA1_send_right.motor_send_data.Mdata.K_P       = MotorA1_send_right.K_P * 2048;
-        MotorA1_send_right.motor_send_data.Mdata.K_W       = MotorA1_send_right.K_W * 1024;
-
-        MotorA1_send_right.motor_send_data.Mdata.LowHzMotorCmdIndex = 0;
-        MotorA1_send_right.motor_send_data.Mdata.LowHzMotorCmdByte  = 0;
-        MotorA1_send_right.motor_send_data.Mdata.Res[0] = MotorA1_send_right.Res;
-
-        MotorA1_send_right.motor_send_data.CRCdata.u32 = crc32_core_Ver3((uint32_t *)(&MotorA1_send_right.motor_send_data), 7); // CRC校验
-
-        memcpy(A1MotorA1_send_right, &MotorA1_send_right.motor_send_data, 34);
-
-        // DMA 发送数据 + 接收数据
-        HAL_UART_Transmit(&huart6, A1MotorA1_send_right, 34,0x03);
-        HAL_Delay(10);
-        HAL_UART_Receive_DMA(&huart6, Date, 78);
-
-        Date_right.motor_recv_data.head.motorID = Date[2];  
-        Date_right.motor_recv_data.Mdata.mode   = Date[4];  
-        Date_right.motor_recv_data.Mdata.Temp   = Date[6];
-        Date_right.motor_recv_data.Mdata.MError = Date[7]; 
-        Date_right.motor_recv_data.Mdata.T      = Date[13] << 8  | Date[12]; 
-        Date_right.motor_recv_data.Mdata.W      = Date[15] << 8  | Date[14]; 
-        Date_right.motor_recv_data.Mdata.Acc    = Date[27] << 8  | Date[26]; 
-        Date_right.motor_recv_data.Mdata.Pos    = Date[33] << 24 | Date[32] << 16 | Date[31] << 8 | Date[30];  
-
-        Date_right.motor_id = Date_right.motor_recv_data.head.motorID;                           
-        Date_right.mode     = Date_right.motor_recv_data.Mdata.mode;                               
-        Date_right.Temp     = Date_right.motor_recv_data.Mdata.Temp;                                
-        Date_right.MError   = Date_right.motor_recv_data.Mdata.MError;                               
-        Date_right.T        = (float) Date_right.motor_recv_data.Mdata.T / 256;                     
-        Date_right.Pos      = (float) (Date_right.motor_recv_data.Mdata.Pos / (16384.0f/2/PI));      
-        Date_right.W        = (float) Date_right.motor_recv_data.Mdata.W / 128;                      
-        Date_right.Acc      = (float) Date_right.motor_recv_data.Mdata.Acc;                          
-
-        if (Date_right.motor_id == 0x00)
-        {
-            MotorA1_recv_right_id00.motor_id = Date_right.motor_id;
-            MotorA1_recv_right_id00.mode     = Date_right.mode; 
-            MotorA1_recv_right_id00.Temp     = Date_right.Temp;
-            MotorA1_recv_right_id00.MError   = Date_right.MError;
-            MotorA1_recv_right_id00.T        = Date_right.T * 9.1f;
-            MotorA1_recv_right_id00.W        = Date_right.W / 9.1f;   
-            MotorA1_recv_right_id00.Pos      = Date_right.Pos*(180/PI/9.1f);
-            MotorA1_recv_right_id00.Acc      = Date_right.Acc; 
-        }
-
-        if (Date_right.motor_id == 0x01)
-        {
-            MotorA1_recv_right_id01.motor_id = Date_right.motor_id;
-            MotorA1_recv_right_id01.mode     = Date_right.mode; 
-            MotorA1_recv_right_id01.Temp     = Date_right.Temp;
-            MotorA1_recv_right_id01.MError   = Date_right.MError;
-            MotorA1_recv_right_id01.T        = Date_right.T * 9.1f;
-            MotorA1_recv_right_id01.W        = Date_right.W / 9.1f;   
-            MotorA1_recv_right_id01.Pos      = Date_right.Pos*(180/PI/9.1f);
-            MotorA1_recv_right_id01.Acc      = Date_right.Acc; 
-        }
-
-        if (Date_right.motor_id == 0x02)
-        {
-            MotorA1_recv_right_id02.motor_id = Date_right.motor_id;
-            MotorA1_recv_right_id02.mode     = Date_right.mode; 
-            MotorA1_recv_right_id02.Temp     = Date_right.Temp;
-            MotorA1_recv_right_id02.MError   = Date_right.MError;
-            MotorA1_recv_right_id02.T        = Date_right.T * 9.1f;
-            MotorA1_recv_right_id02.W        = Date_right.W / 9.1f;   
-            MotorA1_recv_right_id02.Pos      = Date_right.Pos*(180/PI/9.1f);
-            MotorA1_recv_right_id02.Acc      = Date_right.Acc; 
-        }
-    }
-		*/
+				// 根据ID存入对应组的ID0/ID1结构体
+				if (temp_recv.motor_id == 0) {
+						*recv_id0 = temp_recv;
+				} else if (temp_recv.motor_id == 1) {
+						*recv_id1 = temp_recv;
+				}
+				
 }
 
-// 电机0位函数
 
 void motor_relax(void)
 {
-	modify_torque_cmd(&MotorA1_send_left,0, 0.0f);
-	unitreeA1_rxtx(&huart1);
+	modify_torque_cmd(&MotorA1_send_group1,0, 0.0f);
+	unitreeA1_rxtx(&huart1,1);
+	modify_torque_cmd(&MotorA1_send_group1,1, 0.0f);
+	unitreeA1_rxtx(&huart1,1);
+	modify_torque_cmd(&MotorA1_send_group2,0, 0.0f);
+	unitreeA1_rxtx(&huart2,2);
+	modify_torque_cmd(&MotorA1_send_group2,1, 0.0f);
+	unitreeA1_rxtx(&huart2,2);
+	modify_torque_cmd(&MotorA1_send_group3,0, 0.0f);
+	unitreeA1_rxtx(&huart3,3);
+	modify_torque_cmd(&MotorA1_send_group3,1, 0.0f);
+	unitreeA1_rxtx(&huart3,3);
+	modify_torque_cmd(&MotorA1_send_group4,0, 0.0f);
+	unitreeA1_rxtx(&huart6,4);
+	modify_torque_cmd(&MotorA1_send_group4,1, 0.0f);
+	unitreeA1_rxtx(&huart6,4);
 	//后续加入其他的电机测试，暂时先用一个
 }
+
 

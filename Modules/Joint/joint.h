@@ -12,23 +12,49 @@
 #define False 0
 #define True 1
 
-// 设定关节电机零点初始位置
-extern float zero_left_ID0;
-extern float zero_left_ID1;
-//extern float zero_right_ID0;
-//extern float zero_right_ID1;
+//// 设定关节电机零点初始位置
+//extern float zero_left_ID0;
+//extern float zero_left_ID1;
+////extern float zero_right_ID0;
+////extern float zero_right_ID1;
 
-// 电机数据发送结构体
-extern motor_send_t MotorA1_send_left;         // 左腿一号电机数据体
-extern motor_send_t MotorA1_send_right;        // 右腿一号电机数据体
+//// 电机数据发送结构体
+//extern motor_send_t MotorA1_send_left;         // 左腿一号电机数据体
+//extern motor_send_t MotorA1_send_right;        // 右腿一号电机数据体
 
-extern motor_recv_t Date_left;                // 左腿电机接收数据体
-extern motor_recv_t MotorA1_recv_left_id00;   // 左腿00号电机接收数据体
-extern motor_recv_t MotorA1_recv_left_id01;   // 左腿01号电机接收数据体
+//extern motor_recv_t Date_left;                // 左腿电机接收数据体
+//extern motor_recv_t MotorA1_recv_left_id00;   // 左腿00号电机接收数据体
+//extern motor_recv_t MotorA1_recv_left_id01;   // 左腿01号电机接收数据体
 
-extern motor_recv_t Date_right;                // 右腿电机接收数据体
-extern motor_recv_t MotorA1_recv_right_id00;   // 右腿00号电机接收数据体
-extern motor_recv_t MotorA1_recv_right_id01;   // 右腿01号电机接收数据体
+//extern motor_recv_t Date_right;                // 右腿电机接收数据体
+//extern motor_recv_t MotorA1_recv_right_id00;   // 右腿00号电机接收数据体
+//extern motor_recv_t MotorA1_recv_right_id01;   // 右腿01号电机接收数据体
+
+// 4组电机的零点变量（每组ID0和ID1）
+extern float zero_group1_ID0;
+extern float zero_group1_ID1;
+extern float zero_group2_ID0;
+extern float zero_group2_ID1;
+extern float zero_group3_ID0;
+extern float zero_group3_ID1;
+extern float zero_group4_ID0;
+extern float zero_group4_ID1;
+
+// 电机发送/接收结构体声明（与A1_motor_drive.h对应）
+extern motor_send_t MotorA1_send_group1;
+extern motor_send_t MotorA1_send_group2;
+extern motor_send_t MotorA1_send_group3;
+extern motor_send_t MotorA1_send_group4;
+
+extern motor_recv_t MotorA1_recv_group1_id0;
+extern motor_recv_t MotorA1_recv_group1_id1;
+extern motor_recv_t MotorA1_recv_group2_id0;
+extern motor_recv_t MotorA1_recv_group2_id1;
+extern motor_recv_t MotorA1_recv_group3_id0;
+extern motor_recv_t MotorA1_recv_group3_id1;
+extern motor_recv_t MotorA1_recv_group4_id0;
+extern motor_recv_t MotorA1_recv_group4_id1;
+
 
 extern uint8_t STOP; // 急停状态
 
@@ -58,18 +84,19 @@ void Joint_Zero_init_Type2(void);
 void Joint_GOTO_zero(void);
 
 // 监控电机位置与力矩状态
-void Joint_Monitor(void);
+//void Joint_Monitor(void);
 
 // 底盘位置控制
-void Joint_Position_Control(float Pos_Front[][STEP_NUM],float kp,float kw,uint16_t step);
+void Joint_Position_Control(uint8_t group, uint8_t id, float Pos[][STEP_NUM], float kp, float kw, uint16_t step);
 
-void Joint_PW_Control(float Pos_Front[][STEP_NUM],float Omega[][STEP_NUM],float kp,float kw,uint16_t step);
+void Joint_PW_Control(uint8_t group, uint8_t id,float Pos[][STEP_NUM],float Omega[][STEP_NUM],float kp,float kw,uint16_t step);
 
 // 底盘速度控制
-void Joint_Speed_Control(float Speed_Front);//, float Speed_Back
+//void Joint_Speed_Control(float Speed_Front);//, float Speed_Back
 
-//void Joint_Full_Position_Control(float Pos_Front_Left, float Pos_Front_Right, float Pos_Back_Left, float Pos_Back_Right);
+void Joint_Full_Position_Control(uint16_t step);
 
+void Joint_Full_PW_Control(uint16_t step);
 // 离地检测 (测试)
 // uint8_t Joint_IsOn_Ground();
 

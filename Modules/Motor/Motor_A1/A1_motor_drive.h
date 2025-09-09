@@ -8,21 +8,49 @@
 #include <string.h>
 #include <stdio.h>
 
-extern motor_send_t MotorA1_send_left;  // 左腿一号电机数据体
-extern motor_send_t MotorA1_send_right; // 右腿一号电机数据体
+//extern motor_send_t MotorA1_send_left;  // 左腿一号电机数据体
+//extern motor_send_t MotorA1_send_right; // 右腿一号电机数据体
 
-extern motor_recv_t Date_left;        // 左腿电机接收数据体
-extern motor_recv_t MotorA1_recv_left_id00;   // 左腿00号电机接收数据体
-extern motor_recv_t MotorA1_recv_left_id01;   // 左腿01号电机接收数据体
-extern motor_recv_t MotorA1_recv_left_id02;   // 左腿02号电机接收数据体
+//extern motor_recv_t Date_left;        // 左腿电机接收数据体
+//extern motor_recv_t MotorA1_recv_left_id00;   // 左腿00号电机接收数据体
+//extern motor_recv_t MotorA1_recv_left_id01;   // 左腿01号电机接收数据体
+//extern motor_recv_t MotorA1_recv_left_id02;   // 左腿02号电机接收数据体
 
-extern motor_recv_t Date_right;       // 右腿电机接收数据体
-extern motor_recv_t MotorA1_recv_right_id00;  // 右腿00号电机接收数据体
-extern motor_recv_t MotorA1_recv_right_id01;  // 右腿01号电机接收数据体
-extern motor_recv_t MotorA1_recv_right_id02;  // 右腿02号电机接收数据体
-extern uint8_t Date[78];
-extern HAL_StatusTypeDef rec_st;
-extern HAL_StatusTypeDef trans_st;
+//extern motor_recv_t Date_right;       // 右腿电机接收数据体
+//extern motor_recv_t MotorA1_recv_right_id00;  // 右腿00号电机接收数据体
+//extern motor_recv_t MotorA1_recv_right_id01;  // 右腿01号电机接收数据体
+//extern motor_recv_t MotorA1_recv_right_id02;  // 右腿02号电机接收数据体
+//extern uint8_t Date[78];
+
+// 4组电机的发送结构体（每组对应一个发送数据体）
+extern motor_send_t MotorA1_send_group1;  // 第1组电机发送数据
+extern motor_send_t MotorA1_send_group2;  // 第2组电机发送数据
+extern motor_send_t MotorA1_send_group3;  // 第3组电机发送数据
+extern motor_send_t MotorA1_send_group4;  // 第4组电机发送数据
+
+// 4组电机的接收结构体（每组2个ID，共8个电机）
+// 第1组
+extern motor_recv_t MotorA1_recv_group1_id0;
+extern motor_recv_t MotorA1_recv_group1_id1;
+// 第2组
+extern motor_recv_t MotorA1_recv_group2_id0;
+extern motor_recv_t MotorA1_recv_group2_id1;
+// 第3组
+extern motor_recv_t MotorA1_recv_group3_id0;
+extern motor_recv_t MotorA1_recv_group3_id1;
+// 第4组
+extern motor_recv_t MotorA1_recv_group4_id0;
+extern motor_recv_t MotorA1_recv_group4_id1;
+
+// 每组接收数据缓冲区（78字节，与硬件协议匹配）
+extern uint8_t Date_group1[78];
+extern uint8_t Date_group2[78];
+extern uint8_t Date_group3[78];
+extern uint8_t Date_group4[78];
+
+// 通信状态变量
+extern HAL_StatusTypeDef rec_st[4];  // 4组接收状态
+extern HAL_StatusTypeDef trans_st[4];// 4组发送状态
 
 /**
  @brief 对应电机参数修改
@@ -45,7 +73,7 @@ void modify_PW_cmd(motor_send_t *send,uint8_t id, float Pos, float Omega, float 
 /// @brief 用来和电机通讯的代码，将获取的数据存入对应结构体中
 /// @param huart 需要使用的串口，huart1为左侧，6为右侧
 
-void unitreeA1_rxtx(UART_HandleTypeDef *huart);
+void unitreeA1_rxtx(UART_HandleTypeDef *huart, uint8_t group);
 
 void motor_relax(void);
 

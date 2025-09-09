@@ -14,6 +14,7 @@ const float32_t Izz_ee = 0.165f;
 //float32_t cable_velocity[CABLE_NUM][STEP_NUM];
 float32_t cable_initial_length[CABLE_NUM];  // 每条绳索的初始长度(零点参考)
 float32_t motor_angle[CABLE_NUM][STEP_NUM]; // 电机角度轨迹(角度)
+float32_t motor_omega[CABLE_NUM][STEP_NUM];
 Poly5Coeff coeffs[6];                       // 多项式系数(复用，不存储完整轨迹)
 
 // 计算五次多项式系数
@@ -183,12 +184,12 @@ static void generate_trajectory_and_angles(float32_t t_start, float32_t t_end, f
 
         // 计算当前时刻的姿态(局部变量，不存储)
         Pose current_pose;
-//        Velocity current_vel;
+        Velocity current_vel;
         for (uint8_t j = 0; j < 6; j++) {
             current_pose.data[j] = coeffs[j].a0 + coeffs[j].a1*t + coeffs[j].a2*t2 +
                                  coeffs[j].a3*t3 + coeffs[j].a4*t4 + coeffs[j].a5*t5;
-//            current_vel.data[j] = coeffs[j].a1 + 2*coeffs[j].a2*t + 3*coeffs[j].a3*t2 +
-//                                4*coeffs[j].a4*t3 + 5*coeffs[j].a5*t4;
+            current_vel.data[j] = coeffs[j].a1 + 2*coeffs[j].a2*t + 3*coeffs[j].a3*t2 +
+                                4*coeffs[j].a4*t3 + 5*coeffs[j].a5*t4;
         }
 
         // 构建齐次变换矩阵
@@ -218,6 +219,41 @@ static void generate_trajectory_and_angles(float32_t t_start, float32_t t_end, f
             // 计算电机角度并存储(仅保留此结果)
             float32_t length_change = current_length - cable_initial_length[c];
             motor_angle[c][i] = length_change / MOTOR_PULLEY_RADIUS / 3.1415926f * 180.0f;
+						
+						//        // 计算每个绳索的长度和速度
+						float32_t jaco[CABLE_NUM][6]; // 雅克比矩阵 (8x6)
+						
+						// 单位向量
+            float32_t unit_vec[3] = {
+                vec_cable[0] / current_length,
+                vec_cable[1] / current_length,
+                vec_cable[2] / current_length
+            };
+
+            // 末端执行器上的向量 (质心到附着点)
+            float32_t vec_ee[3] = {
+                a_g.x - current_pose.data[0],
+                a_g.y - current_pose.data[1],
+                a_g.z - current_pose.data[2]
+            };
+
+            // 叉乘结果
+            float32_t cross_res[3];
+            cross_product(cross_res, vec_ee, unit_vec);
+
+            // 填充雅克比矩阵
+            jaco[c][0] = unit_vec[0];
+            jaco[c][1] = unit_vec[1];
+            jaco[c][2] = unit_vec[2];
+            jaco[c][3] = cross_res[0];
+            jaco[c][4] = cross_res[1];
+            jaco[c][5] = cross_res[2];
+
+            // 计算绳索速度
+            motor_omega[c][i] = 0.0f;
+            for (uint8_t k = 0; k < 6; k++) {
+                motor_omega[c][i] += -1.0f * jaco[c][k] * current_vel.data[k] / MOTOR_PULLEY_RADIUS;
+            }
         }
     }
 }

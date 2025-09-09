@@ -325,6 +325,8 @@ int main(void)
   MX_USART1_UART_Init();
   MX_USART2_UART_Init();
   MX_TIM2_Init();
+  MX_USART3_UART_Init();
+  MX_USART6_UART_Init();
   /* USER CODE BEGIN 2 */
 	
 	//Joint_Zero_init_Type1();
@@ -374,8 +376,14 @@ int main(void)
       //刷新标志位，做相关计算等  
 			if(cmode == 0)
 			{
-				zero_left_ID0 = 0.0f;
-				//标记零点函数
+				zero_group1_ID0 = 0.0f;
+				zero_group1_ID1 = 0.0f;
+				zero_group2_ID0 = 0.0f;
+				zero_group2_ID1 = 0.0f;
+				zero_group3_ID0 = 0.0f;
+				zero_group3_ID1 = 0.0f;
+				zero_group4_ID0 = 0.0f;
+				zero_group4_ID1 = 0.0f;
 			}
 			Joint_Zero_init_Type1();
 			Task_Execute();

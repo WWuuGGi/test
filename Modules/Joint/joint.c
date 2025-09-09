@@ -6,13 +6,20 @@
 #define LIMIT_RANGE(Pos, Min, Max) ((Pos) = ((Pos) > (Max) ? (Max) : (Pos) < (Min) ? (Min) : (Pos)))
 
 // 默认电机初始零点
-float zero_left_ID0  = 0.0f;
-float zero_left_ID1  = 0.0f;
+//float zero_left_ID0  = 0.0f;
+//float zero_left_ID1  = 0.0f;
 //float zero_right_ID0 = 0.0f;
 //float zero_right_ID1 = 0.0f;
 
-// 电机信息结构体
-//Chassis_ME_t Chassis;
+// 初始化4组电机零点变量
+float zero_group1_ID0 = 0.0f;
+float zero_group1_ID1 = 0.0f;
+float zero_group2_ID0 = 0.0f;
+float zero_group2_ID1 = 0.0f;
+float zero_group3_ID0 = 0.0f;
+float zero_group3_ID1 = 0.0f;
+float zero_group4_ID0 = 0.0f;
+float zero_group4_ID1 = 0.0f;
 
 uint8_t STOP = False;
 
@@ -35,9 +42,12 @@ static float TOLERANCE   = -5.0f;  // 容差 °
 // 电机零点自检
 int Joint_Zero_OK() {
     
-    if (fabsf(zero_left_ID0) <= 1e-6)
+    if (fabsf(zero_group1_ID0) <= 1e-6 || fabsf(zero_group1_ID1) <= 1e-6 ||
+				fabsf(zero_group2_ID0) <= 1e-6 || fabsf(zero_group2_ID1) <= 1e-6 || 
+				fabsf(zero_group3_ID0) <= 1e-6 || fabsf(zero_group3_ID1) <= 1e-6 ||
+				fabsf(zero_group4_ID0) <= 1e-6 || fabsf(zero_group4_ID1) <= 1e-6)
 			{
-        return 0;  //所有零位没有被设置，返回false
+        return 0;  //有零位没有被设置，返回false
 			}
     return 1;  // 否则返回 true
 }
@@ -49,79 +59,61 @@ void Joint_Zero_init_Type1()
   // 电机零位 定义在最上面
   // 使用while循环确保0位正确
 
-  // 自检不通过 D2亮起
-//  HAL_GPIO_WritePin(GPIOF,GPIO_PIN_10,GPIO_PIN_RESET); //
+  while (!Joint_Zero_OK()) 
+		{
+		//group1
+			// 读取ID0零点
+			modify_torque_cmd(&MotorA1_send_group1, 0, 0);
+			unitreeA1_rxtx(&huart1, 1);
+			zero_group1_ID0 = MotorA1_recv_group1_id0.Pos;
+			// 读取ID1零点
+			modify_torque_cmd(&MotorA1_send_group1, 1, 0);
+			unitreeA1_rxtx(&huart1, 1);
+			zero_group1_ID1 = MotorA1_recv_group1_id1.Pos;
+			
+			//group2
+			// 读取ID0零点
+			modify_torque_cmd(&MotorA1_send_group2, 0, 0);
+			unitreeA1_rxtx(&huart2, 1);
+			zero_group2_ID0 = MotorA1_recv_group1_id0.Pos;
+			// 读取ID1零点
+			modify_torque_cmd(&MotorA1_send_group2, 1, 0);
+			unitreeA1_rxtx(&huart2, 1);
+			zero_group2_ID1 = MotorA1_recv_group1_id1.Pos;
 
-  while (Joint_Zero_OK() == False) {
+			//group3
+			// 读取ID0零点
+			modify_torque_cmd(&MotorA1_send_group3, 0, 0);
+			unitreeA1_rxtx(&huart3, 1);
+			zero_group3_ID0 = MotorA1_recv_group1_id0.Pos;
+			// 读取ID1零点
+			modify_torque_cmd(&MotorA1_send_group3, 1, 0);
+			unitreeA1_rxtx(&huart3, 1);
+			zero_group3_ID1 = MotorA1_recv_group1_id1.Pos;
 
-      modify_torque_cmd(&MotorA1_send_left, 0, 0);    //modify_torque_cmd(&MotorA1_send_right, 0, 0);
-      unitreeA1_rxtx(&huart1);               //unitreeA1_rxtx(&huart6);
-      zero_left_ID0  = (float) MotorA1_recv_left_id00.Pos ;
-      //zero_right_ID0 = (float) MotorA1_recv_right_id00.Pos ;
-      //osDelay(2);
-
-//      modify_torque_cmd(&MotorA1_send_left, 1, 0);    modify_torque_cmd(&MotorA1_send_right, 1, 0);
-//      unitreeA1_rxtx(&huart1);               unitreeA1_rxtx(&huart6);
-//      zero_left_ID1  = (float) MotorA1_recv_left_id01.Pos ;
-//      zero_right_ID1 = (float) MotorA1_recv_right_id01.Pos ;
-//      osDelay(2);
-      
-//      osDelay(20);
-      }
-
-  // 自检成功 红灯熄灭
-//  modify_speed_cmd(&MotorA1_send_left,  0, 0);    
-//  modify_speed_cmd(&MotorA1_send_right, 0, 0);
-//  osDelay(1);
-//  modify_speed_cmd(&MotorA1_send_left,  1, 0);    
-//  modify_speed_cmd(&MotorA1_send_right, 1, 0);
-//  HAL_GPIO_WritePin(GPIOF,GPIO_PIN_10,GPIO_PIN_SET); //
-
+			//group4
+			// 读取ID0零点
+			modify_torque_cmd(&MotorA1_send_group4, 0, 0);
+			unitreeA1_rxtx(&huart6, 1);
+			zero_group4_ID0 = MotorA1_recv_group1_id0.Pos;
+			// 读取ID1零点
+			modify_torque_cmd(&MotorA1_send_group4, 1, 0);
+			unitreeA1_rxtx(&huart6, 1);
+			zero_group4_ID1 = MotorA1_recv_group1_id1.Pos;
+			
+			HAL_Delay(1);
+	}
 }
 
-// 电机零位获取 (初始位置 = 限位位置)
-//void Joint_Zero_init_Type2()
+
+//// 回归零点
+//void Joint_GOTO_zero()
 //{
+//    modify_pos_cmd(&MotorA1_send_left,0,(float) zero_left_ID0, 0.006, 1.0);  // 0.005 0.5  
+//    unitreeA1_rxtx(&huart1); 
 
-
-//while (Joint_Zero_OK() == False) {
-
-//    modify_speed_cmd(&MotorA1_send_left,  0, -home_speed);    
-//    modify_speed_cmd(&MotorA1_send_right, 0, +home_speed);
-//    unitreeA1_rxtx(&huart1);                           unitreeA1_rxtx(&huart6);
-//    if ((MotorA1_recv_left_id00.T)  <= -home_torque) {
-//        zero_left_ID0  = (float) MotorA1_recv_left_id00.Pos + UP_LIMIT;} // zero_left_ID0 是减速后的角度 (不是弧度)
-//    osDelay(1);
-//    if ((MotorA1_recv_right_id00.T) >= +home_torque) {
-//        zero_right_ID0 = (float) MotorA1_recv_right_id00.Pos - UP_LIMIT;}
-//    osDelay(1);
-
-//    modify_speed_cmd(&MotorA1_send_left,  1, +home_speed);    
-//    modify_speed_cmd(&MotorA1_send_right, 1, -home_speed);
-//    unitreeA1_rxtx(&huart1);                           unitreeA1_rxtx(&huart6);
-//    if ((MotorA1_recv_left_id01.T)  >= +home_torque) {
-//        zero_left_ID1  = (float) MotorA1_recv_left_id01.Pos - UP_LIMIT;}
-//    osDelay(1);
-//    if ((MotorA1_recv_right_id01.T) <= -home_torque) {
-//        zero_right_ID1 = (float) MotorA1_recv_right_id01.Pos + UP_LIMIT;}
-//    osDelay(1);
-//    }
-//  modify_speed_cmd(&MotorA1_send_left,  0, 0);    
-//  modify_speed_cmd(&MotorA1_send_right, 0, 0);
-//  osDelay(1);
-//  modify_speed_cmd(&MotorA1_send_left,  1, 0);    
-//  modify_speed_cmd(&MotorA1_send_right, 1, 0);
-//  osDelay(1);
+//    HAL_Delay(2);
 //}
-
-// 回归零点
-void Joint_GOTO_zero()
-{
-    modify_pos_cmd(&MotorA1_send_left,0,(float) zero_left_ID0, 0.006, 1.0);  // 0.005 0.5  
-    unitreeA1_rxtx(&huart1); 
-
-    HAL_Delay(2);
-}
 
 // 检测是否超过上限位 因为转换器有问题，暂时不使用该函数
 //void Joint_Monitor()
@@ -141,94 +133,130 @@ void Joint_GOTO_zero()
 //      } // 红灯闪烁
 //}
 
-
-
-// 底盘关节电机 4个同时控制
-
 /**
   * @brief          底盘关节位置控制
   * @param[in]      Pos_Front: 减速后-角度制 正值前腿向上摆动
   * @param[in]      Pos_Back: 减速后-角度制 正值后腿向上摆动
   */
-void Joint_Position_Control(float Pos_Front[][STEP_NUM],float kp,float kw,uint16_t step)//, float Pos_Back
+void Joint_Position_Control(uint8_t group, uint8_t id, float Pos[][STEP_NUM], float kp, float kw, uint16_t step)//, float Pos_Back
 {   
     // 角度 限幅处理
     //LIMIT_RANGE(Pos_Front, -400, +400);
     //LIMIT_RANGE(Pos_Back,  -79, +19);
-    modify_pos_cmd(&MotorA1_send_left,0, (float) Pos_Front[0][step] + zero_left_ID0, kp, kw);  // 0.005 0.5     0.006 1.0
-    //modify_pos_cmd(&MotorA1_send_right,0,(float) +Pos_Front + zero_right_ID0, 0.006,1.0); 
-    unitreeA1_rxtx(&huart1); 
-    //unitreeA1_rxtx(&huart6);
-    //osDelay(1);
-		//HAL_Delay(1);
 	
-//    modify_pos_cmd(&MotorA1_send_left,1, (float) +Pos_Back + zero_left_ID1, 0.006, 1.0);   
-//    modify_pos_cmd(&MotorA1_send_right,1,(float) -Pos_Back + zero_right_ID1, 0.006, 1.0);
-//    unitreeA1_rxtx(&huart1);
-//    unitreeA1_rxtx(&huart6);
-//    osDelay(1);
+		float target_pos = 0.0f;
+		motor_send_t *send_struct = NULL;
+		UART_HandleTypeDef *huart = NULL;
+	
+		// 绑定组对应的发送结构体和串口
+    switch(group) {
+        case 1: send_struct = &MotorA1_send_group1; huart = &huart1; break;
+        case 2: send_struct = &MotorA1_send_group2; huart = &huart2; break;
+        case 3: send_struct = &MotorA1_send_group3; huart = &huart3; break;
+        case 4: send_struct = &MotorA1_send_group4; huart = &huart6; break;
+        default: return;
+    }
+		
+		// 计算目标位置（叠加零点）
+    if (id == 0) {
+        switch(group) {
+            case 1: target_pos = Pos[0][step] + zero_group1_ID0; break;
+            case 2: target_pos = Pos[2][step] + zero_group2_ID0; break;
+            case 3: target_pos = Pos[4][step] + zero_group3_ID0; break;
+            case 4: target_pos = Pos[6][step] + zero_group4_ID0; break;
+        }
+    } else {
+        switch(group) {
+            case 1: target_pos = Pos[1][step] + zero_group1_ID1; break;
+            case 2: target_pos = Pos[3][step] + zero_group2_ID1; break;
+            case 3: target_pos = Pos[5][step] + zero_group3_ID1; break;
+            case 4: target_pos = Pos[7][step] + zero_group4_ID1; break;
+        }
+    }
+
+    modify_pos_cmd(send_struct, id, target_pos, kp, kw);
+    unitreeA1_rxtx(huart, group);
+
 }
 
 
-void Joint_PW_Control(float Pos_Front[][STEP_NUM],float Omega[][STEP_NUM],float kp,float kw,uint16_t step)//, float Pos_Back
+void Joint_PW_Control(uint8_t group, uint8_t id,float Pos[][STEP_NUM],float Omega[][STEP_NUM],float kp,float kw,uint16_t step)//, float Pos_Back
 {   
-    // 角度 限幅处理
-//    LIMIT_RANGE(Pos_Front, -400, +400);
-    //LIMIT_RANGE(Pos_Back,  -79, +19);
-    modify_PW_cmd(&MotorA1_send_left,0, (float) Pos_Front[0][step] + zero_left_ID0,Omega[0][step], kp, kw);  // 0.005 0.5     0.006 1.0
-		//modify_PW_cmd(&MotorA1_send_left,id, (float) Pos_Front[1][step] + zero_left_ID1,Omega[1][step], kp, kw); 
-		//modify_pos_cmd(&MotorA1_send_right,0,(float) +Pos_Front + zero_right_ID0, 0.006,1.0); 
-    unitreeA1_rxtx(&huart1); 
-    //unitreeA1_rxtx(&huart6);
-    //osDelay(1);
-		//HAL_Delay(1);
+		float target_pos = 0.0f;
+		float target_spd = 0.0f;
+		motor_send_t *send_struct = NULL;
+		UART_HandleTypeDef *huart = NULL;
 	
-//    modify_pos_cmd(&MotorA1_send_left,1, (float) +Pos_Back + zero_left_ID1, 0.006, 1.0);   
-//    modify_pos_cmd(&MotorA1_send_right,1,(float) -Pos_Back + zero_right_ID1, 0.006, 1.0);
-//    unitreeA1_rxtx(&huart1);
-//    unitreeA1_rxtx(&huart6);
-//    osDelay(1);
+		// 绑定组对应的发送结构体和串口
+    switch(group) {
+        case 1: send_struct = &MotorA1_send_group1; huart = &huart1; break;
+        case 2: send_struct = &MotorA1_send_group2; huart = &huart2; break;
+        case 3: send_struct = &MotorA1_send_group3; huart = &huart3; break;
+        case 4: send_struct = &MotorA1_send_group4; huart = &huart6; break;
+        default: return;
+    }
+		
+		// 计算目标位置（叠加零点）
+    if (id == 0) {
+        switch(group) {
+            case 1: target_pos = Pos[0][step] + zero_group1_ID0; 
+										target_spd = Omega[0][step];
+										break;
+            case 2: target_pos = Pos[2][step] + zero_group2_ID0;
+										target_spd = Omega[2][step];
+										break;
+            case 3: target_pos = Pos[4][step] + zero_group3_ID0; 
+										target_spd = Omega[4][step];
+										break;
+            case 4: target_pos = Pos[6][step] + zero_group4_ID0; 
+										target_spd = Omega[6][step];
+										break;
+        }
+    } else {
+        switch(group) {
+            case 1: target_pos = Pos[1][step] + zero_group1_ID1; 
+										target_spd = Omega[1][step];
+										break;
+            case 2: target_pos = Pos[3][step] + zero_group2_ID1; 
+										target_spd = Omega[3][step];
+										break;
+            case 3: target_pos = Pos[5][step] + zero_group3_ID1; 
+										target_spd = Omega[5][step];
+										break;
+            case 4: target_pos = Pos[7][step] + zero_group4_ID1; 
+										target_spd = Omega[7][step];
+										break;
+        }
+    }
+
+    modify_PW_cmd(send_struct, id, target_pos,target_spd, kp, kw);
+    unitreeA1_rxtx(huart, group);
 }
 
-//void Joint_Full_Position_Control(float Pos_Front_L, float Pos_Front_R, float Pos_Back_L, float Pos_Back_R)
-//{
-//    LIMIT_RANGE(Pos_Front_L, -79, +19);
-//    LIMIT_RANGE(Pos_Front_R,  -79, +19);
-//    LIMIT_RANGE(Pos_Back_L, -79, +19);
-//    LIMIT_RANGE(Pos_Back_R,  -79, +19);
-//    modify_pos_cmd(&MotorA1_send_left,0, (float) -Pos_Front_L + zero_left_ID0, 0.006, 1.0);  // 0.005 0.5  
-//    modify_pos_cmd(&MotorA1_send_right,0,(float) +Pos_Front_R + zero_right_ID0, 0.006,1.0); 
-//    unitreeA1_rxtx(&huart1); 
-//    //unitreeA1_rxtx(&huart6);
-//    //osDelay(1);
-//    modify_pos_cmd(&MotorA1_send_left,1, (float) +Pos_Back_L + zero_left_ID1, 0.006, 1.0);   
-//    modify_pos_cmd(&MotorA1_send_right,1,(float) -Pos_Back_R + zero_right_ID1, 0.006, 1.0);
-//    unitreeA1_rxtx(&huart1);
-//    //unitreeA1_rxtx(&huart6);
-//    //osDelay(1);
-//}
-
-
-/**
-  * @brief          底盘关节速度控制
-  * @param[in]      Speed_Front: 减速后-角度制 正值前腿向下摆动
-  * @param[in]      Speed_Back:  减速后-角度制 正值后腿向下摆动
-  */
-void Joint_Speed_Control(float Speed_Front)//, float Speed_Back
+void Joint_Full_Position_Control(uint16_t step)
 {
-    modify_speed_cmd(&MotorA1_send_left,0, (float) +Speed_Front);  
-//    modify_speed_cmd(&MotorA1_send_right,0,(float) -Speed_Front); 
-    unitreeA1_rxtx(&huart1); 
-		HAL_Delay(1);
-//    unitreeA1_rxtx(&huart6);
-//    osDelay(1);
-//    modify_speed_cmd(&MotorA1_send_left,1, (float) -Speed_Back);   
-//    modify_speed_cmd(&MotorA1_send_right,1,(float) +Speed_Back);
-//    unitreeA1_rxtx(&huart1);
-//    unitreeA1_rxtx(&huart6);
-//    osDelay(1);
+	Joint_Position_Control(1, 0, motor_angle, 0.022f, 0.1f, step);
+	Joint_Position_Control(1, 1, motor_angle, 0.022f, 0.1f, step);
+	Joint_Position_Control(2, 0, motor_angle, 0.022f, 0.1f, step);
+	Joint_Position_Control(2, 1, motor_angle, 0.022f, 0.1f, step);
+	Joint_Position_Control(3, 0, motor_angle, 0.022f, 0.1f, step);
+	Joint_Position_Control(3, 1, motor_angle, 0.022f, 0.1f, step);
+	Joint_Position_Control(4, 0, motor_angle, 0.022f, 0.1f, step);
+	Joint_Position_Control(4, 1, motor_angle, 0.022f, 0.1f, step);
+	
 }
 
+void Joint_Full_PW_Control(uint16_t step)
+{
+	Joint_PW_Control(1, 0, motor_angle, motor_omega, 0.022f, 0.1f, step);
+	Joint_PW_Control(1, 1, motor_angle, motor_omega, 0.022f, 0.1f, step);
+	Joint_PW_Control(2, 0, motor_angle, motor_omega, 0.022f, 0.1f, step);
+	Joint_PW_Control(2, 1, motor_angle, motor_omega, 0.022f, 0.1f, step);
+	Joint_PW_Control(3, 0, motor_angle, motor_omega, 0.022f, 0.1f, step);
+	Joint_PW_Control(3, 1, motor_angle, motor_omega, 0.022f, 0.1f, step);
+	Joint_PW_Control(4, 0, motor_angle, motor_omega, 0.022f, 0.1f, step);
+	Joint_PW_Control(4, 1, motor_angle, motor_omega, 0.022f, 0.1f, step);
+}
 
 // // 离地检测
 // uint8_t Joint_IsOn_Ground()
