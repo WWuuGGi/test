@@ -164,6 +164,7 @@ static void Key_HandleEvents(void) {
 						step_mode_1 = 0;
 						step_mode_2 = 0;
 						step_mode_3 = 0;
+					
 						//调成零力矩模式，等待接收指令
 						//motor_relax();
             
