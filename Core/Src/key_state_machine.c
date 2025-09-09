@@ -149,7 +149,7 @@ static void Key_HandleEvents(void) {
         if (task_running) {
             // 急停任务
             task_running = 0;
-					current_mode = 0;
+						current_mode = 0;
             // 急停相关代码
             step_mode_1 = 0;
 						step_mode_2 = 0;
@@ -193,19 +193,23 @@ static void Key_HandleEvents(void) {
   * @note   根据当前模式执行不同的任务逻辑
   */
 void Task_Execute(void) {
+	if(task_running)
+	{
     switch (current_mode) {
         case 1:
             // 模式1的任务逻辑
             //
+					if((step_mode_2 == 0) && (step_mode_3 == 0))
+					{
 						if(step_mode_1 == 0)
 						{
 							//初次进入任务时，把其他标志位清零
-							step_mode_2 = 0;
-							step_mode_3 = 0;
+							//step_mode_2 = 0;
+							//step_mode_3 = 0;
 							
 							//初次进入时，计算轨迹路径
-							Pose start_pose = {-0.25f, -0.25f, 0.135f, 0, 0, 0};
-							Pose end_pose = {0.25f, 0.25f, 0.635f, 0, 0, 0};
+							Pose start_pose = {0.25f, 0.25f, 0.135f, 0, 0, 0};
+							Pose end_pose = {0.25f, 0.25f, 0.335f, 0, 0, 0};
 
 							// 初始速度和加速度为零
 							Velocity start_vel = {0};
@@ -234,66 +238,81 @@ void Task_Execute(void) {
 						{
 							
 							Joint_Position_Control(motor_angle,0.025,0.1,step_mode_1);
+							//modify_pos_cmd();
 							step_mode_1++;
 
 						}
 						else
 						{
-							//motor_relax();
+							motor_relax();
 						}
+					}
+					else
+					{
+						motor_relax();
+					}
             break;
         case 2:
             // 模式2的任务逻辑
             //
-						if(step_mode_2 == 0)
+					if((step_mode_1 == 0) && (step_mode_3 == 0))
+					{
+							if(step_mode_2 == 0)
+							{
+								//初次进入任务时，把其他标志位清零
+								//step_mode_1 = 0;
+								//step_mode_3 = 0;
+								
+								//初次进入时，计算轨迹路径
+								Pose start_pose = {0.25f, 0.25f, 0.135f, 0, 0, 0};
+								Pose end_pose = {0.25f, 0.25f, 0.335f, 0, 0, 0};
+
+								// 初始速度和加速度为零
+								Velocity start_vel = {0};
+								Velocity end_vel = {0};
+								Acceleration start_acc = {0};
+								Acceleration end_acc = {0};
+
+								// 或者设置非零的初始和末尾速度
+								// Velocity start_vel = {0.1f, 0.1f, 0, 0, 0, 0};  // 初始有小速度
+								// Velocity end_vel = {0.1f, 0.1f, 0, 0, 0, 0};    // 末尾有小速度
+
+								// 初始化CDPR系统
+								//	cdpr_init(&start, &end);
+								cdpr_init(&start_pose, &start_vel, &start_acc, &end_pose, &end_vel, &end_acc);
+							}
+							
+							if(step_mode_2 < STEP_NUM)
+							{
+								
+								Joint_Position_Control(motor_angle,0.025,0.1,step_mode_2);
+								step_mode_2++;
+
+							}
+							else
+							{
+								motor_relax();
+							}
+					}
+					else
+					{
+						motor_relax();
+					}
+						break;
+        case 3:
+            // 模式3的任务逻辑
+           //
+					if((step_mode_1 == 0) && (step_mode_2 == 0))
+					{
+						if(step_mode_3 == 0)
 						{
 							//初次进入任务时，把其他标志位清零
-							step_mode_1 = 0;
-							step_mode_3 = 0;
+							//step_mode_1 = 0;
+							//step_mode_2 = 0;
 							
 							//初次进入时，计算轨迹路径
 							Pose start_pose = {0.25f, 0.25f, 0.135f, 0, 0, 0};
 							Pose end_pose = {0.25f, 0.25f, 0.335f, 0, 0, 0};
-
-							// 初始速度和加速度为零
-							Velocity start_vel = {0};
-							Velocity end_vel = {0};
-							Acceleration start_acc = {0};
-							Acceleration end_acc = {0};
-
-							// 或者设置非零的初始和末尾速度
-							// Velocity start_vel = {0.1f, 0.1f, 0, 0, 0, 0};  // 初始有小速度
-							// Velocity end_vel = {0.1f, 0.1f, 0, 0, 0, 0};    // 末尾有小速度
-
-							// 初始化CDPR系统
-							//	cdpr_init(&start, &end);
-							cdpr_init(&start_pose, &start_vel, &start_acc, &end_pose, &end_vel, &end_acc);
-						}
-						
-						if(step_mode_2 < STEP_NUM)
-						{
-							
-							Joint_Position_Control(motor_angle,0.025,0.1,step_mode_2);
-							step_mode_2++;
-
-						}
-						else
-						{
-							//motor_relax();
-						}
-            break;
-        case 3:
-            // 模式3的任务逻辑
-           //
-						if(step_mode_3 == 0)
-						{
-							//初次进入任务时，把其他标志位清零
-							step_mode_1 = 0;
-							step_mode_2 = 0;
-							
-							//初次进入时，计算轨迹路径
-							Pose start_pose = {-0.25f, -0.25f, 0.135f, 0, 0, 0};
-							Pose end_pose = {0.25f, 0.25f, 0.635f, 0, 0, 0};
 
 							// 初始速度和加速度为零
 							Velocity start_vel = {0};
@@ -319,14 +338,20 @@ void Task_Execute(void) {
 						}
 						else
 						{
-							//motor_relax();
+							motor_relax();
 						}
+					}
+					else
+					{
+						motor_relax();
+					}
             break;
         default:
             // 默认模式处理
             current_mode = 0;
             break;
     }
+	}
 }
 
 
@@ -341,9 +366,6 @@ void Key_Process(void) {
     Key_HandleEvents();
     
     // 如果任务运行中，执行任务逻辑
-	    if (Key_GetTaskState()) {
-        Task_Execute();
-    }
 }
 
 /**
@@ -365,5 +387,5 @@ uint8_t Key_GetCurrentMode(void) {
 }
 
 KeyTypeDef Key_scope(void) {
-		return key0;
+		return key1;
 }

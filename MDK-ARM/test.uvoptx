@@ -212,30 +212,25 @@
         <Ww>
           <count>10</count>
           <WinNumber>1</WinNumber>
-          <ItemText>key0</ItemText>
+          <ItemText>cstate</ItemText>
         </Ww>
         <Ww>
           <count>11</count>
           <WinNumber>1</WinNumber>
-          <ItemText>cstate</ItemText>
+          <ItemText>cmode</ItemText>
         </Ww>
         <Ww>
           <count>12</count>
           <WinNumber>1</WinNumber>
-          <ItemText>cmode</ItemText>
+          <ItemText>step_mode_1</ItemText>
         </Ww>
         <Ww>
           <count>13</count>
           <WinNumber>1</WinNumber>
-          <ItemText>step_mode_1</ItemText>
-        </Ww>
-        <Ww>
-          <count>14</count>
-          <WinNumber>1</WinNumber>
           <ItemText>step_mode_2</ItemText>
         </Ww>
         <Ww>
-          <count>15</count>
+          <count>14</count>
           <WinNumber>1</WinNumber>
           <ItemText>step_mode_3</ItemText>
         </Ww>
@@ -260,6 +255,11 @@
           <count>3</count>
           <WinNumber>2</WinNumber>
           <ItemText>key1</ItemText>
+        </Ww>
+        <Ww>
+          <count>4</count>
+          <WinNumber>2</WinNumber>
+          <ItemText>k1</ItemText>
         </Ww>
       </WatchWindow2>
       <MemoryWindow1>
@@ -372,7 +372,7 @@
       <GroupNumber>2</GroupNumber>
       <FileNumber>3</FileNumber>
       <FileType>1</FileType>
-      <tvExp>0</tvExp>
+      <tvExp>1</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
       <PathWithFileName>..\Core\Src\key_state_machine.c</PathWithFileName>

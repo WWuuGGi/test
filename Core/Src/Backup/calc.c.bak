@@ -307,20 +307,5 @@ void cdpr_get_current_motor_angles(uint16_t time_idx, float32_t angles[CABLE_NUM
     }
 }
 		
-float get_current_angles(uint8_t step)
-{
-	float angles[8];
-	
-	angles[0] = motor_angle[0][step];
-	angles[1] = motor_angle[1][step];
-	angles[2] = motor_angle[2][step];
-	angles[3] = motor_angle[3][step];
-	angles[4] = motor_angle[4][step];
-	angles[5] = motor_angle[5][step];
-	angles[6] = motor_angle[6][step];
-	angles[7] = motor_angle[7][step];
 
-	return angles;
-
-}
 

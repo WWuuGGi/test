@@ -34,9 +34,8 @@ static float TOLERANCE   = -5.0f;  // 容差 °
 
 // 电机零点自检
 int Joint_Zero_OK() {
-    // 检查所有零位是否都在(-180, 180)范围内
     // 一般来说 left_ID0 零位不可能等于 right_ID0 零位
-    if ((zero_left_ID0  > -180 && zero_left_ID0  < 180) && zero_left_ID0 != 0 )
+    if (fabsf(zero_left_ID0) > 1e-6)
 			{
         return 1;  // 如果所有零位都在范围内，则返回 true
 			}
@@ -71,12 +70,12 @@ void Joint_Zero_init_Type1()
       }
 
   // 自检成功 红灯熄灭
-  modify_speed_cmd(&MotorA1_send_left,  0, 0);    
+//  modify_speed_cmd(&MotorA1_send_left,  0, 0);    
 //  modify_speed_cmd(&MotorA1_send_right, 0, 0);
 //  osDelay(1);
 //  modify_speed_cmd(&MotorA1_send_left,  1, 0);    
 //  modify_speed_cmd(&MotorA1_send_right, 1, 0);
-  HAL_GPIO_WritePin(GPIOF,GPIO_PIN_10,GPIO_PIN_SET); //
+//  HAL_GPIO_WritePin(GPIOF,GPIO_PIN_10,GPIO_PIN_SET); //
 
 }
 

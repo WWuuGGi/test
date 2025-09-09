@@ -27,9 +27,9 @@ static uint8_t Key_ReadPin(KeyTypeDef* key);
 static void Key_StateMachine(KeyTypeDef* key);
 static void Key_HandleEvents(void);
 
-static uint16_t step_mode_1 = 0;
-static uint16_t step_mode_2 = 0;
-static uint16_t step_mode_3 = 0;
+uint16_t step_mode_1 = 0;
+uint16_t step_mode_2 = 0;
+uint16_t step_mode_3 = 0;
 /**
   * @brief  初始化按键
   * @param  无
@@ -145,16 +145,17 @@ static void Key_StateMachine(KeyTypeDef* key) {
   */
 static void Key_HandleEvents(void) {
     // 处理K0按键事件 - 控制任务启动/停止
-    if (key0.event == KEY_EVENT_CLICK) {
+    if (key0.event == KEY_EVENT_LONG_PRESS) {
         if (task_running) {
             // 急停任务
             task_running = 0;
+					current_mode = 0;
             // 急停相关代码
             step_mode_1 = 0;
 						step_mode_2 = 0;
 						step_mode_3 = 0;
 						//调成零力矩模式，等待拖拽回中
-						motor_relax();
+						//motor_relax();
 					
         } else {
             // 启动任务
@@ -164,7 +165,7 @@ static void Key_HandleEvents(void) {
 						step_mode_2 = 0;
 						step_mode_3 = 0;
 						//调成零力矩模式，等待接收指令
-						motor_relax();
+						//motor_relax();
             
         }
     }
@@ -191,7 +192,7 @@ static void Key_HandleEvents(void) {
   * @retval 无
   * @note   根据当前模式执行不同的任务逻辑
   */
-static void Task_Execute(void) {
+void Task_Execute(void) {
     switch (current_mode) {
         case 1:
             // 模式1的任务逻辑
@@ -221,15 +222,24 @@ static void Task_Execute(void) {
 							cdpr_init(&start_pose, &start_vel, &start_acc, &end_pose, &end_vel, &end_acc);
 						}
 						
+//						while((zero_left_ID0*zero_left_ID0 <= 0.000000000001f))
+//						{
+//							//以上电位置为零点
+//							modify_torque_cmd(&MotorA1_send_left, 0, 0);   
+//							unitreeA1_rxtx(&huart1);
+//							zero_left_ID0  = (float) MotorA1_recv_left_id00.Pos ;
+
+//						}
 						if(step_mode_1 < STEP_NUM)
 						{
 							
 							Joint_Position_Control(motor_angle,0.025,0.1,step_mode_1);
 							step_mode_1++;
+
 						}
 						else
 						{
-							motor_relax();
+							//motor_relax();
 						}
             break;
         case 2:
@@ -242,8 +252,8 @@ static void Task_Execute(void) {
 							step_mode_3 = 0;
 							
 							//初次进入时，计算轨迹路径
-							Pose start_pose = {-0.25f, -0.25f, 0.135f, 0, 0, 0};
-							Pose end_pose = {0.25f, 0.25f, 0.635f, 0, 0, 0};
+							Pose start_pose = {0.25f, 0.25f, 0.135f, 0, 0, 0};
+							Pose end_pose = {0.25f, 0.25f, 0.335f, 0, 0, 0};
 
 							// 初始速度和加速度为零
 							Velocity start_vel = {0};
@@ -265,10 +275,11 @@ static void Task_Execute(void) {
 							
 							Joint_Position_Control(motor_angle,0.025,0.1,step_mode_2);
 							step_mode_2++;
+
 						}
 						else
 						{
-							motor_relax();
+							//motor_relax();
 						}
             break;
         case 3:
@@ -304,10 +315,11 @@ static void Task_Execute(void) {
 							
 							Joint_Position_Control(motor_angle,0.025,0.1,step_mode_3);
 							step_mode_3++;
+
 						}
 						else
 						{
-							motor_relax();
+							//motor_relax();
 						}
             break;
         default:
@@ -329,7 +341,7 @@ void Key_Process(void) {
     Key_HandleEvents();
     
     // 如果任务运行中，执行任务逻辑
-    if (task_running) {
+	    if (Key_GetTaskState()) {
         Task_Execute();
     }
 }

@@ -30,6 +30,7 @@
 #include <stdio.h>
 #include "calc.h"
 #include "key_state_machine.h"
+#include "main.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -90,6 +91,8 @@ float speed[t_num];
 uint8_t id = 0;
 uint8_t cstate;
 uint8_t cmode;
+KeyTypeDef k1;
+//uint8_t first_init = 1;
 
 //typedef struct {
 //    float pos_cmd;       // 期望位置(度)
@@ -346,10 +349,12 @@ int main(void)
 //	//	cdpr_init(&start, &end);
 //	cdpr_init(&start_pose, &start_vel, &start_acc, &end_pose, &end_vel, &end_acc);
   
-	KeyTypeDef k0;
+
+	//Joint_Zero_init_Type1();
 	
 	HAL_TIM_Base_Start_IT(&htim2);
 	
+	//HAL_TIM_Base_Stop_IT(&htim2);
 	
 
   /* USER CODE END 2 */
@@ -362,14 +367,28 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
 		
-
-		
-		//pos_spline(position,60.0f,5.0f);//pos xf tf
-		
 		cstate = Key_GetTaskState();
 		cmode = Key_GetCurrentMode();
+	
+		if (cstate) {
+      //刷新标志位，做相关计算等  
+			if(cmode == 0)
+			{
+				//标记零点函数
+				//Joint_Zero_init_Type1();
+			}
+			
+			Task_Execute();
+			HAL_Delay(10);
+    }
+		else
+		{
+			motor_relax();
+		}
 		
-		k0 = Key_scope();
+		//pos_spline(position,60.0f,5.0f);//pos xf tf
+	
+		k1 = Key_scope();
 //		printf("raw_state    = %d\r\n",k0.state);
 //		printf("stable_state = %d\r\n",k0.stable_pin_state);
 //		printf("click_count  = %d\r\n",k0.click_count);
