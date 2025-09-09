@@ -34,12 +34,12 @@ static float TOLERANCE   = -5.0f;  // 容差 °
 
 // 电机零点自检
 int Joint_Zero_OK() {
-    // 一般来说 left_ID0 零位不可能等于 right_ID0 零位
-    if (fabsf(zero_left_ID0) > 1e-6)
+    
+    if (fabsf(zero_left_ID0) <= 1e-6)
 			{
-        return 1;  // 如果所有零位都在范围内，则返回 true
+        return 0;  //所有零位没有被设置，返回false
 			}
-    return 0;  // 否则返回 false
+    return 1;  // 否则返回 true
 }
 
 // 电机零点获取 (初始位置 = 上电位置)
@@ -170,19 +170,13 @@ void Joint_Position_Control(float Pos_Front[][STEP_NUM],float kp,float kw,uint16
 }
 
 
-void Joint_PW_Control(float Pos_Front,float Omega,uint8_t id,float kp,float kw)//, float Pos_Back
+void Joint_PW_Control(float Pos_Front[][STEP_NUM],float Omega[][STEP_NUM],float kp,float kw,uint16_t step)//, float Pos_Back
 {   
     // 角度 限幅处理
-    LIMIT_RANGE(Pos_Front, -400, +400);
+//    LIMIT_RANGE(Pos_Front, -400, +400);
     //LIMIT_RANGE(Pos_Back,  -79, +19);
-	if (id == 0)
-	{
-    modify_PW_cmd(&MotorA1_send_left,id, (float) Pos_Front + zero_left_ID0,Omega, kp, kw);  // 0.005 0.5     0.006 1.0
-	}
-	else if (id == 1)
-	{
-		modify_PW_cmd(&MotorA1_send_left,id, (float) Pos_Front + zero_left_ID1,Omega, kp, kw); 
-	}
+    modify_PW_cmd(&MotorA1_send_left,0, (float) Pos_Front[0][step] + zero_left_ID0,Omega[0][step], kp, kw);  // 0.005 0.5     0.006 1.0
+		//modify_PW_cmd(&MotorA1_send_left,id, (float) Pos_Front[1][step] + zero_left_ID1,Omega[1][step], kp, kw); 
 		//modify_pos_cmd(&MotorA1_send_right,0,(float) +Pos_Front + zero_right_ID0, 0.006,1.0); 
     unitreeA1_rxtx(&huart1); 
     //unitreeA1_rxtx(&huart6);

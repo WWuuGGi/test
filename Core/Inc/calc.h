@@ -71,13 +71,14 @@ static void calculate_poly5_coeff(Poly5Coeff *coeff,
 #define MOTOR_PULLEY_RADIUS 0.0475f  // 电机 pulley 半径，单位：米 (47.5mm)
 
 // 外部全局变量声明
-extern float32_t t_vec[STEP_NUM];                  // 时间向量数组
-extern Pose pose_trj[STEP_NUM];                    // 位姿轨迹数组（位置+姿态）
-extern Velocity v_trj[STEP_NUM];                   // 速度轨迹数组（线速度+角速度）
-extern float32_t cable_length[CABLE_NUM][STEP_NUM]; // 绳索长度数组（每个时刻的长度）
-extern float32_t cable_velocity[CABLE_NUM][STEP_NUM]; // 绳索速度数组（每个时刻的速度）
+//extern float32_t t_vec[STEP_NUM];                  // 时间向量数组
+//extern Pose pose_trj[STEP_NUM];                    // 位姿轨迹数组（位置+姿态）
+//extern Velocity v_trj[STEP_NUM];                   // 速度轨迹数组（线速度+角速度）
+//extern float32_t cable_length[CABLE_NUM][STEP_NUM]; // 绳索长度数组（每个时刻的长度）
+//extern float32_t cable_velocity[CABLE_NUM][STEP_NUM]; // 绳索速度数组（每个时刻的速度）
 extern float32_t cable_initial_length[CABLE_NUM];  // 每条绳索的初始长度(零点参考)
-extern float32_t motor_angle[CABLE_NUM][STEP_NUM]; // 电机角度轨迹(弧度)
+extern float32_t motor_angle[CABLE_NUM][STEP_NUM]; // 电机角度轨迹(角度)
+extern float32_t motor_omega[CABLE_NUM][STEP_NUM]; // 电机角速度(角度)
 
 // 末端执行器物理参数（外部可见）
 extern const float32_t mass_ee;    // 末端执行器质量

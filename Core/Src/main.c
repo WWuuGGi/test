@@ -83,10 +83,10 @@ float spd = 0.0;
 
 //float tf = 10.0f;
 //float xf = -60.0f;
-float dt = 0.005;
-const int t_num = 1000;
-float position[t_num];
-float speed[t_num];
+//float dt = 0.005;
+//const int t_num = 1000;
+//float position[t_num];
+//float speed[t_num];
 
 uint8_t id = 0;
 uint8_t cstate;
@@ -189,101 +189,101 @@ void pos_calc(float * pos,float * speed, float xf, float tf)
 
 
 //--------------------------------------------------
-void pos_spline(float * pos,float xf,float tf)
-{
+//void pos_spline(float * pos,float xf,float tf)
+//{
 
-	if (j < t_num)
-		{
-			if ((j == 0) &&(k == 0))
-			{
-				pos_calc(pos,speed,xf,tf);
-//				data_logging = 1;  // 开始记录数据
-//				error_idx = 0;     // 重置缓冲区
-			}
-			
-//			float* zero_point = NULL;
+//	if (j < t_num)
+//		{
+//			if ((j == 0) &&(k == 0))
+//			{
+//				pos_calc(pos,speed,xf,tf);
+////				data_logging = 1;  // 开始记录数据
+////				error_idx = 0;     // 重置缓冲区
+//			}
 //			
-//			if (id == 0)
+////			float* zero_point = NULL;
+////			
+////			if (id == 0)
+////			{
+////				zero_point = &zero_left_ID0;
+////			}
+////			else if (id == 1)
+////			{
+////				zero_point = &zero_left_ID1;
+////			}
+//				
+//			
+//			while((zero_left_ID0*zero_left_ID0 <= 0.000000000001f) || (zero_left_ID1*zero_left_ID1 <= 0.000000000001f))
 //			{
-//				zero_point = &zero_left_ID0;
-//			}
-//			else if (id == 1)
-//			{
-//				zero_point = &zero_left_ID1;
-//			}
-				
-			
-			while((zero_left_ID0*zero_left_ID0 <= 0.000000000001f) || (zero_left_ID1*zero_left_ID1 <= 0.000000000001f))
-			{
-				//以上电位置为零点
-				modify_torque_cmd(&MotorA1_send_left, 0, 0);   
-				unitreeA1_rxtx(&huart1);
-				modify_torque_cmd(&MotorA1_send_left, 1, 0);   
-				unitreeA1_rxtx(&huart1);
-				
-				zero_left_ID0  = (float) MotorA1_recv_left_id00.Pos ;
-				zero_left_ID1  = (float) MotorA1_recv_left_id01.Pos ;
+//				//以上电位置为零点
+//				modify_torque_cmd(&MotorA1_send_left, 0, 0);   
+//				unitreeA1_rxtx(&huart1);
+//				modify_torque_cmd(&MotorA1_send_left, 1, 0);   
+//				unitreeA1_rxtx(&huart1);
+//				
+//				zero_left_ID0  = (float) MotorA1_recv_left_id00.Pos ;
+//				zero_left_ID1  = (float) MotorA1_recv_left_id01.Pos ;
 
-				HAL_Delay(1);
-			}
-			
-			
-			if (k < 1)
-			{
-				Joint_PW_Control(position[j],speed[j],0,0.022f,0.1f);//0.025 1.0   0.015 0.3
-				Joint_PW_Control(position[j],speed[j],1,0.022f,0.1f);//0.025 1.0   0.015 0.3
-				//Joint_Position_Control(position[j],0.022f,1.0f);//0.025 1.0
-				// 计算并记录误差
-				
 //				HAL_Delay(1);
-//				Joint_PW_Control(position[j],speed[j],0.006f,0.50f);
-//				if (data_logging)
-//				{
-//						calculate_errors(position[j], speed[j]);
-//				}
-				
-//				if (id == 0)
-//				{
-//					ang = (float) MotorA1_recv_left_id00.Pos - zero_left_ID0;
-//					spd = MotorA1_recv_left_id00.W - MotorA1_send_left.W;
-//				}
-//				else if(id == 1)
-//				{
-//					ang = (float) MotorA1_recv_left_id01.Pos - zero_left_ID1;
-//					spd = MotorA1_recv_left_id01.W - MotorA1_send_left.W;
-//				}
-				k++;
-				HAL_Delay(5);
-			}
-			else
-			{
-				j++;
-				k = 0;
-				HAL_GPIO_TogglePin(GPIOF,GPIO_PIN_10);
-			}
-		}
-		else
-		{
-			modify_torque_cmd(&MotorA1_send_left, 0, 0);    
-			unitreeA1_rxtx(&huart1);   
-			modify_torque_cmd(&MotorA1_send_left, 1, 0);    
-			unitreeA1_rxtx(&huart1);               			
-//				if (id == 0)
-//				{
-//					ang = (float) MotorA1_recv_left_id00.Pos - zero_left_ID0;
-//					spd = MotorA1_recv_left_id00.W - MotorA1_send_left.W;
-//				}
-//				else if(id == 1)
-//				{
-//					ang = (float) MotorA1_recv_left_id01.Pos - zero_left_ID1;
-//					spd = MotorA1_recv_left_id01.W - MotorA1_send_left.W;
-//				}
-//			if (data_logging)
-//			{
-//					data_logging = 0;  // 停止记录
 //			}
-		}
-}
+//			
+//			
+//			if (k < 1)
+//			{
+//				Joint_PW_Control(position[j],speed[j],0,0.022f,0.1f);//0.025 1.0   0.015 0.3
+//				Joint_PW_Control(position[j],speed[j],1,0.022f,0.1f);//0.025 1.0   0.015 0.3
+//				//Joint_Position_Control(position[j],0.022f,1.0f);//0.025 1.0
+//				// 计算并记录误差
+//				
+////				HAL_Delay(1);
+////				Joint_PW_Control(position[j],speed[j],0.006f,0.50f);
+////				if (data_logging)
+////				{
+////						calculate_errors(position[j], speed[j]);
+////				}
+//				
+////				if (id == 0)
+////				{
+////					ang = (float) MotorA1_recv_left_id00.Pos - zero_left_ID0;
+////					spd = MotorA1_recv_left_id00.W - MotorA1_send_left.W;
+////				}
+////				else if(id == 1)
+////				{
+////					ang = (float) MotorA1_recv_left_id01.Pos - zero_left_ID1;
+////					spd = MotorA1_recv_left_id01.W - MotorA1_send_left.W;
+////				}
+//				k++;
+//				HAL_Delay(5);
+//			}
+//			else
+//			{
+//				j++;
+//				k = 0;
+//				HAL_GPIO_TogglePin(GPIOF,GPIO_PIN_10);
+//			}
+//		}
+//		else
+//		{
+//			modify_torque_cmd(&MotorA1_send_left, 0, 0);    
+//			unitreeA1_rxtx(&huart1);   
+//			modify_torque_cmd(&MotorA1_send_left, 1, 0);    
+//			unitreeA1_rxtx(&huart1);               			
+////				if (id == 0)
+////				{
+////					ang = (float) MotorA1_recv_left_id00.Pos - zero_left_ID0;
+////					spd = MotorA1_recv_left_id00.W - MotorA1_send_left.W;
+////				}
+////				else if(id == 1)
+////				{
+////					ang = (float) MotorA1_recv_left_id01.Pos - zero_left_ID1;
+////					spd = MotorA1_recv_left_id01.W - MotorA1_send_left.W;
+////				}
+////			if (data_logging)
+////			{
+////					data_logging = 0;  // 停止记录
+////			}
+//		}
+//}
 
 
 /* USER CODE END PFP */
@@ -350,7 +350,7 @@ int main(void)
 //	cdpr_init(&start_pose, &start_vel, &start_acc, &end_pose, &end_vel, &end_acc);
   
 
-	//Joint_Zero_init_Type1();
+	Joint_Zero_init_Type1();
 	
 	HAL_TIM_Base_Start_IT(&htim2);
 	
@@ -374,10 +374,10 @@ int main(void)
       //刷新标志位，做相关计算等  
 			if(cmode == 0)
 			{
+				zero_left_ID0 = 0.0f;
 				//标记零点函数
-				//Joint_Zero_init_Type1();
 			}
-			
+			Joint_Zero_init_Type1();
 			Task_Execute();
 			HAL_Delay(10);
     }

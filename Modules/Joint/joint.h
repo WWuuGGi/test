@@ -63,7 +63,7 @@ void Joint_Monitor(void);
 // 底盘位置控制
 void Joint_Position_Control(float Pos_Front[][STEP_NUM],float kp,float kw,uint16_t step);
 
-void Joint_PW_Control(float Pos_Front,float Omega,uint8_t id,float kp,float kw);
+void Joint_PW_Control(float Pos_Front[][STEP_NUM],float Omega[][STEP_NUM],float kp,float kw,uint16_t step);
 
 // 底盘速度控制
 void Joint_Speed_Control(float Speed_Front);//, float Speed_Back

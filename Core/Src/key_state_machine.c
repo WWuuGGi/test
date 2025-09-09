@@ -72,7 +72,7 @@ static void Key_StateMachine(KeyTypeDef* key) {
             key->stable_pin_state = raw_pin_state;  // 更新稳定状态
             key->state_change_time = 0;             // 重置消抖计时
         }
-//        return;  // 消抖期间不处理状态切换
+        //return;  // 消抖期间不处理状态切换
     } else {
         // 状态未变化，重置消抖计时
         key->state_change_time = 0;
@@ -116,6 +116,8 @@ static void Key_StateMachine(KeyTypeDef* key) {
                 }
                 key->state = KEY_STATE_IDLE;
                 key->click_count = 0;
+								//添加重置施放时间
+								key->release_time = 0; // 重置释放时间，避免残留值干扰
             }
             // 双击窗口内再次按下：计数+1
             else if (pin_state) {
@@ -235,10 +237,10 @@ void Task_Execute(void) {
 //							zero_left_ID0  = (float) MotorA1_recv_left_id00.Pos ;
 
 //						}
-						if(step_mode_1 < STEP_NUM)
+						if(step_mode_1 < STEP_NUM && task_running)
 						{
 							
-							Joint_Position_Control(motor_angle,0.025,0.1,step_mode_1);
+							Joint_PW_Control(motor_angle,motor_omega,0.015f,0.1f,step_mode_1);
 							//modify_pos_cmd();
 							step_mode_1++;
 
@@ -283,10 +285,10 @@ void Task_Execute(void) {
 								cdpr_init(&start_pose, &start_vel, &start_acc, &end_pose, &end_vel, &end_acc);
 							}
 							
-							if(step_mode_2 < STEP_NUM)
+							if(step_mode_2 < STEP_NUM && task_running)
 							{
 								
-								Joint_Position_Control(motor_angle,0.025,0.1,step_mode_2);
+								Joint_PW_Control(motor_angle,motor_omega,0.015f,0.1f,step_mode_2);
 								step_mode_2++;
 
 							}
@@ -313,7 +315,7 @@ void Task_Execute(void) {
 							
 							//初次进入时，计算轨迹路径
 							Pose start_pose = {0.25f, 0.25f, 0.135f, 0, 0, 0};
-							Pose end_pose = {0.25f, 0.25f, 0.335f, 0, 0, 0};
+							Pose end_pose = {0.25f, 0.25f, 0.635f, 0, 0, 0};
 
 							// 初始速度和加速度为零
 							Velocity start_vel = {0};
@@ -330,10 +332,10 @@ void Task_Execute(void) {
 							cdpr_init(&start_pose, &start_vel, &start_acc, &end_pose, &end_vel, &end_acc);
 						}
 						
-						if(step_mode_3 < STEP_NUM)
+						if(step_mode_3 < STEP_NUM && task_running)
 						{
 							
-							Joint_Position_Control(motor_angle,0.025,0.1,step_mode_3);
+							Joint_PW_Control(motor_angle,motor_omega,0.015f,0.1f,step_mode_3);
 							step_mode_3++;
 
 						}
