@@ -13,10 +13,15 @@
 #include "stm32f4xx_hal.h"
 
 // 按键引脚定义，请根据实际硬件修改
-#define K0_GPIO_Port GPIOE
-#define K0_Pin GPIO_PIN_4
-#define K1_GPIO_Port GPIOE
-#define K1_Pin GPIO_PIN_3
+#define K1_GPIO_Port GPIOF
+#define K1_Pin GPIO_PIN_1
+#define K2_GPIO_Port GPIOF
+#define K2_Pin GPIO_PIN_2
+#define K3_GPIO_Port GPIOF
+#define K3_Pin GPIO_PIN_3
+#define K4_GPIO_Port GPIOF
+#define K4_Pin GPIO_PIN_4
+
 
 // 按键参数定义
 #define KEY_LONG_PRESS_MS 1000    // 长按判定时间(ms)
@@ -63,7 +68,10 @@ void Key_Process(void);
 void Task_Execute(void);
 uint8_t Key_GetTaskState(void);
 uint8_t Key_GetCurrentMode(void);
-KeyTypeDef Key_scope(void);
+KeyTypeDef Key1_scope(void);
+KeyTypeDef Key2_scope(void);
+KeyTypeDef Key3_scope(void);
+KeyTypeDef Key4_scope(void);
 
 
 #endif /* __KEY_STATE_MACHINE_H */

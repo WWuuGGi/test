@@ -15,8 +15,10 @@
 
 
 // 按键实例化
-static KeyTypeDef key0 = {K0_GPIO_Port, K0_Pin, KEY_STATE_IDLE, 0, 0, 0, 0, KEY_EVENT_NONE,0,0};
 static KeyTypeDef key1 = {K1_GPIO_Port, K1_Pin, KEY_STATE_IDLE, 0, 0, 0, 0, KEY_EVENT_NONE,0,0};
+static KeyTypeDef key2 = {K2_GPIO_Port, K2_Pin, KEY_STATE_IDLE, 0, 0, 0, 0, KEY_EVENT_NONE,0,0};
+static KeyTypeDef key3 = {K3_GPIO_Port, K3_Pin, KEY_STATE_IDLE, 0, 0, 0, 0, KEY_EVENT_NONE,0,0};
+static KeyTypeDef key4 = {K4_GPIO_Port, K4_Pin, KEY_STATE_IDLE, 0, 0, 0, 0, KEY_EVENT_NONE,0,0};
 
 // 全局变量
 static uint8_t task_running = 0;    // 任务运行标志
@@ -146,8 +148,8 @@ static void Key_StateMachine(KeyTypeDef* key) {
   * @retval 无
   */
 static void Key_HandleEvents(void) {
-    // 处理K0按键事件 - 控制任务启动/停止
-    if (key0.event == KEY_EVENT_LONG_PRESS) {
+    // 处理K1按键事件 - 控制任务启动/停止
+    if (key4.event == KEY_EVENT_LONG_PRESS) {
         if (task_running) {
             // 急停任务
             task_running = 0;
@@ -354,8 +356,11 @@ void Task_Execute(void) {
   * @retval 无
   */
 void Key_Process(void) {
-    Key_StateMachine(&key0);
     Key_StateMachine(&key1);
+    Key_StateMachine(&key2);
+		Key_StateMachine(&key3);
+		Key_StateMachine(&key4);
+	
     Key_HandleEvents();
     
     // 如果任务运行中，执行任务逻辑
@@ -379,6 +384,18 @@ uint8_t Key_GetCurrentMode(void) {
     return current_mode;
 }
 
-KeyTypeDef Key_scope(void) {
+KeyTypeDef Key1_scope(void) {
 		return key1;
+}
+
+KeyTypeDef Key2_scope(void) {
+		return key2;
+}
+
+KeyTypeDef Key3_scope(void) {
+		return key3;
+}
+
+KeyTypeDef Key4_scope(void) {
+		return key4;
 }

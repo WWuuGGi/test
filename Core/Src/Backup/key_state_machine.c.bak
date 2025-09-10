@@ -212,7 +212,7 @@ void Task_Execute(void) {
 							
 							//初次进入时，计算轨迹路径
 							Pose start_pose = {0.25f, 0.25f, 0.135f, 0, 0, 0};
-							Pose end_pose = {0.25f, 0.25f, 0.335f, 0, 0, 0};
+							Pose end_pose = {0.25f, 0.25f, 0.635f, 0, 0, 0};
 
 							// 初始速度和加速度为零
 							Velocity start_vel = {0};
