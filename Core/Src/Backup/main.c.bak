@@ -92,6 +92,10 @@ uint8_t id = 0;
 uint8_t cstate;
 uint8_t cmode;
 KeyTypeDef k1;
+KeyTypeDef k2;
+KeyTypeDef k3;
+KeyTypeDef k4;
+
 //uint8_t first_init = 1;
 
 //typedef struct {
@@ -352,7 +356,7 @@ int main(void)
 //	cdpr_init(&start_pose, &start_vel, &start_acc, &end_pose, &end_vel, &end_acc);
   
 
-	Joint_Zero_init_Type1();
+	//Joint_Zero_init_Type1();
 	
 	HAL_TIM_Base_Start_IT(&htim2);
 	
@@ -385,7 +389,7 @@ int main(void)
 				zero_group4_ID0 = 0.0f;
 				zero_group4_ID1 = 0.0f;
 			}
-			Joint_Zero_init_Type1();
+			//Joint_Zero_init_Type1();
 			Task_Execute();
 			HAL_Delay(10);
     }
@@ -396,7 +400,10 @@ int main(void)
 		
 		//pos_spline(position,60.0f,5.0f);//pos xf tf
 	
-		k1 = Key_scope();
+		k1 = Key1_scope();
+		k2 = Key2_scope();
+		k3 = Key3_scope();
+		k4 = Key4_scope();
 //		printf("raw_state    = %d\r\n",k0.state);
 //		printf("stable_state = %d\r\n",k0.stable_pin_state);
 //		printf("click_count  = %d\r\n",k0.click_count);

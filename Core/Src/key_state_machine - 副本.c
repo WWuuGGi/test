@@ -15,10 +15,10 @@
 
 
 // 按键实例化
-static KeyTypeDef key1 = {K1_GPIO_Port, K1_Pin, KEY_STATE_IDLE, KEY_EVENT_NONE,0};
-static KeyTypeDef key2 = {K2_GPIO_Port, K2_Pin, KEY_STATE_IDLE, KEY_EVENT_NONE,0};
-static KeyTypeDef key3 = {K3_GPIO_Port, K3_Pin, KEY_STATE_IDLE, KEY_EVENT_NONE,0};
-static KeyTypeDef key4 = {K4_GPIO_Port, K4_Pin, KEY_STATE_IDLE, KEY_EVENT_NONE,0};
+static KeyTypeDef key1 = {K1_GPIO_Port, K1_Pin, KEY_STATE_IDLE, 0, 0, 0, 0, KEY_EVENT_NONE,0,0};
+static KeyTypeDef key2 = {K2_GPIO_Port, K2_Pin, KEY_STATE_IDLE, 0, 0, 0, 0, KEY_EVENT_NONE,0,0};
+static KeyTypeDef key3 = {K3_GPIO_Port, K3_Pin, KEY_STATE_IDLE, 0, 0, 0, 0, KEY_EVENT_NONE,0,0};
+static KeyTypeDef key4 = {K4_GPIO_Port, K4_Pin, KEY_STATE_IDLE, 0, 0, 0, 0, KEY_EVENT_NONE,0,0};
 
 // 全局变量
 static uint8_t task_running = 0;    // 任务运行标志
@@ -58,99 +58,86 @@ static uint8_t Key_ReadPin(KeyTypeDef* key) {
   * @retval 无
   */
 static void Key_StateMachine(KeyTypeDef* key) {
-    uint8_t pin_state = Key_ReadPin(key);
-//    uint32_t current_time = HAL_GetTick();
+    uint8_t raw_pin_state = Key_ReadPin(key);
+    uint32_t current_time = HAL_GetTick();
     
     key->event = KEY_EVENT_NONE;
 
-//    // 按键消抖：检测到引脚状态变化后，等待KEY_DEBOUNCE_MS再确认
-//    if (raw_pin_state != key->stable_pin_state) {
-//        // 首次检测到变化，记录时间
-//        if (key->state_change_time == 0) {
-//            key->state_change_time = current_time;
-//        }
-//        // 等待消抖时间后，确认状态变化
-//        else if (current_time - key->state_change_time >= KEY_DEBOUNCE_MS) {
-//            key->stable_pin_state = raw_pin_state;  // 更新稳定状态
-//            key->state_change_time = 0;             // 重置消抖计时
-//        }
-//        //return;  // 消抖期间不处理状态切换
-//    } else {
-//        // 状态未变化，重置消抖计时
-//        key->state_change_time = 0;
-//    }
+    // 按键消抖：检测到引脚状态变化后，等待KEY_DEBOUNCE_MS再确认
+    if (raw_pin_state != key->stable_pin_state) {
+        // 首次检测到变化，记录时间
+        if (key->state_change_time == 0) {
+            key->state_change_time = current_time;
+        }
+        // 等待消抖时间后，确认状态变化
+        else if (current_time - key->state_change_time >= KEY_DEBOUNCE_MS) {
+            key->stable_pin_state = raw_pin_state;  // 更新稳定状态
+            key->state_change_time = 0;             // 重置消抖计时
+        }
+        //return;  // 消抖期间不处理状态切换
+    } else {
+        // 状态未变化，重置消抖计时
+        key->state_change_time = 0;
+    }
 
     // 以下使用消抖后的stable_pin_state进行状态判断
-//    uint8_t pin_state = key->stable_pin_state;
+    uint8_t pin_state = key->stable_pin_state;
 
     switch (key->state) {
         case KEY_STATE_IDLE:
-						if(pin_state == 1)//有按键按下
-									{
-											key->state = KEY_STATE_SURE;//转入状态1
-											key->event = KEY_EVENT_NONE;//空事件
-									}
-									else
-									{
-											key->event = KEY_EVENT_NONE;//空事件
-									}
-									break;
-        case KEY_STATE_SURE:
-            if(pin_state == 1)//确认和上次相同
-									{
-											key->state = KEY_STATE_PRESSED;//转入状态1
-											key->event = KEY_EVENT_PRESS;//按下事件
-											key->timecount = 0;//计数器清零
-									}
-									else
-									{
-											key->state = KEY_STATE_IDLE;//转入状态1
-											key->event = KEY_EVENT_NONE;//按下事件
-									}
-									break;
+            if (pin_state) {  // 按键按下（消抖后确认）
+                key->state = KEY_STATE_PRESSED;
+                key->press_time = current_time;
+                key->click_count = 0;  // 重置点击计数
+                key->long_press_flag = 0;
+            }
+            break;
 
         case KEY_STATE_PRESSED:
-						if(pin_state != 1)//按键释放，端口高电平
-									{
-											key->state = KEY_STATE_IDLE;//转入状态1
-											key->event = KEY_EVENT_RELEASED;//按下事件
-									}
-									else if((pin_state == 1)
-										&& (++key->timecount >= KEY_LONG_DOWN_DELAY)) 
-											//超过KEY_LONG_DOWN_DELAY没有释放
-									{
-											key->state = KEY_STATE_LONG_PRESS;//转入状态3
-											key->event = KEY_EVENT_LONG_PRESS;//长按事件
-											key->timecount = 0;//计数器清零
-									}
-									else
-									{
-											key->event = KEY_EVENT_NONE;//空事件
-									}
-									break;
+            // 检测长按（消抖后确认按下状态持续时间）
+            if (current_time - key->press_time >= KEY_LONG_PRESS_MS) {
+                key->state = KEY_STATE_LONG_PRESS;
+                key->long_press_flag = 1;
+                key->event = KEY_EVENT_LONG_PRESS;
+            }
+            // 检测释放（消抖后确认释放）
+            else if (!pin_state) {
+                key->state = KEY_STATE_RELEASED;
+                key->release_time = current_time;
+                key->click_count++;  // 计数+1（可能是单击或双击的第一次）
+            }
+            break;
+
+        case KEY_STATE_RELEASED:
+            // 双击窗口超时：确认单击/双击
+            if (current_time - key->release_time >= KEY_DOUBLE_CLICK_MS) {
+                if (key->click_count == 1) {
+                    key->event = KEY_EVENT_CLICK;  // 单击事件（快速响应）
+                } else if (key->click_count == 2) {
+                    key->event = KEY_EVENT_DOUBLE_CLICK;  // 双击事件
+                }
+                key->state = KEY_STATE_IDLE;
+                key->click_count = 0;
+								//添加重置施放时间
+								key->release_time = 0; // 重置释放时间，避免残留值干扰
+            }
+            // 双击窗口内再次按下：计数+1
+            else if (pin_state) {
+                key->state = KEY_STATE_PRESSED;
+                key->press_time = current_time;
+            }
+            break;
 
         case KEY_STATE_LONG_PRESS:
-								if(pin_state != 1)//按键释放，端口高电平
-                {
-											key->state = KEY_STATE_IDLE;//转入状态1
-											key->event = KEY_EVENT_RELEASED;//按下事件
-                }
-									else if((pin_state == 1)
-										&& (++key->timecount >= KEY_LONG_DOWN_DELAY)) 
-                    //超过KEY_LONG_DOWN_DELAY没有释放
-                {
-											key->event = KEY_EVENT_LONG_PRESS;//长按事件
-											key->timecount = 0;//计数器清零
-                }
-                else
-                {
-											key->event = KEY_EVENT_NONE;//空事件
-                }
-                break;
-
+            // 长按后释放
+            if (!pin_state) {
+                key->state = KEY_STATE_IDLE;
+                key->click_count = 0;
+            }
+            break;
 
         default:
-            //key->state = KEY_STATE_IDLE;
+            key->state = KEY_STATE_IDLE;
             break;
     }
 }
@@ -191,13 +178,13 @@ static void Key_HandleEvents(void) {
     // 只有任务运行时，才处理K1的模式切换
     if (task_running) {
         // 处理K1按键事件 - 模式切换
-        if (key1.event == KEY_EVENT_RELEASED) {
+        if (key1.event == KEY_EVENT_CLICK) {
             // 单击切换到模式1
             current_mode = 1;
-        } else if (key2.event == KEY_EVENT_RELEASED) {
+        } else if (key1.event == KEY_EVENT_DOUBLE_CLICK) {
             // 双击切换到模式2
             current_mode = 2;
-        } else if (key3.event == KEY_EVENT_RELEASED) {
+        } else if (key1.event == KEY_EVENT_LONG_PRESS) {
             // 长按切换到模式3
             current_mode = 3;
         }
