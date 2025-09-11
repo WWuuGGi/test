@@ -43,9 +43,10 @@ uint8_t STOP = False;
 int Joint_Zero_OK() {
     
     if (fabsf(zero_group1_ID0) <= 1e-6f || fabsf(zero_group1_ID1) <= 1e-6f ||
-				fabsf(zero_group2_ID0) <= 1e-6f || fabsf(zero_group2_ID1) <= 1e-6f || 
-				fabsf(zero_group3_ID0) <= 1e-6f || fabsf(zero_group3_ID1) <= 1e-6f ||
-				fabsf(zero_group4_ID0) <= 1e-6f || fabsf(zero_group4_ID1) <= 1e-6f)
+				fabsf(zero_group2_ID0) <= 1e-6f || fabsf(zero_group2_ID1) <= 1e-6f 
+		//||	fabsf(zero_group3_ID0) <= 1e-6f || fabsf(zero_group3_ID1) <= 1e-6f ||
+		//		fabsf(zero_group4_ID0) <= 1e-6f || fabsf(zero_group4_ID1) <= 1e-6f
+		)
 			{
         return 0;  //有零位没有被设置，返回false
 			}
@@ -74,32 +75,32 @@ void Joint_Zero_init_Type1()
 			//group2
 			// 读取ID0零点
 			modify_torque_cmd(&MotorA1_send_group2, 0, 0);
-			unitreeA1_rxtx(&huart2, 1);
-			zero_group2_ID0 = MotorA1_recv_group1_id0.Pos;
+			unitreeA1_rxtx(&huart2, 2);
+			zero_group2_ID0 = MotorA1_recv_group2_id0.Pos;
 			// 读取ID1零点
 			modify_torque_cmd(&MotorA1_send_group2, 1, 0);
-			unitreeA1_rxtx(&huart2, 1);
-			zero_group2_ID1 = MotorA1_recv_group1_id1.Pos;
+			unitreeA1_rxtx(&huart2, 2);
+			zero_group2_ID1 = MotorA1_recv_group2_id1.Pos;
 
 			//group3
 			// 读取ID0零点
 			modify_torque_cmd(&MotorA1_send_group3, 0, 0);
-			unitreeA1_rxtx(&huart3, 1);
-			zero_group3_ID0 = MotorA1_recv_group1_id0.Pos;
+			unitreeA1_rxtx(&huart3, 3);
+			zero_group3_ID0 = MotorA1_recv_group3_id0.Pos;
 			// 读取ID1零点
 			modify_torque_cmd(&MotorA1_send_group3, 1, 0);
-			unitreeA1_rxtx(&huart3, 1);
-			zero_group3_ID1 = MotorA1_recv_group1_id1.Pos;
+			unitreeA1_rxtx(&huart3, 3);
+			zero_group3_ID1 = MotorA1_recv_group3_id1.Pos;
 
 			//group4
 			// 读取ID0零点
 			modify_torque_cmd(&MotorA1_send_group4, 0, 0);
-			unitreeA1_rxtx(&huart6, 1);
-			zero_group4_ID0 = MotorA1_recv_group1_id0.Pos;
+			unitreeA1_rxtx(&huart6, 4);
+			zero_group4_ID0 = MotorA1_recv_group4_id0.Pos;
 			// 读取ID1零点
 			modify_torque_cmd(&MotorA1_send_group4, 1, 0);
-			unitreeA1_rxtx(&huart6, 1);
-			zero_group4_ID1 = MotorA1_recv_group1_id1.Pos;
+			unitreeA1_rxtx(&huart6, 4);
+			zero_group4_ID1 = MotorA1_recv_group4_id1.Pos;
 			
 			HAL_Delay(1);
 	}
