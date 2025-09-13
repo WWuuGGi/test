@@ -15,7 +15,7 @@ void go_pos_cmd(MotorCmd_t *cmd,uint8_t id,float pos ,float KP, float KW)
 	cmd->mode = 1;
 	cmd->K_P = KP;
 	cmd->K_W = KW;
-	cmd->Pos = pos*6.33f;//弧度制
+	cmd->Pos = pos*6.33f/ 180.0f * 3.1415926f;//角度制
 	cmd->W = 0;
 	cmd->T = 0;
 }
@@ -89,9 +89,9 @@ void extract_data(MotorData_t *motor_r)
 		motor_r->mode = motor_r->motor_recv_data.mode.status;
 		motor_r->Temp = motor_r->motor_recv_data.fbk.temp;
 		motor_r->MError = motor_r->motor_recv_data.fbk.MError;
-		motor_r->W = ((float)motor_r->motor_recv_data.fbk.speed / 256.0f) * 6.28318f;
-		motor_r->T = ((float)motor_r->motor_recv_data.fbk.torque) / 256.0f;
-		motor_r->Pos = 6.28318f * ((float)motor_r->motor_recv_data.fbk.pos) / 32768.0f;
+		motor_r->W = ((float)motor_r->motor_recv_data.fbk.speed / 256.0f) * 6.28318f * 6.33f;
+		motor_r->T = ((float)motor_r->motor_recv_data.fbk.torque) / 256.0f /6.33f;
+		motor_r->Pos = 6.28318f * ((float)motor_r->motor_recv_data.fbk.pos) / 32768.0f * (180/3.1415926f/6.33f);
 		motor_r->footForce = motor_r->motor_recv_data.fbk.force;
 		motor_r->correct = 1;
 		return;

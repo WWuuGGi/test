@@ -338,29 +338,35 @@ int main(void)
 	j = 0;
 	k = 0;
 	
-//	Pose start_pose = {-0.25f, -0.25f, 0.135f, 0, 0, 0};
-//	Pose end_pose = {0.25f, 0.25f, 0.635f, 0, 0, 0};
+	Pose start_pose = {0.25f, 0.25f, 0.135f, 0, 0, 0};
+	Pose end_pose = {0.25f, 0.25f, 0.335f, 0, 0, 0};
 
-//	// 初始速度和加速度为零
-//	Velocity start_vel = {0};
-//	Velocity end_vel = {0};
-//	Acceleration start_acc = {0};
-//	Acceleration end_acc = {0};
+	// 初始速度和加速度为零
+	Velocity start_vel = {0};
+	Velocity end_vel = {0};
+	Acceleration start_acc = {0};
+	Acceleration end_acc = {0};
 
-//	// 或者设置非零的初始和末尾速度
-//	// Velocity start_vel = {0.1f, 0.1f, 0, 0, 0, 0};  // 初始有小速度
-//	// Velocity end_vel = {0.1f, 0.1f, 0, 0, 0, 0};    // 末尾有小速度
+	// 或者设置非零的初始和末尾速度
+	// Velocity start_vel = {0.1f, 0.1f, 0, 0, 0, 0};  // 初始有小速度
+	// Velocity end_vel = {0.1f, 0.1f, 0, 0, 0, 0};    // 末尾有小速度
 
-//	// 初始化CDPR系统
-//	//	cdpr_init(&start, &end);
-//	cdpr_init(&start_pose, &start_vel, &start_acc, &end_pose, &end_vel, &end_acc);
+	// 初始化CDPR系统
+	//	cdpr_init(&start, &end);
+	cdpr_init(&start_pose, &start_vel, &start_acc, &end_pose, &end_vel, &end_acc);
   
-
+	while (fabsf(zero_group4_ID0) <= 1e-6f)
+	{
+		go_torque_cmd(&Motor_go_send_group4,0,0.0f);
+		unitreeA1_rxtx(&huart1,4);
+		zero_group4_ID0 = Motor_go_recv_group4_id0.Pos;
+	}
+		
 	//Joint_Zero_init_Type1();
 	
 	HAL_TIM_Base_Start_IT(&htim2);
 	
-	//HAL_TIM_Base_Stop_IT(&htim2);
+
 	
 
   /* USER CODE END 2 */
@@ -373,8 +379,22 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
 		
-		modify_speed_cmd(&MotorA1_send_group1,0xbb,0.3f);
-		unitreeA1_rxtx(&huart1,1);
+		//modify_speed_cmd(&MotorA1_send_group1,0,6.28f);
+		if (j < STEP_NUM)
+		{
+
+				go_pos_cmd(&Motor_go_send_group4,0,motor_angle[0][j] + zero_group4_ID0,0.18f,0.004f);
+				unitreeA1_rxtx(&huart1,4);
+				HAL_Delay(10);
+				j++;
+		}
+		else
+		{
+				go_torque_cmd(&Motor_go_send_group4,0,0.0f);
+				unitreeA1_rxtx(&huart1,4);
+				HAL_Delay(10);
+		}
+
 		
 		/*
 		cstate = Key_GetTaskState();

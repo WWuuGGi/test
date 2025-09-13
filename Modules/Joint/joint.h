@@ -44,7 +44,12 @@ extern float zero_group4_ID1;
 extern motor_send_t MotorA1_send_group1;
 extern motor_send_t MotorA1_send_group2;
 extern motor_send_t MotorA1_send_group3;
-extern motor_send_t MotorA1_send_group4;
+//extern motor_send_t MotorA1_send_group4;
+
+// 替换为go_protocol的结构体：
+extern MotorCmd_t Motor_go_send_group4;
+extern MotorData_t Motor_go_recv_group4_id0;
+extern MotorData_t Motor_go_recv_group4_id1;
 
 extern motor_recv_t MotorA1_recv_group1_id0;
 extern motor_recv_t MotorA1_recv_group1_id1;
@@ -52,8 +57,8 @@ extern motor_recv_t MotorA1_recv_group2_id0;
 extern motor_recv_t MotorA1_recv_group2_id1;
 extern motor_recv_t MotorA1_recv_group3_id0;
 extern motor_recv_t MotorA1_recv_group3_id1;
-extern motor_recv_t MotorA1_recv_group4_id0;
-extern motor_recv_t MotorA1_recv_group4_id1;
+//extern motor_recv_t MotorA1_recv_group4_id0;
+//extern motor_recv_t MotorA1_recv_group4_id1;
 
 
 extern uint8_t STOP; // 急停状态

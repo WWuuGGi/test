@@ -37,3 +37,6 @@ test\a1_motor_drive.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.
 test\a1_motor_drive.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h
 test\a1_motor_drive.o: D:\keil5\ARM\ARMCC\Bin\..\include\string.h
 test\a1_motor_drive.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdio.h
+test\a1_motor_drive.o: ../Core/Inc/gom_protocol.h
+test\a1_motor_drive.o: ../Core/Inc/crc_ccitt.h
+test\a1_motor_drive.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdlib.h

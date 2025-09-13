@@ -7,6 +7,7 @@
 #include "main.h"
 #include <string.h>
 #include <stdio.h>
+#include "gom_protocol.h"
 
 //extern motor_send_t MotorA1_send_left;  // 左腿一号电机数据体
 //extern motor_send_t MotorA1_send_right; // 右腿一号电机数据体
@@ -26,7 +27,7 @@
 extern motor_send_t MotorA1_send_group1;  // 第1组电机发送数据
 extern motor_send_t MotorA1_send_group2;  // 第2组电机发送数据
 extern motor_send_t MotorA1_send_group3;  // 第3组电机发送数据
-extern motor_send_t MotorA1_send_group4;  // 第4组电机发送数据
+//extern motor_send_t MotorA1_send_group4;  // 第4组电机发送数据
 
 // 4组电机的接收结构体（每组2个ID，共8个电机）
 // 第1组
@@ -39,14 +40,21 @@ extern motor_recv_t MotorA1_recv_group2_id1;
 extern motor_recv_t MotorA1_recv_group3_id0;
 extern motor_recv_t MotorA1_recv_group3_id1;
 // 第4组
-extern motor_recv_t MotorA1_recv_group4_id0;
-extern motor_recv_t MotorA1_recv_group4_id1;
+//extern motor_recv_t MotorA1_recv_group4_id0;
+//extern motor_recv_t MotorA1_recv_group4_id1;
 
 // 每组接收数据缓冲区（78字节，与硬件协议匹配）
 extern uint8_t Date_group1[78];
 extern uint8_t Date_group2[78];
 extern uint8_t Date_group3[78];
-extern uint8_t Date_group4[78];
+//extern uint8_t Date_group4[78];
+extern uint8_t Date_go_group4[16]; // go协议接收缓冲区（RIS_MotorData_t为16字节）
+
+// 第四组改为go_protocol的结构体（替换原有group4）
+extern MotorCmd_t Motor_go_send_group4;       // 发送结构体（go协议）
+extern MotorData_t Motor_go_recv_group4_id0;  // 接收结构体（ID0）
+extern MotorData_t Motor_go_recv_group4_id1;  // 接收结构体（ID1）
+
 
 // 通信状态变量
 extern HAL_StatusTypeDef rec_st[4];  // 4组接收状态

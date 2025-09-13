@@ -39,5 +39,7 @@ test\joint.o: ../Modules/Motor/Motor_A1/motor_msg.h
 test\joint.o: ../Modules/Motor/Motor_A1/motor_msg.h
 test\joint.o: ../Core/Inc/usart.h
 test\joint.o: D:\keil5\ARM\ARMCC\Bin\..\include\string.h
+test\joint.o: ../Core/Inc/gom_protocol.h
+test\joint.o: ../Core/Inc/crc_ccitt.h
 test\joint.o: ../Core/Inc/calc.h
 test\joint.o: D:\keil5\ARM\ARMCC\Bin\..\include\math.h

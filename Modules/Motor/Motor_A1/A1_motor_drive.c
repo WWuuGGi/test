@@ -20,7 +20,12 @@
 motor_send_t MotorA1_send_group1 = {0};
 motor_send_t MotorA1_send_group2 = {0};
 motor_send_t MotorA1_send_group3 = {0};
-motor_send_t MotorA1_send_group4 = {0};
+//motor_send_t MotorA1_send_group4 = {0};
+
+// 第四组替换为go_protocol结构体
+MotorCmd_t Motor_go_send_group4 = {0};       // 发送命令结构体
+MotorData_t Motor_go_recv_group4_id0 = {0};  // ID0接收数据
+MotorData_t Motor_go_recv_group4_id1 = {0};  // ID1接收数据
 
 // 4组电机接收结构体初始化
 motor_recv_t MotorA1_recv_group1_id0 = {0};
@@ -29,14 +34,15 @@ motor_recv_t MotorA1_recv_group2_id0 = {0};
 motor_recv_t MotorA1_recv_group2_id1 = {0};
 motor_recv_t MotorA1_recv_group3_id0 = {0};
 motor_recv_t MotorA1_recv_group3_id1 = {0};
-motor_recv_t MotorA1_recv_group4_id0 = {0};
-motor_recv_t MotorA1_recv_group4_id1 = {0};
+//motor_recv_t MotorA1_recv_group4_id0 = {0};
+//motor_recv_t MotorA1_recv_group4_id1 = {0};
 
 // 接收缓冲区
 uint8_t Date_group1[78] = {0};
 uint8_t Date_group2[78] = {0};
 uint8_t Date_group3[78] = {0};
-uint8_t Date_group4[78] = {0};
+//uint8_t Date_group4[78] = {0};
+uint8_t Date_go_group4[16] = {0};  // go协议接收缓冲区（16字节）
 
 // 通信状态
 HAL_StatusTypeDef rec_st[4] = {HAL_OK};
@@ -147,6 +153,8 @@ void modify_PW_cmd(motor_send_t *send,uint8_t id, float Pos, float Omega, float 
 void unitreeA1_rxtx(UART_HandleTypeDef *huart, uint8_t group)
 {
         //uint8_t A1MotorA1_send_left[34]; // 发送数据
+	if (group != 4)
+	{
 				uint8_t *send_buf = NULL;
 				uint8_t *recv_buf = NULL;
 				motor_send_t *send_struct = NULL;
@@ -175,13 +183,6 @@ void unitreeA1_rxtx(UART_HandleTypeDef *huart, uint8_t group)
 								recv_buf = Date_group3;
 								recv_id0 = &MotorA1_recv_group3_id0;
 								recv_id1 = &MotorA1_recv_group3_id1;
-								break;
-						case 4:
-								send_struct = &MotorA1_send_group4;
-								send_buf = (uint8_t*)&MotorA1_send_group4.motor_send_data;
-								recv_buf = Date_group4;
-								recv_id0 = &MotorA1_recv_group4_id0;
-								recv_id1 = &MotorA1_recv_group4_id1;
 								break;
 						default: return;
 				}
@@ -278,6 +279,44 @@ void unitreeA1_rxtx(UART_HandleTypeDef *huart, uint8_t group)
 				} else if (temp_recv.motor_id == 1) {
 						*recv_id1 = temp_recv;
 				}
+	}
+	else if (group == 4)
+	{
+			MotorCmd_t *go_send = &Motor_go_send_group4;
+			MotorData_t *recv_id0 = &Motor_go_recv_group4_id0;
+			MotorData_t *recv_id1 = &Motor_go_recv_group4_id1;
+			MotorData_t temp;
+			uint8_t *send_buf = (uint8_t*)&go_send->motor_send_data;  // go协议发送缓冲区
+			uint8_t *recv_buf = Date_go_group4;                      // go协议接收缓冲区
+			
+			// 1. 处理发送数据（使用go_protocol的modify_data）
+			modify_data(go_send);  // 自动填充包头、转换物理量、计算CRC
+
+			// 2. 硬件使能控制（与原有group4一致）
+			HAL_GPIO_WritePin(GROUP_PORT_1, GROUP_PIN_1, GPIO_PIN_SET);
+			// 发送go协议数据包（RIS_ControlData_t为17字节）
+			trans_st[3] = HAL_UART_Transmit(huart, send_buf, sizeof(RIS_ControlData_t), 1);
+			HAL_GPIO_WritePin(GROUP_PORT_1, GROUP_PIN_1, GPIO_PIN_RESET);
+
+			// 3. 接收go协议数据（RIS_MotorData_t为16字节）
+			rec_st[3] = HAL_UART_Receive(huart, recv_buf, sizeof(RIS_MotorData_t), 1);
+
+			// 4. 解析接收数据（使用go_protocol的extract_data）
+			// 先将接收缓冲区数据拷贝到MotorData_t的接收结构体
+		
+			memcpy(&temp.motor_recv_data, recv_buf, sizeof(RIS_MotorData_t));
+			extract_data(&temp);  // 自动校验包头、CRC，解析物理量
+
+			// 若接收的是ID1的数据，同步更新到recv_id1
+			if (temp.motor_id == 1) {
+					*recv_id1 = temp;
+		  }
+			else
+			{
+					*recv_id0 = temp;
+			}
+	}
+	
 				
 }
 
@@ -296,10 +335,14 @@ void motor_relax(void)
 	unitreeA1_rxtx(&huart3,3);
 	modify_torque_cmd(&MotorA1_send_group3,1, 0.0f);
 	unitreeA1_rxtx(&huart3,3);
-	modify_torque_cmd(&MotorA1_send_group4,0, 0.0f);
-	unitreeA1_rxtx(&huart6,4);
-	modify_torque_cmd(&MotorA1_send_group4,1, 0.0f);
-	unitreeA1_rxtx(&huart6,4);
+//	modify_torque_cmd(&MotorA1_send_group4,0, 0.0f);
+//	unitreeA1_rxtx(&huart6,4);
+//	modify_torque_cmd(&MotorA1_send_group4,1, 0.0f);
+//	unitreeA1_rxtx(&huart6,4);
+	go_torque_cmd(&Motor_go_send_group4,0,0.0f);
+	unitreeA1_rxtx(&huart1,4);
+	go_torque_cmd(&Motor_go_send_group4,1,0.0f);
+	unitreeA1_rxtx(&huart1,4);
 	//后续加入其他的电机测试，暂时先用一个
 }
 
