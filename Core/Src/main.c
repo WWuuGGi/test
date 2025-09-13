@@ -356,7 +356,7 @@ int main(void)
 //	cdpr_init(&start_pose, &start_vel, &start_acc, &end_pose, &end_vel, &end_acc);
   
 
-	Joint_Zero_init_Type1();
+	//Joint_Zero_init_Type1();
 	
 	HAL_TIM_Base_Start_IT(&htim2);
 	
@@ -373,7 +373,10 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
 		
-		//
+		modify_speed_cmd(&MotorA1_send_group1,0xbb,0.3f);
+		unitreeA1_rxtx(&huart1,1);
+		
+		/*
 		cstate = Key_GetTaskState();
 		cmode = Key_GetCurrentMode();
 	
@@ -412,7 +415,7 @@ int main(void)
 //		modify_torque_cmd(&MotorA1_send_left, 0, 0);    
 //		unitreeA1_rxtx(&huart1);   
 
-		
+		*/
   }
   /* USER CODE END 3 */
 }
