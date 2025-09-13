@@ -358,7 +358,7 @@ int main(void)
 	while (fabsf(zero_group4_ID0) <= 1e-6f)
 	{
 		go_torque_cmd(&Motor_go_send_group4,0,0.0f);
-		unitreeA1_rxtx(&huart1,4);
+		unitreeA1_rxtx(&huart2,4);
 		zero_group4_ID0 = Motor_go_recv_group4_id0.Pos;
 	}
 		
@@ -384,14 +384,14 @@ int main(void)
 		{
 
 				go_pos_cmd(&Motor_go_send_group4,0,motor_angle[0][j] + zero_group4_ID0,0.18f,0.004f);
-				unitreeA1_rxtx(&huart1,4);
+				unitreeA1_rxtx(&huart2,4);
 				HAL_Delay(10);
 				j++;
 		}
 		else
 		{
 				go_torque_cmd(&Motor_go_send_group4,0,0.0f);
-				unitreeA1_rxtx(&huart1,4);
+				unitreeA1_rxtx(&huart2,4);
 				HAL_Delay(10);
 		}
 
