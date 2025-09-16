@@ -3,7 +3,7 @@
 <title>Static Call Graph - [test\test.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image test\test.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060960: Last Updated: Tue Sep 16 11:57:19 2025
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060960: Last Updated: Tue Sep 16 15:21:41 2025
 <BR><P>
 <H3>Maximum Stack Usage =       1300 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -544,7 +544,8 @@ Global Symbols
 </UL>
 <BR>[Calls]<UL><LI><a href="#[6e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GetTick
 </UL>
-<BR>[Called By]<UL><LI><a href="#[5b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
+<BR>[Called By]<UL><LI><a href="#[9b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Joint_Zero_init_Type1
+<LI><a href="#[5b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
 <P><STRONG><a name="[92]"></a>HAL_GPIO_Init</STRONG> (Thumb, 450 bytes, Stack size 40 bytes, stm32f4xx_hal_gpio.o(i.HAL_GPIO_Init))
@@ -570,8 +571,8 @@ Global Symbols
 <LI><a href="#[6d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_Delay
 <LI><a href="#[bd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;calculate_errors
 <LI><a href="#[a4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Key_StateMachine
-<LI><a href="#[94]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UART_WaitOnFlagUntilTimeout
 <LI><a href="#[93]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_UART_Receive
+<LI><a href="#[94]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UART_WaitOnFlagUntilTimeout
 </UL>
 
 <P><STRONG><a name="[8c]"></a>HAL_IncTick</STRONG> (Thumb, 12 bytes, Stack size 0 bytes, stm32f4xx_hal.o(i.HAL_IncTick))
@@ -824,10 +825,11 @@ Global Symbols
 <BR><BR>[Called By]<UL><LI><a href="#[9b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Joint_Zero_init_Type1
 </UL>
 
-<P><STRONG><a name="[9b]"></a>Joint_Zero_init_Type1</STRONG> (Thumb, 244 bytes, Stack size 16 bytes, joint.o(i.Joint_Zero_init_Type1))
+<P><STRONG><a name="[9b]"></a>Joint_Zero_init_Type1</STRONG> (Thumb, 294 bytes, Stack size 16 bytes, joint.o(i.Joint_Zero_init_Type1))
 <BR><BR>[Stack]<UL><LI>Max Depth = 288<LI>Call Chain = Joint_Zero_init_Type1 &rArr; unitreeA1_rxtx &rArr; __aeabi_dmul &rArr; _double_epilogue &rArr; _double_round
 </UL>
-<BR>[Calls]<UL><LI><a href="#[9d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;go_torque_cmd
+<BR>[Calls]<UL><LI><a href="#[6d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_Delay
+<LI><a href="#[9d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;go_torque_cmd
 <LI><a href="#[9e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Joint_Zero_OK
 <LI><a href="#[99]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;unitreeA1_rxtx
 <LI><a href="#[9c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;modify_torque_cmd

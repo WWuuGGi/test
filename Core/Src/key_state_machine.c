@@ -334,6 +334,7 @@ void Task_Execute(void) {
 						{
 							
 							Joint_Full_PW_Control(step_mode_3);
+							//Joint_Full_Position_Control(step_mode_3);
 							step_mode_3++;
 						}
 						else
