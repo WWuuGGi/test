@@ -32,6 +32,8 @@ static void Key_HandleEvents(void);
 uint16_t step_mode_1 = 0;
 uint16_t step_mode_2 = 0;
 uint16_t step_mode_3 = 0;
+uint8_t zero_init = 1;
+uint8_t data_logging = 0;
 /**
   * @brief  初始化按键
   * @param  无
@@ -158,6 +160,7 @@ static void Key_HandleEvents(void) {
             step_mode_1 = 0;
 						step_mode_2 = 0;
 						step_mode_3 = 0;
+						zero_init = 1;
 						//调成零力矩模式，等待拖拽回中
 						//motor_relax();
 					
@@ -235,6 +238,7 @@ void Task_Execute(void) {
 						{
 							
 							Joint_Full_PW_Control(step_mode_1);
+//							Joint_Full_Position_Control(step_mode_1);
 							step_mode_1++;
 
 						}
@@ -261,7 +265,7 @@ void Task_Execute(void) {
 								
 								//初次进入时，计算轨迹路径
 								Pose start_pose = {0.25f, 0.25f, 0.135f, 0, 0, 0};
-								Pose end_pose = {0.25f, 0.25f, 0.335f, 0, 0, 0};
+								Pose end_pose = {-0.25f, -0.25f, 0.335f, 0, 0, 0};
 
 								// 初始速度和加速度为零
 								Velocity start_vel = {0};
@@ -305,9 +309,10 @@ void Task_Execute(void) {
 							//初次进入任务时，把其他标志位清零
 							//step_mode_1 = 0;
 							//step_mode_2 = 0;
+							data_logging =1;
 							
 							//初次进入时，计算轨迹路径
-							Pose start_pose = {0.25f, 0.25f, 0.135f, 0, 0, 0};
+							Pose start_pose = {-0.25f, -0.25f, 0.135f, 0, 0, 0};
 							Pose end_pose = {0.25f, 0.25f, 0.335f, 0, 0, 0};
 
 							// 初始速度和加速度为零
@@ -334,6 +339,7 @@ void Task_Execute(void) {
 						else
 						{
 							motor_relax();
+							
 						}
 					}
 					else

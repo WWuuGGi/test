@@ -405,6 +405,16 @@
               <FilePath>..\Core\Src\key_state_machine.c</FilePath>
             </File>
             <File>
+              <FileName>gom_protocol.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Core\Src\gom_protocol.c</FilePath>
+            </File>
+            <File>
+              <FileName>crc_ccitt.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Core\Src\crc_ccitt.c</FilePath>
+            </File>
+            <File>
               <FileName>main.c</FileName>
               <FileType>1</FileType>
               <FilePath>../Core/Src/main.c</FilePath>
@@ -489,16 +499,6 @@
               <FileName>stm32f4xx_hal_timebase_tim.c</FileName>
               <FileType>1</FileType>
               <FilePath>../Core/Src/stm32f4xx_hal_timebase_tim.c</FilePath>
-            </File>
-            <File>
-              <FileName>gom_protocol.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Core\Src\gom_protocol.c</FilePath>
-            </File>
-            <File>
-              <FileName>crc_ccitt.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Core\Src\crc_ccitt.c</FilePath>
             </File>
           </Files>
         </Group>

@@ -33,28 +33,32 @@
 // 4组电机的零点变量（每组ID0和ID1）
 extern float zero_group1_ID0;
 extern float zero_group1_ID1;
+extern float zero_group1_ID2;
 extern float zero_group2_ID0;
 extern float zero_group2_ID1;
+extern float zero_group2_ID2;
 extern float zero_group3_ID0;
 extern float zero_group3_ID1;
-extern float zero_group4_ID0;
-extern float zero_group4_ID1;
+
+
 
 // 电机发送/接收结构体声明（与A1_motor_drive.h对应）
 extern motor_send_t MotorA1_send_group1;
 extern motor_send_t MotorA1_send_group2;
-extern motor_send_t MotorA1_send_group3;
+//extern motor_send_t MotorA1_send_group3;
 //extern motor_send_t MotorA1_send_group4;
 
 // 替换为go_protocol的结构体：
-extern MotorCmd_t Motor_go_send_group4;
-extern MotorData_t Motor_go_recv_group4_id0;
-extern MotorData_t Motor_go_recv_group4_id1;
+extern MotorCmd_t Motor_go_send_group2;
+extern MotorData_t Motor_go_recv_group2_id0;
+extern MotorData_t Motor_go_recv_group2_id1;
 
 extern motor_recv_t MotorA1_recv_group1_id0;
 extern motor_recv_t MotorA1_recv_group1_id1;
+extern motor_recv_t MotorA1_recv_group1_id2;
 extern motor_recv_t MotorA1_recv_group2_id0;
 extern motor_recv_t MotorA1_recv_group2_id1;
+extern motor_recv_t MotorA1_recv_group2_id2;
 extern motor_recv_t MotorA1_recv_group3_id0;
 extern motor_recv_t MotorA1_recv_group3_id1;
 //extern motor_recv_t MotorA1_recv_group4_id0;

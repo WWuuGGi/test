@@ -1,7 +1,7 @@
 Dependencies for Project 'test', Target 'test': (DO NOT MODIFY !)
 CompilerVersion: 5060960::V5.06 update 7 (build 960)::.\ARMCC
-F (startup_stm32f407xx.s)(0x68C13FDD)(--cpu Cortex-M4.fp.sp -g --apcs=interwork --pd "__MICROLIB SETA 1"-I.\RTE\_test-IC:\Users\caiyang\AppData\Local\Arm\Packs\ARM\CMSIS\5.9.0\CMSIS\Core\Include-IC:\Users\caiyang\AppData\Local\Arm\Packs\Keil\STM32F4xx_DFP\2.16.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include--pd "__UVISION_VERSION SETA 538" --pd "_RTE_ SETA 1" --pd "STM32F407xx SETA 1" --pd "_RTE_ SETA 1"--list startup_stm32f407xx.lst --xref -o test\startup_stm32f407xx.o --depend test\startup_stm32f407xx.d)
-F (..\Core\Src\calc.c)(0x68BFED19)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ../Modules/Motor/Motor_A1 -I ../Modules/Joint -I ../Modules/Incremental_pid-I.\RTE\_test-IC:\Users\caiyang\AppData\Local\Arm\Packs\ARM\CMSIS\5.9.0\CMSIS\Core\Include-IC:\Users\caiyang\AppData\Local\Arm\Packs\Keil\STM32F4xx_DFP\2.16.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-D__UVISION_VERSION="538" -D_RTE_ -DSTM32F407xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F407xx-o test\calc.o --omf_browse test\calc.crf --depend test\calc.d)
+F (startup_stm32f407xx.s)(0x68C7BB38)(--cpu Cortex-M4.fp.sp -g --apcs=interwork --pd "__MICROLIB SETA 1"-I.\RTE\_test-IC:\Users\caiyang\AppData\Local\Arm\Packs\ARM\CMSIS\5.9.0\CMSIS\Core\Include-IC:\Users\caiyang\AppData\Local\Arm\Packs\Keil\STM32F4xx_DFP\2.16.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include--pd "__UVISION_VERSION SETA 538" --pd "_RTE_ SETA 1" --pd "STM32F407xx SETA 1" --pd "_RTE_ SETA 1"--list startup_stm32f407xx.lst --xref -o test\startup_stm32f407xx.o --depend test\startup_stm32f407xx.d)
+F (..\Core\Src\calc.c)(0x68C7F6AB)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ../Modules/Motor/Motor_A1 -I ../Modules/Joint -I ../Modules/Incremental_pid-I.\RTE\_test-IC:\Users\caiyang\AppData\Local\Arm\Packs\ARM\CMSIS\5.9.0\CMSIS\Core\Include-IC:\Users\caiyang\AppData\Local\Arm\Packs\Keil\STM32F4xx_DFP\2.16.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-D__UVISION_VERSION="538" -D_RTE_ -DSTM32F407xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F407xx-o test\calc.o --omf_browse test\calc.crf --depend test\calc.d)
 I (../Core/Inc/calc.h)(0x68BFE94A)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h)(0x6899AB74)
 I (../Core/Inc/stm32f4xx_hal_conf.h)(0x68C1397F)
@@ -34,8 +34,8 @@ I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h)(0x6899AB74)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h)(0x6899AB74)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h)(0x6899AB74)
 I (D:\keil5\ARM\ARMCC\include\math.h)(0x60252378)
-F (..\Core\Src\key_state_machine.c)(0x68C169A0)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ../Modules/Motor/Motor_A1 -I ../Modules/Joint -I ../Modules/Incremental_pid-I.\RTE\_test-IC:\Users\caiyang\AppData\Local\Arm\Packs\ARM\CMSIS\5.9.0\CMSIS\Core\Include-IC:\Users\caiyang\AppData\Local\Arm\Packs\Keil\STM32F4xx_DFP\2.16.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-D__UVISION_VERSION="538" -D_RTE_ -DSTM32F407xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F407xx-o test\key_state_machine.o --omf_browse test\key_state_machine.crf --depend test\key_state_machine.d)
-I (../Core/Inc/key_state_machine.h)(0x68C14165)
+F (..\Core\Src\key_state_machine.c)(0x68C8DEC4)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ../Modules/Motor/Motor_A1 -I ../Modules/Joint -I ../Modules/Incremental_pid-I.\RTE\_test-IC:\Users\caiyang\AppData\Local\Arm\Packs\ARM\CMSIS\5.9.0\CMSIS\Core\Include-IC:\Users\caiyang\AppData\Local\Arm\Packs\Keil\STM32F4xx_DFP\2.16.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-D__UVISION_VERSION="538" -D_RTE_ -DSTM32F407xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F407xx-o test\key_state_machine.o --omf_browse test\key_state_machine.crf --depend test\key_state_machine.d)
+I (../Core/Inc/key_state_machine.h)(0x68C8DEC4)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h)(0x6899AB74)
 I (../Core/Inc/stm32f4xx_hal_conf.h)(0x68C1397F)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h)(0x6899AB74)
@@ -69,16 +69,26 @@ I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h)(0x6899AB74)
 I (../Core/Inc/main.h)(0x68B010E5)
 I (../Core/Inc/calc.h)(0x68BFE94A)
 I (D:\keil5\ARM\ARMCC\include\math.h)(0x60252378)
-I (../Modules/Motor/Motor_A1/A1_motor_drive.h)(0x68C52E42)
+I (../Modules/Motor/Motor_A1/A1_motor_drive.h)(0x68C7C175)
 I (../Modules/Motor/Motor_A1/motor_msg.h)(0x689DADC7)
-I (../Core/Inc/usart.h)(0x68BFF3ED)
+I (../Core/Inc/usart.h)(0x68C7BADF)
 I (D:\keil5\ARM\ARMCC\include\string.h)(0x6025237E)
 I (D:\keil5\ARM\ARMCC\include\stdio.h)(0x60252374)
-I (../Core/Inc/gom_protocol.h)(0x68C51687)
+I (../Core/Inc/gom_protocol.h)(0x68C8C47A)
 I (../Core/Inc/crc_ccitt.h)(0x68C51102)
 I (D:\keil5\ARM\ARMCC\include\stdlib.h)(0x60252374)
-I (../Modules/Joint/joint.h)(0x68C530CB)
-F (../Core/Src/main.c)(0x68C54B04)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ../Modules/Motor/Motor_A1 -I ../Modules/Joint -I ../Modules/Incremental_pid-I.\RTE\_test-IC:\Users\caiyang\AppData\Local\Arm\Packs\ARM\CMSIS\5.9.0\CMSIS\Core\Include-IC:\Users\caiyang\AppData\Local\Arm\Packs\Keil\STM32F4xx_DFP\2.16.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-D__UVISION_VERSION="538" -D_RTE_ -DSTM32F407xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F407xx-o test\main.o --omf_browse test\main.crf --depend test\main.d)
+I (../Modules/Joint/joint.h)(0x68C7BDA9)
+F (..\Core\Src\gom_protocol.c)(0x68C8C47A)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ../Modules/Motor/Motor_A1 -I ../Modules/Joint -I ../Modules/Incremental_pid-I.\RTE\_test-IC:\Users\caiyang\AppData\Local\Arm\Packs\ARM\CMSIS\5.9.0\CMSIS\Core\Include-IC:\Users\caiyang\AppData\Local\Arm\Packs\Keil\STM32F4xx_DFP\2.16.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-D__UVISION_VERSION="538" -D_RTE_ -DSTM32F407xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F407xx-o test\gom_protocol.o --omf_browse test\gom_protocol.crf --depend test\gom_protocol.d)
+I (../Core/Inc/gom_protocol.h)(0x68C8C47A)
+I (../Core/Inc/crc_ccitt.h)(0x68C51102)
+I (D:\keil5\ARM\ARMCC\include\stdint.h)(0x6025237E)
+I (D:\keil5\ARM\ARMCC\include\stdlib.h)(0x60252374)
+I (D:\keil5\ARM\ARMCC\include\string.h)(0x6025237E)
+F (..\Core\Src\crc_ccitt.c)(0x68C51102)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ../Modules/Motor/Motor_A1 -I ../Modules/Joint -I ../Modules/Incremental_pid-I.\RTE\_test-IC:\Users\caiyang\AppData\Local\Arm\Packs\ARM\CMSIS\5.9.0\CMSIS\Core\Include-IC:\Users\caiyang\AppData\Local\Arm\Packs\Keil\STM32F4xx_DFP\2.16.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-D__UVISION_VERSION="538" -D_RTE_ -DSTM32F407xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F407xx-o test\crc_ccitt.o --omf_browse test\crc_ccitt.crf --depend test\crc_ccitt.d)
+I (../Core/Inc/crc_ccitt.h)(0x68C51102)
+I (D:\keil5\ARM\ARMCC\include\stdint.h)(0x6025237E)
+I (D:\keil5\ARM\ARMCC\include\stdlib.h)(0x60252374)
+F (../Core/Src/main.c)(0x68C8DEC4)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ../Modules/Motor/Motor_A1 -I ../Modules/Joint -I ../Modules/Incremental_pid-I.\RTE\_test-IC:\Users\caiyang\AppData\Local\Arm\Packs\ARM\CMSIS\5.9.0\CMSIS\Core\Include-IC:\Users\caiyang\AppData\Local\Arm\Packs\Keil\STM32F4xx_DFP\2.16.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-D__UVISION_VERSION="538" -D_RTE_ -DSTM32F407xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F407xx-o test\main.o --omf_browse test\main.crf --depend test\main.d)
 I (../Core/Inc/main.h)(0x68B010E5)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h)(0x6899AB74)
 I (../Core/Inc/stm32f4xx_hal_conf.h)(0x68C1397F)
@@ -111,20 +121,20 @@ I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h)(0x6899AB74)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h)(0x6899AB74)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h)(0x6899AB74)
 I (../Core/Inc/tim.h)(0x689F1B90)
-I (../Core/Inc/usart.h)(0x68BFF3ED)
+I (../Core/Inc/usart.h)(0x68C7BADF)
 I (../Core/Inc/gpio.h)(0x6899ABA8)
-I (../Modules/Motor/Motor_A1/A1_motor_drive.h)(0x68C52E42)
+I (../Modules/Motor/Motor_A1/A1_motor_drive.h)(0x68C7C175)
 I (../Modules/Motor/Motor_A1/motor_msg.h)(0x689DADC7)
 I (D:\keil5\ARM\ARMCC\include\string.h)(0x6025237E)
 I (D:\keil5\ARM\ARMCC\include\stdio.h)(0x60252374)
-I (../Core/Inc/gom_protocol.h)(0x68C51687)
+I (../Core/Inc/gom_protocol.h)(0x68C8C47A)
 I (../Core/Inc/crc_ccitt.h)(0x68C51102)
 I (D:\keil5\ARM\ARMCC\include\stdlib.h)(0x60252374)
-I (../Modules/Joint/joint.h)(0x68C530CB)
+I (../Modules/Joint/joint.h)(0x68C7BDA9)
 I (../Core/Inc/calc.h)(0x68BFE94A)
 I (D:\keil5\ARM\ARMCC\include\math.h)(0x60252378)
-I (../Core/Inc/key_state_machine.h)(0x68C14165)
-F (../Core/Src/gpio.c)(0x68C13FD9)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ../Modules/Motor/Motor_A1 -I ../Modules/Joint -I ../Modules/Incremental_pid-I.\RTE\_test-IC:\Users\caiyang\AppData\Local\Arm\Packs\ARM\CMSIS\5.9.0\CMSIS\Core\Include-IC:\Users\caiyang\AppData\Local\Arm\Packs\Keil\STM32F4xx_DFP\2.16.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-D__UVISION_VERSION="538" -D_RTE_ -DSTM32F407xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F407xx-o test\gpio.o --omf_browse test\gpio.crf --depend test\gpio.d)
+I (../Core/Inc/key_state_machine.h)(0x68C8DEC4)
+F (../Core/Src/gpio.c)(0x68C7BB35)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ../Modules/Motor/Motor_A1 -I ../Modules/Joint -I ../Modules/Incremental_pid-I.\RTE\_test-IC:\Users\caiyang\AppData\Local\Arm\Packs\ARM\CMSIS\5.9.0\CMSIS\Core\Include-IC:\Users\caiyang\AppData\Local\Arm\Packs\Keil\STM32F4xx_DFP\2.16.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-D__UVISION_VERSION="538" -D_RTE_ -DSTM32F407xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F407xx-o test\gpio.o --omf_browse test\gpio.crf --depend test\gpio.d)
 I (../Core/Inc/gpio.h)(0x6899ABA8)
 I (../Core/Inc/main.h)(0x68B010E5)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h)(0x6899AB74)
@@ -190,8 +200,8 @@ I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr_ex.h)(0x6899AB74)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h)(0x6899AB74)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h)(0x6899AB74)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h)(0x6899AB74)
-F (../Core/Src/usart.c)(0x68C54D1F)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ../Modules/Motor/Motor_A1 -I ../Modules/Joint -I ../Modules/Incremental_pid-I.\RTE\_test-IC:\Users\caiyang\AppData\Local\Arm\Packs\ARM\CMSIS\5.9.0\CMSIS\Core\Include-IC:\Users\caiyang\AppData\Local\Arm\Packs\Keil\STM32F4xx_DFP\2.16.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-D__UVISION_VERSION="538" -D_RTE_ -DSTM32F407xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F407xx-o test\usart.o --omf_browse test\usart.crf --depend test\usart.d)
-I (../Core/Inc/usart.h)(0x68BFF3ED)
+F (../Core/Src/usart.c)(0x68C7BADF)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ../Modules/Motor/Motor_A1 -I ../Modules/Joint -I ../Modules/Incremental_pid-I.\RTE\_test-IC:\Users\caiyang\AppData\Local\Arm\Packs\ARM\CMSIS\5.9.0\CMSIS\Core\Include-IC:\Users\caiyang\AppData\Local\Arm\Packs\Keil\STM32F4xx_DFP\2.16.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-D__UVISION_VERSION="538" -D_RTE_ -DSTM32F407xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F407xx-o test\usart.o --omf_browse test\usart.crf --depend test\usart.d)
+I (../Core/Inc/usart.h)(0x68C7BADF)
 I (../Core/Inc/main.h)(0x68B010E5)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h)(0x6899AB74)
 I (../Core/Inc/stm32f4xx_hal_conf.h)(0x68C1397F)
@@ -319,16 +329,6 @@ I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr_ex.h)(0x6899AB74)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h)(0x6899AB74)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h)(0x6899AB74)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h)(0x6899AB74)
-F (..\Core\Src\gom_protocol.c)(0x68C53984)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ../Modules/Motor/Motor_A1 -I ../Modules/Joint -I ../Modules/Incremental_pid-I.\RTE\_test-IC:\Users\caiyang\AppData\Local\Arm\Packs\ARM\CMSIS\5.9.0\CMSIS\Core\Include-IC:\Users\caiyang\AppData\Local\Arm\Packs\Keil\STM32F4xx_DFP\2.16.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-D__UVISION_VERSION="538" -D_RTE_ -DSTM32F407xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F407xx-o test\gom_protocol.o --omf_browse test\gom_protocol.crf --depend test\gom_protocol.d)
-I (../Core/Inc/gom_protocol.h)(0x68C51687)
-I (../Core/Inc/crc_ccitt.h)(0x68C51102)
-I (D:\keil5\ARM\ARMCC\include\stdint.h)(0x6025237E)
-I (D:\keil5\ARM\ARMCC\include\stdlib.h)(0x60252374)
-I (D:\keil5\ARM\ARMCC\include\string.h)(0x6025237E)
-F (..\Core\Src\crc_ccitt.c)(0x68C51102)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ../Modules/Motor/Motor_A1 -I ../Modules/Joint -I ../Modules/Incremental_pid-I.\RTE\_test-IC:\Users\caiyang\AppData\Local\Arm\Packs\ARM\CMSIS\5.9.0\CMSIS\Core\Include-IC:\Users\caiyang\AppData\Local\Arm\Packs\Keil\STM32F4xx_DFP\2.16.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-D__UVISION_VERSION="538" -D_RTE_ -DSTM32F407xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F407xx-o test\crc_ccitt.o --omf_browse test\crc_ccitt.crf --depend test\crc_ccitt.d)
-I (../Core/Inc/crc_ccitt.h)(0x68C51102)
-I (D:\keil5\ARM\ARMCC\include\stdint.h)(0x6025237E)
-I (D:\keil5\ARM\ARMCC\include\stdlib.h)(0x60252374)
 F (../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim.c)(0x6899AB74)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ../Modules/Motor/Motor_A1 -I ../Modules/Joint -I ../Modules/Incremental_pid-I.\RTE\_test-IC:\Users\caiyang\AppData\Local\Arm\Packs\ARM\CMSIS\5.9.0\CMSIS\Core\Include-IC:\Users\caiyang\AppData\Local\Arm\Packs\Keil\STM32F4xx_DFP\2.16.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-D__UVISION_VERSION="538" -D_RTE_ -DSTM32F407xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F407xx-o test\stm32f4xx_hal_tim.o --omf_browse test\stm32f4xx_hal_tim.crf --depend test\stm32f4xx_hal_tim.d)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h)(0x6899AB74)
 I (../Core/Inc/stm32f4xx_hal_conf.h)(0x68C1397F)
@@ -732,7 +732,7 @@ I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr_ex.h)(0x6899AB74)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h)(0x6899AB74)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h)(0x6899AB74)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h)(0x6899AB74)
-F (../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal.c)(0x68C172D0)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ../Modules/Motor/Motor_A1 -I ../Modules/Joint -I ../Modules/Incremental_pid-I.\RTE\_test-IC:\Users\caiyang\AppData\Local\Arm\Packs\ARM\CMSIS\5.9.0\CMSIS\Core\Include-IC:\Users\caiyang\AppData\Local\Arm\Packs\Keil\STM32F4xx_DFP\2.16.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-D__UVISION_VERSION="538" -D_RTE_ -DSTM32F407xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F407xx-o test\stm32f4xx_hal.o --omf_browse test\stm32f4xx_hal.crf --depend test\stm32f4xx_hal.d)
+F (../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal.c)(0x68C7C56E)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ../Modules/Motor/Motor_A1 -I ../Modules/Joint -I ../Modules/Incremental_pid-I.\RTE\_test-IC:\Users\caiyang\AppData\Local\Arm\Packs\ARM\CMSIS\5.9.0\CMSIS\Core\Include-IC:\Users\caiyang\AppData\Local\Arm\Packs\Keil\STM32F4xx_DFP\2.16.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-D__UVISION_VERSION="538" -D_RTE_ -DSTM32F407xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F407xx-o test\stm32f4xx_hal.o --omf_browse test\stm32f4xx_hal.crf --depend test\stm32f4xx_hal.d)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h)(0x6899AB74)
 I (../Core/Inc/stm32f4xx_hal_conf.h)(0x68C1397F)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h)(0x6899AB74)
@@ -856,11 +856,11 @@ I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr_ex.h)(0x6899AB74)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h)(0x6899AB74)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h)(0x6899AB74)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h)(0x6899AB74)
-F (..\Modules\Motor\Motor_A1\A1_motor_drive.c)(0x68C54CBB)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ../Modules/Motor/Motor_A1 -I ../Modules/Joint -I ../Modules/Incremental_pid-I.\RTE\_test-IC:\Users\caiyang\AppData\Local\Arm\Packs\ARM\CMSIS\5.9.0\CMSIS\Core\Include-IC:\Users\caiyang\AppData\Local\Arm\Packs\Keil\STM32F4xx_DFP\2.16.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-D__UVISION_VERSION="538" -D_RTE_ -DSTM32F407xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F407xx-o test\a1_motor_drive.o --omf_browse test\a1_motor_drive.crf --depend test\a1_motor_drive.d)
-I (..\Modules\Motor\Motor_A1\A1_motor_drive.h)(0x68C52E42)
+F (..\Modules\Motor\Motor_A1\A1_motor_drive.c)(0x68C8D69D)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ../Modules/Motor/Motor_A1 -I ../Modules/Joint -I ../Modules/Incremental_pid-I.\RTE\_test-IC:\Users\caiyang\AppData\Local\Arm\Packs\ARM\CMSIS\5.9.0\CMSIS\Core\Include-IC:\Users\caiyang\AppData\Local\Arm\Packs\Keil\STM32F4xx_DFP\2.16.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-D__UVISION_VERSION="538" -D_RTE_ -DSTM32F407xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F407xx-o test\a1_motor_drive.o --omf_browse test\a1_motor_drive.crf --depend test\a1_motor_drive.d)
+I (..\Modules\Motor\Motor_A1\A1_motor_drive.h)(0x68C7C175)
 I (..\Modules\Motor\Motor_A1\motor_msg.h)(0x689DADC7)
 I (D:\keil5\ARM\ARMCC\include\stdint.h)(0x6025237E)
-I (../Core/Inc/usart.h)(0x68BFF3ED)
+I (../Core/Inc/usart.h)(0x68C7BADF)
 I (../Core/Inc/main.h)(0x68B010E5)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h)(0x6899AB74)
 I (../Core/Inc/stm32f4xx_hal_conf.h)(0x68C1397F)
@@ -893,15 +893,15 @@ I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h)(0x6899AB74)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h)(0x6899AB74)
 I (D:\keil5\ARM\ARMCC\include\string.h)(0x6025237E)
 I (D:\keil5\ARM\ARMCC\include\stdio.h)(0x60252374)
-I (../Core/Inc/gom_protocol.h)(0x68C51687)
+I (../Core/Inc/gom_protocol.h)(0x68C8C47A)
 I (../Core/Inc/crc_ccitt.h)(0x68C51102)
 I (D:\keil5\ARM\ARMCC\include\stdlib.h)(0x60252374)
-F (..\Modules\Motor\Motor_A1\A1_motor_drive.h)(0x68C52E42)()
+F (..\Modules\Motor\Motor_A1\A1_motor_drive.h)(0x68C7C175)()
 F (..\Modules\Motor\Motor_A1\motor_msg.h)(0x689DADC7)()
-F (..\Modules\Joint\joint.c)(0x68C530CB)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ../Modules/Motor/Motor_A1 -I ../Modules/Joint -I ../Modules/Incremental_pid-I.\RTE\_test-IC:\Users\caiyang\AppData\Local\Arm\Packs\ARM\CMSIS\5.9.0\CMSIS\Core\Include-IC:\Users\caiyang\AppData\Local\Arm\Packs\Keil\STM32F4xx_DFP\2.16.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-D__UVISION_VERSION="538" -D_RTE_ -DSTM32F407xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F407xx-o test\joint.o --omf_browse test\joint.crf --depend test\joint.d)
+F (..\Modules\Joint\joint.c)(0x68C8D826)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ../Modules/Motor/Motor_A1 -I ../Modules/Joint -I ../Modules/Incremental_pid-I.\RTE\_test-IC:\Users\caiyang\AppData\Local\Arm\Packs\ARM\CMSIS\5.9.0\CMSIS\Core\Include-IC:\Users\caiyang\AppData\Local\Arm\Packs\Keil\STM32F4xx_DFP\2.16.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-D__UVISION_VERSION="538" -D_RTE_ -DSTM32F407xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F407xx-o test\joint.o --omf_browse test\joint.crf --depend test\joint.d)
 I (D:\keil5\ARM\ARMCC\include\stdlib.h)(0x60252374)
 I (D:\keil5\ARM\ARMCC\include\stdio.h)(0x60252374)
-I (..\Modules\Joint\joint.h)(0x68C530CB)
+I (..\Modules\Joint\joint.h)(0x68C7BDA9)
 I (../Core/Inc/main.h)(0x68B010E5)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h)(0x6899AB74)
 I (../Core/Inc/stm32f4xx_hal_conf.h)(0x68C1397F)
@@ -933,12 +933,12 @@ I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr_ex.h)(0x6899AB74)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h)(0x6899AB74)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h)(0x6899AB74)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h)(0x6899AB74)
-I (../Modules/Motor/Motor_A1/A1_motor_drive.h)(0x68C52E42)
+I (../Modules/Motor/Motor_A1/A1_motor_drive.h)(0x68C7C175)
 I (../Modules/Motor/Motor_A1/motor_msg.h)(0x689DADC7)
-I (../Core/Inc/usart.h)(0x68BFF3ED)
+I (../Core/Inc/usart.h)(0x68C7BADF)
 I (D:\keil5\ARM\ARMCC\include\string.h)(0x6025237E)
-I (../Core/Inc/gom_protocol.h)(0x68C51687)
+I (../Core/Inc/gom_protocol.h)(0x68C8C47A)
 I (../Core/Inc/crc_ccitt.h)(0x68C51102)
 I (../Core/Inc/calc.h)(0x68BFE94A)
 I (D:\keil5\ARM\ARMCC\include\math.h)(0x60252378)
-F (..\Modules\Joint\joint.h)(0x68C530CB)()
+F (..\Modules\Joint\joint.h)(0x68C7BDA9)()

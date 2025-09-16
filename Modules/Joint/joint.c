@@ -14,12 +14,13 @@
 // 初始化4组电机零点变量
 float zero_group1_ID0 = 0.0f;
 float zero_group1_ID1 = 0.0f;
+float zero_group1_ID2 = 0.0f;
 float zero_group2_ID0 = 0.0f;
 float zero_group2_ID1 = 0.0f;
+float zero_group2_ID2 = 0.0f;
 float zero_group3_ID0 = 0.0f;
 float zero_group3_ID1 = 0.0f;
-float zero_group4_ID0 = 0.0f;
-float zero_group4_ID1 = 0.0f;
+
 
 uint8_t STOP = False;
 
@@ -42,11 +43,9 @@ uint8_t STOP = False;
 // 电机零点自检
 int Joint_Zero_OK() {
     
-    if (fabsf(zero_group1_ID0) <= 1e-6f || fabsf(zero_group1_ID1) <= 1e-6f ||
-				fabsf(zero_group2_ID0) <= 1e-6f || fabsf(zero_group2_ID1) <= 1e-6f 
-		//||	fabsf(zero_group3_ID0) <= 1e-6f || fabsf(zero_group3_ID1) <= 1e-6f ||
-		//		fabsf(zero_group4_ID0) <= 1e-6f || fabsf(zero_group4_ID1) <= 1e-6f
-		)
+    if (fabsf(zero_group1_ID0) <= 1e-6f || fabsf(zero_group1_ID1) <= 1e-6f || fabsf(zero_group1_ID2) <= 1e-6f ||
+				fabsf(zero_group2_ID0) <= 1e-6f || fabsf(zero_group2_ID1) <= 1e-6f || fabsf(zero_group2_ID2) <= 1e-6f
+		||	fabsf(zero_group3_ID0) <= 1e-6f || fabsf(zero_group3_ID1) <= 1e-6f )
 			{
         return 0;  //有零位没有被设置，返回false
 			}
@@ -64,45 +63,43 @@ void Joint_Zero_init_Type1()
 		{
 		//group1
 			// 读取ID0零点
-			modify_torque_cmd(&MotorA1_send_group1, 0, 0);
+			modify_torque_cmd(&MotorA1_send_group1, 0, 0.0f);
 			unitreeA1_rxtx(&huart1, 1);
 			zero_group1_ID0 = MotorA1_recv_group1_id0.Pos;
+			
 			// 读取ID1零点
-			modify_torque_cmd(&MotorA1_send_group1, 1, 0);
+			modify_torque_cmd(&MotorA1_send_group1, 1, 0.0f);
 			unitreeA1_rxtx(&huart1, 1);
 			zero_group1_ID1 = MotorA1_recv_group1_id1.Pos;
 			
+			modify_torque_cmd(&MotorA1_send_group1, 2, 0.0f);
+			unitreeA1_rxtx(&huart1, 1);
+			zero_group1_ID2 = MotorA1_recv_group1_id2.Pos;
+			
 			//group2
 			// 读取ID0零点
-			modify_torque_cmd(&MotorA1_send_group2, 0, 0);
-			unitreeA1_rxtx(&huart2, 2);
+			modify_torque_cmd(&MotorA1_send_group2, 0, 0.0f);
+			unitreeA1_rxtx(&huart1, 2);
 			zero_group2_ID0 = MotorA1_recv_group2_id0.Pos;
 			// 读取ID1零点
-			modify_torque_cmd(&MotorA1_send_group2, 1, 0);
-			unitreeA1_rxtx(&huart2, 2);
+			modify_torque_cmd(&MotorA1_send_group2, 1, 0.0f);
+			unitreeA1_rxtx(&huart1, 2);
 			zero_group2_ID1 = MotorA1_recv_group2_id1.Pos;
+			modify_torque_cmd(&MotorA1_send_group2, 2, 0.0f);
+			unitreeA1_rxtx(&huart1, 2);
+			zero_group2_ID2 = MotorA1_recv_group2_id2.Pos;
 
 			//group3
 			// 读取ID0零点
-			modify_torque_cmd(&MotorA1_send_group3, 0, 0);
-			unitreeA1_rxtx(&huart3, 3);
-			zero_group3_ID0 = MotorA1_recv_group3_id0.Pos;
+			go_torque_cmd(&Motor_go_send_group3,0,0.0f);
+			unitreeA1_rxtx(&huart6,3);
+			zero_group3_ID0 = Motor_go_recv_group3_id0.Pos;
 			// 读取ID1零点
-			modify_torque_cmd(&MotorA1_send_group3, 1, 0);
-			unitreeA1_rxtx(&huart3, 3);
-			zero_group3_ID1 = MotorA1_recv_group3_id1.Pos;
-
-			//group4
-			// 读取ID0零点
-			go_torque_cmd(&Motor_go_send_group4,0,0.0f);
-			unitreeA1_rxtx(&huart1,4);
-			zero_group4_ID0 = Motor_go_recv_group4_id0.Pos;
-			// 读取ID1零点
-			go_torque_cmd(&Motor_go_send_group4,1,0.0f);
-			unitreeA1_rxtx(&huart1,4);
-			zero_group4_ID1 = Motor_go_recv_group4_id1.Pos;
+			go_torque_cmd(&Motor_go_send_group3,1,0.0f);
+			unitreeA1_rxtx(&huart6,3);
+			zero_group3_ID1 = Motor_go_recv_group3_id1.Pos;
 			
-			HAL_Delay(1);
+//			HAL_Delay(1);
 	}
 }
 
@@ -152,8 +149,8 @@ void Joint_Position_Control(uint8_t group, uint8_t id, float Pos[][STEP_NUM], fl
 		// 绑定组对应的发送结构体和串口
     switch(group) {
         case 1: send_struct = &MotorA1_send_group1; huart = &huart1; break;
-        case 2: send_struct = &MotorA1_send_group2; huart = &huart2; break;
-        case 3: send_struct = &MotorA1_send_group3; huart = &huart3; break;
+        case 2: send_struct = &MotorA1_send_group2; huart = &huart1; break;
+        //case 3: send_struct = &MotorA1_send_group3; huart = &huart3; break;
         //case 4: send_struct = &MotorA1_send_group4; huart = &huart6; break;
         default: return;
     }
@@ -164,14 +161,14 @@ void Joint_Position_Control(uint8_t group, uint8_t id, float Pos[][STEP_NUM], fl
             case 1: target_pos = Pos[0][step] + zero_group1_ID0; break;
             case 2: target_pos = Pos[2][step] + zero_group2_ID0; break;
             case 3: target_pos = Pos[4][step] + zero_group3_ID0; break;
-            case 4: target_pos = Pos[6][step] + zero_group4_ID0; break;
+            //case 4: target_pos = Pos[6][step] + zero_group4_ID0; break;
         }
     } else {
         switch(group) {
             case 1: target_pos = Pos[1][step] + zero_group1_ID1; break;
             case 2: target_pos = Pos[3][step] + zero_group2_ID1; break;
             case 3: target_pos = Pos[5][step] + zero_group3_ID1; break;
-            case 4: target_pos = Pos[7][step] + zero_group4_ID1; break;
+            //case 4: target_pos = Pos[7][step] + zero_group4_ID1; break;
         }
     }
 
@@ -187,12 +184,14 @@ void Joint_PW_Control(uint8_t group, uint8_t id,float Pos[][STEP_NUM],float Omeg
 		float target_spd = 0.0f;
 		motor_send_t *send_struct = NULL;
 		UART_HandleTypeDef *huart = NULL;
+		MotorCmd_t *send_struct_go = NULL;
+		
 	
 		// 绑定组对应的发送结构体和串口
     switch(group) {
         case 1: send_struct = &MotorA1_send_group1; huart = &huart1; break;
-        case 2: send_struct = &MotorA1_send_group2; huart = &huart2; break;
-        case 3: send_struct = &MotorA1_send_group3; huart = &huart3; break;
+        case 2: send_struct = &MotorA1_send_group2; huart = &huart1; break;
+        case 3: send_struct_go = &Motor_go_send_group3; huart = &huart6; break;
         //case 4: send_struct = &MotorA1_send_group4; huart = &huart6; break;
         default: return;
     }
@@ -203,35 +202,50 @@ void Joint_PW_Control(uint8_t group, uint8_t id,float Pos[][STEP_NUM],float Omeg
             case 1: target_pos = Pos[0][step] + zero_group1_ID0; 
 										target_spd = Omega[0][step];
 										break;
-            case 2: target_pos = Pos[2][step] + zero_group2_ID0;
-										target_spd = Omega[2][step];
+            case 2: target_pos = Pos[3][step] + zero_group2_ID0;
+										target_spd = Omega[3][step];
 										break;
-            case 3: target_pos = Pos[4][step] + zero_group3_ID0; 
-										target_spd = Omega[4][step];
-										break;
-            case 4: target_pos = Pos[6][step] + zero_group4_ID0; 
+            case 3: target_pos = Pos[6][step] + zero_group3_ID0; 
 										target_spd = Omega[6][step];
 										break;
+//            case 4: target_pos = Pos[6][step] + zero_group4_ID0; 
+//										target_spd = Omega[6][step];
+//										break;
         }
-    } else {
+    } else if (id == 1){
         switch(group) {
             case 1: target_pos = Pos[1][step] + zero_group1_ID1; 
 										target_spd = Omega[1][step];
 										break;
-            case 2: target_pos = Pos[3][step] + zero_group2_ID1; 
-										target_spd = Omega[3][step];
+            case 2: target_pos = Pos[4][step] + zero_group2_ID1; 
+										target_spd = Omega[4][step];
 										break;
-            case 3: target_pos = Pos[5][step] + zero_group3_ID1; 
-										target_spd = Omega[5][step];
-										break;
-            case 4: target_pos = Pos[7][step] + zero_group4_ID1; 
+            case 3: target_pos = Pos[7][step] + zero_group3_ID1; 
 										target_spd = Omega[7][step];
 										break;
-        }
+				}
+//            case 4: target_pos = Pos[7][step] + zero_group4_ID1; 
+//										target_spd = Omega[7][step];
+//										break;
+		} else if (id == 2){
+				switch(group) {
+						case 1: target_pos = Pos[2][step] + zero_group1_ID2; 
+										target_spd = Omega[2][step];
+										break;
+            case 2: target_pos = Pos[5][step] + zero_group2_ID2; 
+										target_spd = Omega[5][step];
+										break;
+			}
     }
-
-    modify_PW_cmd(send_struct, id, target_pos,target_spd, kp, kw);
-    unitreeA1_rxtx(huart, group);
+		
+		if(group == 3)
+		{
+				go_pw_cmd(send_struct_go,id,target_pos,target_spd,kp,kw);
+		}
+		else {
+				modify_PW_cmd(send_struct, id, target_pos,target_spd, kp, kw);
+    }
+			unitreeA1_rxtx(huart, group);
 }
 
 void Joint_Full_Position_Control(uint16_t step)
@@ -249,14 +263,16 @@ void Joint_Full_Position_Control(uint16_t step)
 
 void Joint_Full_PW_Control(uint16_t step)
 {
-	Joint_PW_Control(1, 0, motor_angle, motor_omega, 0.022f, 0.1f, step);
-	Joint_PW_Control(1, 1, motor_angle, motor_omega, 0.022f, 0.1f, step);
-	Joint_PW_Control(2, 0, motor_angle, motor_omega, 0.022f, 0.1f, step);
-	Joint_PW_Control(2, 1, motor_angle, motor_omega, 0.022f, 0.1f, step);
-	Joint_PW_Control(3, 0, motor_angle, motor_omega, 0.022f, 0.1f, step);
-	Joint_PW_Control(3, 1, motor_angle, motor_omega, 0.022f, 0.1f, step);
-	Joint_PW_Control(4, 0, motor_angle, motor_omega, 0.022f, 0.1f, step);
-	Joint_PW_Control(4, 1, motor_angle, motor_omega, 0.022f, 0.1f, step);
+	Joint_PW_Control(1, 0, motor_angle, motor_omega, 0.020f, 0.1f, step);
+	Joint_PW_Control(1, 1, motor_angle, motor_omega, 0.020f, 0.1f, step);
+	Joint_PW_Control(1, 2, motor_angle, motor_omega, 0.020f, 0.1f, step);
+	Joint_PW_Control(2, 0, motor_angle, motor_omega, 0.020f, 0.1f, step);
+	Joint_PW_Control(2, 1, motor_angle, motor_omega, 0.020f, 0.1f, step);
+	Joint_PW_Control(2, 2, motor_angle, motor_omega, 0.020f, 0.1f, step);
+	//	Joint_PW_Control(3, 0, motor_angle, motor_omega, 0.022f, 0.1f, step);
+//	Joint_PW_Control(3, 1, motor_angle, motor_omega, 0.022f, 0.1f, step);
+	Joint_PW_Control(3, 0, motor_angle, motor_omega, 0.18f, 0.004f, step);
+	Joint_PW_Control(3, 1, motor_angle, motor_omega, 0.18f, 0.004f, step);
 }
 
 // // 离地检测

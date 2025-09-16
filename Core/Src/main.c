@@ -69,6 +69,7 @@ extern motor_recv_t MotorA1_recv_left_id00;
 extern motor_recv_t MotorA1_recv_left_id01;   
 extern motor_recv_t MotorA1_recv_left_id02;   
 extern uint8_t Date[78];
+extern uint8_t data_logging;     // 数据记录使能标志
 
 int j = 0;
 int k = 0;
@@ -91,6 +92,7 @@ float spd = 0.0;
 uint8_t id = 0;
 uint8_t cstate;
 uint8_t cmode;
+
 KeyTypeDef k1;
 KeyTypeDef k2;
 KeyTypeDef k3;
@@ -98,20 +100,20 @@ KeyTypeDef k4;
 
 //uint8_t first_init = 1;
 
-//typedef struct {
-//    float pos_cmd;       // 期望位置(度)
-//    float pos_fdb;       // 实际位置(度)
-//    float pos_error;     // 位置误差(度)
-//    float vel_cmd;       // 期望速度(rad/s)
-//    float vel_fdb;       // 实际速度(rad/s)
-//    float vel_error;     // 速度误差(rad/s)
-//    uint32_t timestamp;  // 时间戳(ms)
-//} ErrorData_t;
+typedef struct {
+    float pos_cmd;       // 期望位置(度)
+    float pos_fdb;       // 实际位置(度)
+    float pos_error;     // 位置误差(度)
+    float vel_cmd;       // 期望速度(rad/s)
+    float vel_fdb;       // 实际速度(rad/s)
+    float vel_error;     // 速度误差(rad/s)
+    uint32_t timestamp;  // 时间戳(ms)
+} ErrorData_t;
 
-//ErrorData_t error_buf0[1000];  // 误差数据缓冲区
+ErrorData_t error_buf0[STEP_NUM];  // 误差数据缓冲区
 //ErrorData_t error_buf1[1000];  // 误差数据缓冲区
-//uint16_t error_idx = 0;       // 缓冲区索引
-//uint8_t data_logging = 0;     // 数据记录使能标志
+uint16_t error_idx = 0;       // 缓冲区索引
+
 
 /* USER CODE END PV */
 
@@ -148,47 +150,33 @@ void pos_calc(float * pos,float * speed, float xf, float tf)
 	
 }
 
-//void calculate_errors(float cmd_pos, float cmd_vel)
-//{
-//    if (error_idx < t_num)  // 防止缓冲区溢出
-//    {
-//        // 获取实际反馈值
-//        float act_pos0;  // 实际位置(度)
-//        float act_vel0;  // 实际速度(rad/s)
-//				float act_pos1;  // 实际位置(度)
-//        float act_vel1;  // 实际速度(rad/s)
-//        
-//				act_pos0 = MotorA1_recv_left_id00.Pos - zero_left_ID0;
-//				act_vel0 = MotorA1_recv_left_id00.W; 
+void calculate_errors(float cmd_pos, float cmd_vel)
+{
+    if (error_idx < STEP_NUM)  // 防止缓冲区溢出
+    {
+        // 获取实际反馈值
+        float act_pos0;  // 实际位置(度)
+        float act_vel0;  // 实际速度(rad/s)
+        
+				act_pos0 = Motor_go_recv_group3_id0.Pos - zero_group3_ID0;
+				act_vel0 = Motor_go_recv_group3_id0.W; 
 
-//				act_pos1 = MotorA1_recv_left_id01.Pos - zero_left_ID1;
-//				act_vel1 = MotorA1_recv_left_id01.W; 
-//				
-//        // 计算误差
-//        error_buf0[error_idx].pos_cmd = cmd_pos;
-//        error_buf0[error_idx].pos_fdb = act_pos0;
-//        error_buf0[error_idx].pos_error = cmd_pos - act_pos0;//目标减去实际值
-//        
-//        error_buf0[error_idx].vel_cmd = cmd_vel;
-//        error_buf0[error_idx].vel_fdb = act_vel0;
-//        error_buf0[error_idx].vel_error = cmd_vel - act_vel0;//目标减去实际值
-//        
-//        error_buf0[error_idx].timestamp = HAL_GetTick();  // 记录时间戳
-//        
-//				// 计算误差
-//        error_buf1[error_idx].pos_cmd = cmd_pos;
-//        error_buf1[error_idx].pos_fdb = act_pos1;
-//        error_buf1[error_idx].pos_error = cmd_pos - act_pos1;//目标减去实际值
-//        
-//        error_buf1[error_idx].vel_cmd = cmd_vel;
-//        error_buf1[error_idx].vel_fdb = act_vel1;
-//        error_buf1[error_idx].vel_error = cmd_vel - act_vel1;//目标减去实际值
-//        
-//        error_buf1[error_idx].timestamp = HAL_GetTick();  // 记录时间戳
-//				
-//        error_idx++;
-//    }
-//}
+				
+        // 计算误差
+        error_buf0[error_idx].pos_cmd = cmd_pos;
+        error_buf0[error_idx].pos_fdb = act_pos0;
+        error_buf0[error_idx].pos_error = cmd_pos - act_pos0;//目标减去实际值
+        
+        error_buf0[error_idx].vel_cmd = cmd_vel;
+        error_buf0[error_idx].vel_fdb = act_vel0;
+        error_buf0[error_idx].vel_error = cmd_vel - act_vel0;//目标减去实际值
+        
+        error_buf0[error_idx].timestamp = HAL_GetTick();  // 记录时间戳
+        
+				// 计算误差
+        error_idx++;
+    }
+}
 
 
 
@@ -327,9 +315,7 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_USART1_UART_Init();
-  MX_USART2_UART_Init();
   MX_TIM2_Init();
-  MX_USART3_UART_Init();
   MX_USART6_UART_Init();
   /* USER CODE BEGIN 2 */
 	
@@ -355,18 +341,58 @@ int main(void)
 	//	cdpr_init(&start, &end);
 	cdpr_init(&start_pose, &start_vel, &start_acc, &end_pose, &end_vel, &end_acc);
   
-	while (fabsf(zero_group4_ID0) <= 1e-6f)
-	{
-		go_torque_cmd(&Motor_go_send_group4,0,0.0f);
-		unitreeA1_rxtx(&huart2,4);
-		zero_group4_ID0 = Motor_go_recv_group4_id0.Pos;
-	}
+//	while (fabsf(zero_group1_ID0) <= 1e-6f || fabsf(zero_group1_ID1) <= 1e-6f ||
+//		fabsf(zero_group2_ID2) <= 1e-6f || fabsf(zero_group2_ID0) <= 1e-6f || fabsf(zero_group3_ID0) <= 1e-6f)
+//	{
+//			j++;
+//			modify_torque_cmd(&MotorA1_send_group1, 0, 0.0f);
+//			unitreeA1_rxtx(&huart1, 1);
+//			zero_group1_ID0 = MotorA1_recv_group1_id0.Pos;
+//			
+//			//HAL_Delay(1);
+//		
+//			// 读取ID1零点
+//			modify_torque_cmd(&MotorA1_send_group1, 1, 0.0f);
+//			unitreeA1_rxtx(&huart1, 1);
+//			zero_group1_ID1 = MotorA1_recv_group1_id1.Pos;
+//		
+//			//HAL_Delay(1);
+//			
+//			modify_torque_cmd(&MotorA1_send_group1, 2, 0.0f);
+//			unitreeA1_rxtx(&huart1, 1);
+//			zero_group1_ID2 = MotorA1_recv_group1_id2.Pos;
+//		
+//			//HAL_Delay(1);
+//		
+//			modify_torque_cmd(&MotorA1_send_group2, 0, 0.0f);
+//			unitreeA1_rxtx(&huart1, 2);
+//			zero_group2_ID0 = MotorA1_recv_group2_id0.Pos;
+//			
+//			//HAL_Delay(1);
+//			
+//			// 读取ID1零点
+//			modify_torque_cmd(&MotorA1_send_group2, 1, 0.0f);
+//			unitreeA1_rxtx(&huart1, 2);
+//			zero_group2_ID1 = MotorA1_recv_group2_id1.Pos;
+//			
+//			//HAL_Delay(1);
+//			
+//			modify_torque_cmd(&MotorA1_send_group2, 2, 0.0f);
+//			unitreeA1_rxtx(&huart1, 2);
+//			zero_group2_ID2 = MotorA1_recv_group2_id2.Pos;
+//			
+//			
+//			go_torque_cmd(&Motor_go_send_group3, 0, 0.0f);
+//			unitreeA1_rxtx(&huart6, 3);
+//			zero_group3_ID0 = Motor_go_recv_group3_id0.Pos;
+//			//HAL_Delay(1);
+//	}
 		
-	//Joint_Zero_init_Type1();
+	Joint_Zero_init_Type1();
 	
 	HAL_TIM_Base_Start_IT(&htim2);
 	
-
+	HAL_Delay(100);
 	
 
   /* USER CODE END 2 */
@@ -380,46 +406,109 @@ int main(void)
     /* USER CODE BEGIN 3 */
 		
 		//modify_speed_cmd(&MotorA1_send_group1,0,6.28f);
-		if (j < STEP_NUM)
-		{
-
-				go_pos_cmd(&Motor_go_send_group4,0,motor_angle[0][j] + zero_group4_ID0,0.18f,0.004f);
-				unitreeA1_rxtx(&huart2,4);
-				HAL_Delay(10);
-				j++;
-		}
-		else
-		{
-				go_torque_cmd(&Motor_go_send_group4,0,0.0f);
-				unitreeA1_rxtx(&huart2,4);
-				HAL_Delay(10);
-		}
-
 		
-		/*
+//		if (j < STEP_NUM)
+//		{
+
+//				go_pos_cmd(&Motor_go_send_group4,0,motor_angle[0][j] + zero_group4_ID0,0.18f,0.004f);
+//				unitreeA1_rxtx(&huart1,4);
+//				HAL_Delay(10);
+//				j++;
+//		}
+//		else
+//		{
+//				go_torque_cmd(&Motor_go_send_group4,0,0.0f);
+//				unitreeA1_rxtx(&huart1,4);
+//				HAL_Delay(10);
+//		}
+
+//	modify_torque_cmd(&MotorA1_send_group1,2,0.0f);
+//	unitreeA1_rxtx(&huart1,1);
+//	HAL_Delay(10);
+		
+		
 		cstate = Key_GetTaskState();
 		cmode = Key_GetCurrentMode();
 	
 		if (cstate) {
       //刷新标志位，做相关计算等  
-			if(cmode == 0)
+			if(cmode == 0 && zero_init == 1)
 			{
 				zero_group1_ID0 = 0.0f;
 				zero_group1_ID1 = 0.0f;
+				zero_group1_ID2 = 0.0f;
 				zero_group2_ID0 = 0.0f;
 				zero_group2_ID1 = 0.0f;
+				zero_group2_ID2 = 0.0f;
 				zero_group3_ID0 = 0.0f;
 				zero_group3_ID1 = 0.0f;
-				zero_group4_ID0 = 0.0f;
-				zero_group4_ID1 = 0.0f;
+				zero_init = 0;
 			}
 			Joint_Zero_init_Type1();
+//	while (fabsf(zero_group1_ID0) <= 1e-6f || fabsf(zero_group1_ID1) <= 1e-6f ||
+//		fabsf(zero_group2_ID2) <= 1e-6f || fabsf(zero_group2_ID0) <= 1e-6f || fabsf(zero_group3_ID0) <= 1e-6f)
+//	{
+//			modify_torque_cmd(&MotorA1_send_group1, 0, 0.0f);
+//			unitreeA1_rxtx(&huart1, 1);
+//			zero_group1_ID0 = MotorA1_recv_group1_id0.Pos;
+//			
+//			//HAL_Delay(1);
+//		
+//			// 读取ID1零点
+//			modify_torque_cmd(&MotorA1_send_group1, 1, 0.0f);
+//			unitreeA1_rxtx(&huart1, 1);
+//			zero_group1_ID1 = MotorA1_recv_group1_id1.Pos;
+//		
+//			//HAL_Delay(1);
+//			
+//			modify_torque_cmd(&MotorA1_send_group1, 2, 0.0f);
+//			unitreeA1_rxtx(&huart1, 1);
+//			zero_group1_ID2 = MotorA1_recv_group1_id2.Pos;
+//		
+//			//HAL_Delay(1);
+//		
+//			modify_torque_cmd(&MotorA1_send_group2, 0, 0.0f);
+//			unitreeA1_rxtx(&huart1, 2);
+//			zero_group2_ID0 = MotorA1_recv_group2_id0.Pos;
+//			
+//			//HAL_Delay(1);
+//			
+//			// 读取ID1零点
+//			modify_torque_cmd(&MotorA1_send_group2, 1, 0.0f);
+//			unitreeA1_rxtx(&huart1, 2);
+//			zero_group2_ID1 = MotorA1_recv_group2_id1.Pos;
+//			
+//			//HAL_Delay(1);
+//			
+//			modify_torque_cmd(&MotorA1_send_group2, 2, 0.0f);
+//			unitreeA1_rxtx(&huart1, 2);
+//			zero_group2_ID2 = MotorA1_recv_group2_id2.Pos;
+//			
+//			//HAL_Delay(1);
+//			
+//			go_torque_cmd(&Motor_go_send_group3, 0, 0.0f);
+//			unitreeA1_rxtx(&huart6, 3);
+//			zero_group3_ID0 = Motor_go_recv_group3_id0.Pos;
+//		}
+
 			Task_Execute();
+			if (data_logging)
+				{
+						calculate_errors(motor_angle[6][step_mode_3], motor_omega[6][step_mode_3]);
+					if(step_mode_3 == STEP_NUM)
+					{
+						data_logging = 0;
+					}
+				}
 			HAL_Delay(10);
     }
 		else
 		{
 			motor_relax();
+//			modify_changeid_cmd(&MotorA1_send_group1,10);
+//			unitreeA1_rxtx(&huart1,1);
+//			HAL_Delay(10);
+				
 		}
 		
 		
@@ -435,7 +524,7 @@ int main(void)
 //		modify_torque_cmd(&MotorA1_send_left, 0, 0);    
 //		unitreeA1_rxtx(&huart1);   
 
-		*/
+		
   }
   /* USER CODE END 3 */
 }

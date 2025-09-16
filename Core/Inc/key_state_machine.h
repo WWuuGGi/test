@@ -61,6 +61,8 @@ typedef struct {
 extern uint16_t step_mode_1;
 extern uint16_t step_mode_2;
 extern uint16_t step_mode_3;
+extern uint8_t zero_init;
+extern uint8_t data_logging;
 
 // º¯ÊıÉùÃ÷
 void Key_Init(void);

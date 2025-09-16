@@ -40,16 +40,6 @@ void go_torque_cmd(MotorCmd_t *cmd,uint8_t id,float torque)
 	cmd->T = torque;
 }
 	
-void go_pw_cmd(MotorCmd_t *cmd,uint8_t id,float pos,float spd,float kp,float kd)
-{
-	cmd->id = id;
-	cmd->mode = 1;
-	cmd->K_P = kp;
-	cmd->K_W = kd;
-	cmd->Pos = pos*6.33f/ 180.0f * 3.1415926f;
-	cmd->W = spd*6.33f;
-	cmd->T = 0.0f;
-}
 
 /// @brief 将发送给电机的浮点参数转换为定点类型参数
 /// @param motor_s 要转换的电机指令结构体
