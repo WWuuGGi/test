@@ -252,8 +252,17 @@ static void generate_trajectory_and_angles(float32_t t_start, float32_t t_end, f
             // ¼ÆËãÉşË÷ËÙ¶È
             motor_omega[c][i] = 0.0f;
             for (uint8_t k = 0; k < 6; k++) {
+							if(c != 2 && c != 3)
+							{
                 motor_omega[c][i] += -1.0f * jaco[c][k] * current_vel.data[k] / MOTOR_PULLEY_RADIUS;
-            }
+							}
+							else
+							{
+								motor_omega[c][i] += -1.0f * jaco[c][k] * current_vel.data[k] / GO_PULLEY_RADIUS;
+							}
+							
+							
+						}
         }
     }
 }

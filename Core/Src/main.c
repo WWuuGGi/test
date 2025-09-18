@@ -388,7 +388,7 @@ int main(void)
 //			//HAL_Delay(1);
 //	}
 		
-	Joint_Zero_init_Type1();
+	//Joint_Zero_init_Type1();
 	
 	HAL_TIM_Base_Start_IT(&htim2);
 	
@@ -444,62 +444,18 @@ int main(void)
 				zero_group3_ID1 = 0.0f;
 				zero_init = 0;
 			}
-			Joint_Zero_init_Type1();
-//	while (fabsf(zero_group1_ID0) <= 1e-6f || fabsf(zero_group1_ID1) <= 1e-6f ||
-//		fabsf(zero_group2_ID2) <= 1e-6f || fabsf(zero_group2_ID0) <= 1e-6f || fabsf(zero_group3_ID0) <= 1e-6f)
-//	{
-//			modify_torque_cmd(&MotorA1_send_group1, 0, 0.0f);
-//			unitreeA1_rxtx(&huart1, 1);
-//			zero_group1_ID0 = MotorA1_recv_group1_id0.Pos;
-//			
-//			//HAL_Delay(1);
-//		
-//			// 读取ID1零点
-//			modify_torque_cmd(&MotorA1_send_group1, 1, 0.0f);
-//			unitreeA1_rxtx(&huart1, 1);
-//			zero_group1_ID1 = MotorA1_recv_group1_id1.Pos;
-//		
-//			//HAL_Delay(1);
-//			
-//			modify_torque_cmd(&MotorA1_send_group1, 2, 0.0f);
-//			unitreeA1_rxtx(&huart1, 1);
-//			zero_group1_ID2 = MotorA1_recv_group1_id2.Pos;
-//		
-//			//HAL_Delay(1);
-//		
-//			modify_torque_cmd(&MotorA1_send_group2, 0, 0.0f);
-//			unitreeA1_rxtx(&huart1, 2);
-//			zero_group2_ID0 = MotorA1_recv_group2_id0.Pos;
-//			
-//			//HAL_Delay(1);
-//			
-//			// 读取ID1零点
-//			modify_torque_cmd(&MotorA1_send_group2, 1, 0.0f);
-//			unitreeA1_rxtx(&huart1, 2);
-//			zero_group2_ID1 = MotorA1_recv_group2_id1.Pos;
-//			
-//			//HAL_Delay(1);
-//			
-//			modify_torque_cmd(&MotorA1_send_group2, 2, 0.0f);
-//			unitreeA1_rxtx(&huart1, 2);
-//			zero_group2_ID2 = MotorA1_recv_group2_id2.Pos;
-//			
-//			//HAL_Delay(1);
-//			
-//			go_torque_cmd(&Motor_go_send_group3, 0, 0.0f);
-//			unitreeA1_rxtx(&huart6, 3);
-//			zero_group3_ID0 = Motor_go_recv_group3_id0.Pos;
-//		}
+			//Joint_Zero_init_Type1();
 
 			Task_Execute();
-			if (data_logging)
-				{
-						calculate_errors(motor_angle[6][step_mode_3], motor_omega[6][step_mode_3]);
-					if(step_mode_3 == STEP_NUM)
-					{
-						data_logging = 0;
-					}
-				}
+//			if (data_logging)
+//				{
+//						calculate_errors(motor_angle[6][step_mode_3], motor_omega[6][step_mode_3]);
+//					if(step_mode_3 == STEP_NUM)
+//					{
+//						data_logging = 0;
+//					}
+//				}
+			
 			HAL_Delay(10);
     }
 		else

@@ -69,6 +69,7 @@ static void calculate_poly5_coeff(Poly5Coeff *coeff,
 #define CABLE_NUM 8       // 绳索数量
 #define STEP_NUM 501      // 轨迹总步数（0.01s步长，5s共501个点）
 #define MOTOR_PULLEY_RADIUS 0.0475f  // 电机 pulley 半径，单位：米 (47.5mm)
+#define GO_PULLEY_RADIUS 0.0510f  // 电机 pulley 半径，单位：米 (47.5mm)
 
 // 外部全局变量声明
 //extern float32_t t_vec[STEP_NUM];                  // 时间向量数组

@@ -245,18 +245,25 @@ void Joint_PW_Control(uint8_t group, uint8_t id,float Pos[][STEP_NUM],float Omeg
         //case 4: send_struct = &MotorA1_send_group4; huart = &huart6; break;
         default: return;
     }
-		
+//b1 - G1 ID 2
+//b2 - G2 ID 2
+//b3 - G3 ID 1
+//b4 - G3 ID 0
+//b5 - G2 ID 1
+//b6 - G2 ID 0 
+//b7 - G1 ID 1
+//b8 - G1 ID 0 
 		// 计算目标位置（叠加零点）
     if (id == 0) {
         switch(group) {
-            case 1: target_pos = Pos[0][step] + zero_group1_ID0; 
-										target_spd = Omega[0][step];
+            case 1: target_pos = +1.0f * Pos[7][step] + zero_group1_ID0; 
+										target_spd = Omega[7][step];
 										break;
-            case 2: target_pos = Pos[3][step] + zero_group2_ID0;
-										target_spd = Omega[3][step];
+            case 2: target_pos = +1.0f * Pos[5][step] + zero_group2_ID0;
+										target_spd = Omega[5][step];
 										break;
-            case 3: target_pos = Pos[6][step] + zero_group3_ID0; 
-										target_spd = Omega[6][step];
+            case 3: target_pos = -1.0f * Pos[3][step] + zero_group3_ID0; 
+										target_spd = -1.0f * Omega[3][step];
 										break;
 //            case 4: target_pos = Pos[6][step] + zero_group4_ID0; 
 //										target_spd = Omega[6][step];
@@ -264,14 +271,14 @@ void Joint_PW_Control(uint8_t group, uint8_t id,float Pos[][STEP_NUM],float Omeg
         }
     } else if (id == 1){
         switch(group) {
-            case 1: target_pos = Pos[1][step] + zero_group1_ID1; 
-										target_spd = Omega[1][step];
+            case 1: target_pos = -1.0f * Pos[6][step] + zero_group1_ID1; 
+										target_spd = -1.0f * Omega[6][step];
 										break;
-            case 2: target_pos = Pos[4][step] + zero_group2_ID1; 
-										target_spd = Omega[4][step];
+            case 2: target_pos = -1.0f * Pos[4][step] + zero_group2_ID1; 
+										target_spd = -1.0f * Omega[4][step];
 										break;
-            case 3: target_pos = Pos[7][step] + zero_group3_ID1; 
-										target_spd = Omega[7][step];
+            case 3: target_pos = +1.0f * Pos[2][step] + zero_group3_ID1; 
+										target_spd = Omega[2][step];
 										break;
 				}
 //            case 4: target_pos = Pos[7][step] + zero_group4_ID1; 
@@ -279,11 +286,11 @@ void Joint_PW_Control(uint8_t group, uint8_t id,float Pos[][STEP_NUM],float Omeg
 //										break;
 		} else if (id == 2){
 				switch(group) {
-						case 1: target_pos = Pos[2][step] + zero_group1_ID2; 
-										target_spd = Omega[2][step];
+						case 1: target_pos = +1.0f * Pos[0][step] + zero_group1_ID2; 
+										target_spd = Omega[0][step];
 										break;
-            case 2: target_pos = Pos[5][step] + zero_group2_ID2; 
-										target_spd = Omega[5][step];
+            case 2: target_pos = -1.0f * Pos[1][step] + zero_group2_ID2; 
+										target_spd = -1.0f *Omega[1][step];
 										break;
 			}
     }

@@ -237,8 +237,11 @@ void Task_Execute(void) {
 						if(step_mode_1 < STEP_NUM && task_running)
 						{
 							
-							Joint_Full_PW_Control(step_mode_1);
+							//Joint_Full_PW_Control(step_mode_1);
 //							Joint_Full_Position_Control(step_mode_1);
+							modify_speed_cmd(&MotorA1_send_group1,1,0.5f);
+							//modify_torque_cmd(&MotorA1_send_group1,1,0.75f);
+							unitreeA1_rxtx(&huart1,1);
 							step_mode_1++;
 
 						}
@@ -285,7 +288,7 @@ void Task_Execute(void) {
 							if(step_mode_2 < STEP_NUM && task_running)
 							{
 								
-								Joint_Full_PW_Control(step_mode_2);
+								//Joint_Full_PW_Control(step_mode_2);
 								step_mode_2++;
 
 							}
@@ -333,7 +336,7 @@ void Task_Execute(void) {
 						if(step_mode_3 < STEP_NUM && task_running)
 						{
 							
-							Joint_Full_PW_Control(step_mode_3);
+							//Joint_Full_PW_Control(step_mode_3);
 							//Joint_Full_Position_Control(step_mode_3);
 							step_mode_3++;
 						}
