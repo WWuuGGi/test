@@ -43,7 +43,7 @@ uint8_t STOP = False;
 // 电机零点自检
 int Joint_Zero_OK() {
     
-    if (fabsf(zero_group1_ID0) <= 1e-6f || fabsf(zero_group1_ID1) <= 1e-6f //|| fabsf(zero_group1_ID2) <= 1e-6f 
+    if (fabsf(zero_group1_ID0) <= 1e-6f || fabsf(zero_group1_ID1) <= 1e-6f // fabsf(zero_group1_ID2) <= 1e-6f 
 			||	fabsf(zero_group2_ID0) <= 1e-6f || fabsf(zero_group2_ID1) <= 1e-6f || fabsf(zero_group2_ID2) <= 1e-6f
 		||	fabsf(zero_group3_ID0) <= 1e-6f || fabsf(zero_group3_ID1) <= 1e-6f )
 			{
@@ -67,20 +67,20 @@ void Joint_Zero_init_Type1()
 			unitreeA1_rxtx(&huart1, 1);
 			zero_group1_ID0 = MotorA1_recv_group1_id0.Pos;
 			
-			HAL_Delay(1);
+			HAL_Delay(5);
 			
 			// 读取ID1零点
 			modify_torque_cmd(&MotorA1_send_group1, 1, 0.0f);
 			unitreeA1_rxtx(&huart1, 1);
 			zero_group1_ID1 = MotorA1_recv_group1_id1.Pos;
 			
-			HAL_Delay(1);
+			HAL_Delay(5);
 			
 			modify_torque_cmd(&MotorA1_send_group1, 2, 0.0f);
 			unitreeA1_rxtx(&huart1, 1);
 			zero_group1_ID2 = MotorA1_recv_group1_id2.Pos;
 			
-			HAL_Delay(1);
+			HAL_Delay(5);
 			
 			//group2
 			// 读取ID0零点
@@ -88,20 +88,20 @@ void Joint_Zero_init_Type1()
 			unitreeA1_rxtx(&huart1, 2);
 			zero_group2_ID0 = MotorA1_recv_group2_id0.Pos;
 			
-			HAL_Delay(1);
+			HAL_Delay(5);
 			
 			// 读取ID1零点
 			modify_torque_cmd(&MotorA1_send_group2, 1, 0.0f);
 			unitreeA1_rxtx(&huart1, 2);
 			zero_group2_ID1 = MotorA1_recv_group2_id1.Pos;
 			
-			HAL_Delay(1);
+			HAL_Delay(5);
 			
 			modify_torque_cmd(&MotorA1_send_group2, 2, 0.0f);
 			unitreeA1_rxtx(&huart1, 2);
 			zero_group2_ID2 = MotorA1_recv_group2_id2.Pos;
 
-			HAL_Delay(1);
+			HAL_Delay(5);
 
 			//group3
 			// 读取ID0零点
@@ -109,14 +109,14 @@ void Joint_Zero_init_Type1()
 			unitreeA1_rxtx(&huart6,3);
 			zero_group3_ID0 = Motor_go_recv_group3_id0.Pos;
 			
-			HAL_Delay(1);
+			HAL_Delay(5);
 
 			// 读取ID1零点
 			go_torque_cmd(&Motor_go_send_group3,1,0.0f);
 			unitreeA1_rxtx(&huart6,3);
 			zero_group3_ID1 = Motor_go_recv_group3_id1.Pos;
 			
-			HAL_Delay(1);
+			HAL_Delay(5);
 	}
 }
 
@@ -198,7 +198,7 @@ void Joint_Position_Control(uint8_t group, uint8_t id, float Pos[][STEP_NUM], fl
             case 2: target_pos = -1.0f * Pos[4][step] + zero_group2_ID1; 
 
 										break;
-            case 3: target_pos = Pos[2][step] + zero_group3_ID1; 
+            case 3: target_pos = Pos[0][step] + zero_group3_ID1; 
 
 										break;
 				}
@@ -207,7 +207,7 @@ void Joint_Position_Control(uint8_t group, uint8_t id, float Pos[][STEP_NUM], fl
 //										break;
 		} else if (id == 2){
 				switch(group) {
-						case 1: target_pos = Pos[0][step] + zero_group1_ID2; 
+						case 1: target_pos = Pos[2][step] + zero_group1_ID2; 
 
 										break;
             case 2: target_pos = -1.0f * Pos[1][step] + zero_group2_ID2; 
@@ -245,9 +245,9 @@ void Joint_PW_Control(uint8_t group, uint8_t id,float Pos[][STEP_NUM],float Omeg
         //case 4: send_struct = &MotorA1_send_group4; huart = &huart6; break;
         default: return;
     }
-//b1 - G1 ID 2
+//b1 - G3 ID 1
 //b2 - G2 ID 2
-//b3 - G3 ID 1
+//b3 - G1 ID 2
 //b4 - G3 ID 0
 //b5 - G2 ID 1
 //b6 - G2 ID 0 
@@ -277,8 +277,8 @@ void Joint_PW_Control(uint8_t group, uint8_t id,float Pos[][STEP_NUM],float Omeg
             case 2: target_pos = -1.0f * Pos[4][step] + zero_group2_ID1; 
 										target_spd = -1.0f * Omega[4][step];
 										break;
-            case 3: target_pos = +1.0f * Pos[2][step] + zero_group3_ID1; 
-										target_spd = Omega[2][step];
+            case 3: target_pos = +1.0f * Pos[0][step] + zero_group3_ID1; 
+										target_spd = Omega[0][step];
 										break;
 				}
 //            case 4: target_pos = Pos[7][step] + zero_group4_ID1; 
@@ -286,8 +286,8 @@ void Joint_PW_Control(uint8_t group, uint8_t id,float Pos[][STEP_NUM],float Omeg
 //										break;
 		} else if (id == 2){
 				switch(group) {
-						case 1: target_pos = +1.0f * Pos[0][step] + zero_group1_ID2; 
-										target_spd = Omega[0][step];
+						case 1: target_pos = +1.0f * Pos[2][step] + zero_group1_ID2; 
+										target_spd = Omega[2][step];
 										break;
             case 2: target_pos = -1.0f * Pos[1][step] + zero_group2_ID2; 
 										target_spd = -1.0f *Omega[1][step];

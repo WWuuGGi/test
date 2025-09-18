@@ -219,7 +219,7 @@ static void generate_trajectory_and_angles(float32_t t_start, float32_t t_end, f
             // 计算电机角度并存储(仅保留此结果)
             float32_t length_change = current_length - cable_initial_length[c];
             
-						if(c != 2 && c != 3)
+						if(c != 0 && c != 3)
 						{
 							motor_angle[c][i] = length_change / MOTOR_PULLEY_RADIUS / 3.1415926f * 180.0f;
 						}
@@ -260,7 +260,7 @@ static void generate_trajectory_and_angles(float32_t t_start, float32_t t_end, f
             // 计算绳索速度
             motor_omega[c][i] = 0.0f;
             for (uint8_t k = 0; k < 6; k++) {
-							if(c != 2 && c != 3)
+							if(c != 0 && c != 3)
 							{
                 motor_omega[c][i] += -1.0f * jaco[c][k] * current_vel.data[k] / MOTOR_PULLEY_RADIUS;
 							}

@@ -34,6 +34,7 @@ uint16_t step_mode_2 = 0;
 uint16_t step_mode_3 = 0;
 uint8_t zero_init = 1;
 uint8_t data_logging = 0;
+uint8_t turn = 1;
 /**
   * @brief  初始化按键
   * @param  无
@@ -209,28 +210,27 @@ void Task_Execute(void) {
             //
 					if((step_mode_2 == 0) && (step_mode_3 == 0))
 					{
+						if(turn < 2)
+						{
 						if(step_mode_1 == 0)
 						{
 							//初次进入任务时，把其他标志位清零
 							//step_mode_2 = 0;
 							//step_mode_3 = 0;
+							Pose start_pose = {0.0f, 0.0f, 0.135f, 0.0f, 0.0f, 0.0f};
+							Pose end_pose = {0.0f, 0.0f, 0.335f, 0.0f, 0.0f, 0.0f};
+							switch(turn)
+							{
+								case 1:
+									start_pose.data[0] = 0.0f;
+									start_pose.data[1] = 0.0f;
+							}
 							
-							//初次进入时，计算轨迹路径
-							Pose start_pose = {0.0f, 0.0f, 0.135f, 0, 0, 0};
-							Pose end_pose = {0.0f, 0.0f, 0.335f, 0, 0, 0};
-
 							// 初始速度和加速度为零
 							Velocity start_vel = {0};
 							Velocity end_vel = {0};
 							Acceleration start_acc = {0};
 							Acceleration end_acc = {0};
-
-							// 或者设置非零的初始和末尾速度
-							// Velocity start_vel = {0.1f, 0.1f, 0, 0, 0, 0};  // 初始有小速度
-							// Velocity end_vel = {0.1f, 0.1f, 0, 0, 0, 0};    // 末尾有小速度
-
-							// 初始化CDPR系统
-							//	cdpr_init(&start, &end);
 							cdpr_init(&start_pose, &start_vel, &start_acc, &end_pose, &end_vel, &end_acc,10.0f);
 						}
 						
@@ -247,8 +247,9 @@ void Task_Execute(void) {
 						}
 						else
 						{
-							Joint_Full_Position_Control(step_mode_1 - 1);
+							Joint_Full_PW_Control(step_mode_1 - 1);
 						}
+					}
 					}
 					else
 					{
