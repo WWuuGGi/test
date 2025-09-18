@@ -216,8 +216,8 @@ void Task_Execute(void) {
 							//step_mode_3 = 0;
 							
 							//初次进入时，计算轨迹路径
-							Pose start_pose = {0.25f, 0.25f, 0.135f, 0, 0, 0};
-							Pose end_pose = {0.25f, 0.25f, 0.335f, 0, 0, 0};
+							Pose start_pose = {0.0f, 0.0f, 0.135f, 0, 0, 0};
+							Pose end_pose = {0.0f, 0.0f, 0.335f, 0, 0, 0};
 
 							// 初始速度和加速度为零
 							Velocity start_vel = {0};
@@ -231,23 +231,23 @@ void Task_Execute(void) {
 
 							// 初始化CDPR系统
 							//	cdpr_init(&start, &end);
-							cdpr_init(&start_pose, &start_vel, &start_acc, &end_pose, &end_vel, &end_acc);
+							cdpr_init(&start_pose, &start_vel, &start_acc, &end_pose, &end_vel, &end_acc,10.0f);
 						}
 						
 						if(step_mode_1 < STEP_NUM && task_running)
 						{
 							
-							//Joint_Full_PW_Control(step_mode_1);
+							Joint_Full_PW_Control(step_mode_1);
 //							Joint_Full_Position_Control(step_mode_1);
-							modify_speed_cmd(&MotorA1_send_group1,1,0.5f);
-							//modify_torque_cmd(&MotorA1_send_group1,1,0.75f);
-							unitreeA1_rxtx(&huart1,1);
+//							modify_speed_cmd(&MotorA1_send_group1,1,0.5f);
+//							//modify_torque_cmd(&MotorA1_send_group1,1,0.75f);
+//							unitreeA1_rxtx(&huart1,1);
 							step_mode_1++;
 
 						}
 						else
 						{
-							motor_relax();
+							Joint_Full_Position_Control(step_mode_1 - 1);
 						}
 					}
 					else
@@ -267,8 +267,8 @@ void Task_Execute(void) {
 								//step_mode_3 = 0;
 								
 								//初次进入时，计算轨迹路径
-								Pose start_pose = {0.25f, 0.25f, 0.135f, 0, 0, 0};
-								Pose end_pose = {-0.25f, -0.25f, 0.335f, 0, 0, 0};
+								Pose start_pose = {0.0f, 0.0f, 0.135f, 0, 0, 0};
+								Pose end_pose = {0.0f, 0.0f, 0.435f, 0, 0, 0};
 
 								// 初始速度和加速度为零
 								Velocity start_vel = {0};
@@ -282,13 +282,13 @@ void Task_Execute(void) {
 
 								// 初始化CDPR系统
 								//	cdpr_init(&start, &end);
-								cdpr_init(&start_pose, &start_vel, &start_acc, &end_pose, &end_vel, &end_acc);
+								cdpr_init(&start_pose, &start_vel, &start_acc, &end_pose, &end_vel, &end_acc,10.0f);
 							}
 							
 							if(step_mode_2 < STEP_NUM && task_running)
 							{
 								
-								//Joint_Full_PW_Control(step_mode_2);
+								Joint_Full_PW_Control(step_mode_2);
 								step_mode_2++;
 
 							}
@@ -309,14 +309,12 @@ void Task_Execute(void) {
 					{
 						if(step_mode_3 == 0)
 						{
-							//初次进入任务时，把其他标志位清零
-							//step_mode_1 = 0;
-							//step_mode_2 = 0;
+
 							data_logging =1;
 							
 							//初次进入时，计算轨迹路径
-							Pose start_pose = {-0.25f, -0.25f, 0.135f, 0, 0, 0};
-							Pose end_pose = {0.25f, 0.25f, 0.335f, 0, 0, 0};
+							Pose start_pose = {0.0f, 0.0f, 0.135f, 0, 0, 0};
+							Pose end_pose = {0.0f, 0.0f, 0.535f, 0, 0, 0};
 
 							// 初始速度和加速度为零
 							Velocity start_vel = {0};
@@ -324,19 +322,13 @@ void Task_Execute(void) {
 							Acceleration start_acc = {0};
 							Acceleration end_acc = {0};
 
-							// 或者设置非零的初始和末尾速度
-							// Velocity start_vel = {0.1f, 0.1f, 0, 0, 0, 0};  // 初始有小速度
-							// Velocity end_vel = {0.1f, 0.1f, 0, 0, 0, 0};    // 末尾有小速度
-
-							// 初始化CDPR系统
-							//	cdpr_init(&start, &end);
-							cdpr_init(&start_pose, &start_vel, &start_acc, &end_pose, &end_vel, &end_acc);
+							cdpr_init(&start_pose, &start_vel, &start_acc, &end_pose, &end_vel, &end_acc,10.0f);
 						}
 						
 						if(step_mode_3 < STEP_NUM && task_running)
 						{
 							
-							//Joint_Full_PW_Control(step_mode_3);
+							Joint_Full_PW_Control(step_mode_3);
 							//Joint_Full_Position_Control(step_mode_3);
 							step_mode_3++;
 						}

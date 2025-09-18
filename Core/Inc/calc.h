@@ -67,7 +67,7 @@ static void calculate_poly5_coeff(Poly5Coeff *coeff,
 
 // 系统参数宏定义
 #define CABLE_NUM 8       // 绳索数量
-#define STEP_NUM 501      // 轨迹总步数（0.01s步长，5s共501个点）
+#define STEP_NUM 1001      // 轨迹总步数（0.01s步长，5s共501个点）
 #define MOTOR_PULLEY_RADIUS 0.0475f  // 电机 pulley 半径，单位：米 (47.5mm)
 #define GO_PULLEY_RADIUS 0.0510f  // 电机 pulley 半径，单位：米 (47.5mm)
 
@@ -161,7 +161,7 @@ void generate_trajectory_and_angles(float32_t t_start, float32_t t_end, float32_
  * 生成轨迹并计算动力学参数，系统启动时调用
  */
 void cdpr_init(const Pose *start_pose, const Velocity *start_vel, const Acceleration *start_acc,
-              const Pose *end_pose, const Velocity *end_vel, const Acceleration *end_acc);
+              const Pose *end_pose, const Velocity *end_vel, const Acceleration *end_acc,float time);
 
 
 /**

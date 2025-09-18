@@ -43,8 +43,8 @@ uint8_t STOP = False;
 // 电机零点自检
 int Joint_Zero_OK() {
     
-    if (fabsf(zero_group1_ID0) <= 1e-6f || fabsf(zero_group1_ID1) <= 1e-6f || fabsf(zero_group1_ID2) <= 1e-6f ||
-				fabsf(zero_group2_ID0) <= 1e-6f || fabsf(zero_group2_ID1) <= 1e-6f || fabsf(zero_group2_ID2) <= 1e-6f
+    if (fabsf(zero_group1_ID0) <= 1e-6f || fabsf(zero_group1_ID1) <= 1e-6f //|| fabsf(zero_group1_ID2) <= 1e-6f 
+			||	fabsf(zero_group2_ID0) <= 1e-6f || fabsf(zero_group2_ID1) <= 1e-6f || fabsf(zero_group2_ID2) <= 1e-6f
 		||	fabsf(zero_group3_ID0) <= 1e-6f || fabsf(zero_group3_ID1) <= 1e-6f )
 			{
         return 0;  //有零位没有被设置，返回false
@@ -177,13 +177,13 @@ void Joint_Position_Control(uint8_t group, uint8_t id, float Pos[][STEP_NUM], fl
 // 计算目标位置（叠加零点）
     if (id == 0) {
         switch(group) {
-            case 1: target_pos = Pos[0][step] + zero_group1_ID0; 
+            case 1: target_pos = Pos[7][step] + zero_group1_ID0; 
 
 										break;
-            case 2: target_pos = Pos[3][step] + zero_group2_ID0;
+            case 2: target_pos = Pos[5][step] + zero_group2_ID0;
 
 										break;
-            case 3: target_pos = Pos[6][step] + zero_group3_ID0; 
+            case 3: target_pos = -1.0f * Pos[3][step] + zero_group3_ID0; 
 
 										break;
 //            case 4: target_pos = Pos[6][step] + zero_group4_ID0; 
@@ -192,13 +192,13 @@ void Joint_Position_Control(uint8_t group, uint8_t id, float Pos[][STEP_NUM], fl
         }
     } else if (id == 1){
         switch(group) {
-            case 1: target_pos = Pos[1][step] + zero_group1_ID1; 
+            case 1: target_pos = -1.0f * Pos[6][step] + zero_group1_ID1; 
 
 										break;
-            case 2: target_pos = Pos[4][step] + zero_group2_ID1; 
+            case 2: target_pos = -1.0f * Pos[4][step] + zero_group2_ID1; 
 
 										break;
-            case 3: target_pos = Pos[7][step] + zero_group3_ID1; 
+            case 3: target_pos = Pos[2][step] + zero_group3_ID1; 
 
 										break;
 				}
@@ -207,10 +207,10 @@ void Joint_Position_Control(uint8_t group, uint8_t id, float Pos[][STEP_NUM], fl
 //										break;
 		} else if (id == 2){
 				switch(group) {
-						case 1: target_pos = Pos[2][step] + zero_group1_ID2; 
+						case 1: target_pos = Pos[0][step] + zero_group1_ID2; 
 
 										break;
-            case 2: target_pos = Pos[5][step] + zero_group2_ID2; 
+            case 2: target_pos = -1.0f * Pos[1][step] + zero_group2_ID2; 
 
 										break;
 			}
@@ -313,23 +313,23 @@ void Joint_Full_Position_Control(uint16_t step)
 	Joint_Position_Control(2, 0, motor_angle, 0.022f, 0.1f, step);
 	Joint_Position_Control(2, 1, motor_angle, 0.022f, 0.1f, step);
 	Joint_Position_Control(2, 2, motor_angle, 0.022f, 0.1f, step);
-	Joint_Position_Control(3, 0, motor_angle, 0.20f, 0.003f, step);
-	Joint_Position_Control(3, 1, motor_angle, 0.20f, 0.003f, step);
+	Joint_Position_Control(3, 0, motor_angle, 0.20f, 0.001f, step);
+	Joint_Position_Control(3, 1, motor_angle, 0.20f, 0.001f, step);
 	
 }
 
 void Joint_Full_PW_Control(uint16_t step)
 {
-	Joint_PW_Control(1, 0, motor_angle, motor_omega, 0.020f, 0.1f, step);
-	Joint_PW_Control(1, 1, motor_angle, motor_omega, 0.020f, 0.1f, step);
-	Joint_PW_Control(1, 2, motor_angle, motor_omega, 0.020f, 0.1f, step);
-	Joint_PW_Control(2, 0, motor_angle, motor_omega, 0.020f, 0.1f, step);
-	Joint_PW_Control(2, 1, motor_angle, motor_omega, 0.020f, 0.1f, step);
-	Joint_PW_Control(2, 2, motor_angle, motor_omega, 0.020f, 0.1f, step);
+	Joint_PW_Control(1, 0, motor_angle, motor_omega, 0.022f, 0.1f, step);
+	Joint_PW_Control(1, 1, motor_angle, motor_omega, 0.022f, 0.1f, step);
+	Joint_PW_Control(1, 2, motor_angle, motor_omega, 0.022f, 0.1f, step);
+	Joint_PW_Control(2, 0, motor_angle, motor_omega, 0.022f, 0.1f, step);
+	Joint_PW_Control(2, 1, motor_angle, motor_omega, 0.022f, 0.1f, step);
+	Joint_PW_Control(2, 2, motor_angle, motor_omega, 0.022f, 0.1f, step);
 	//	Joint_PW_Control(3, 0, motor_angle, motor_omega, 0.022f, 0.1f, step);
 //	Joint_PW_Control(3, 1, motor_angle, motor_omega, 0.022f, 0.1f, step);
-	Joint_PW_Control(3, 0, motor_angle, motor_omega, 0.21f, 0.002f, step);
-	Joint_PW_Control(3, 1, motor_angle, motor_omega, 0.21f, 0.002f, step);
+	Joint_PW_Control(3, 0, motor_angle, motor_omega, 0.21f, 0.001f, step);
+	Joint_PW_Control(3, 1, motor_angle, motor_omega, 0.21f, 0.001f, step);
 }
 
 // // 离地检测

@@ -51,10 +51,10 @@ const Point4f base_g[CABLE_NUM] = {
     {-0.397f, -0.324f, 0.820f, 1.0f}, // b2
     {0.397f, -0.324f, 0.820f, 1.0f},  // b3
     {0.397f,  0.324f, 0.820f, 1.0f},  // b4
-    {-0.397f,  0.324f, -0.004f, 1.0f}, // b5
-    {-0.397f, -0.324f, -0.004f, 1.0f}, // b6
-    {0.397f, -0.324f,  -0.004f, 1.0f},  // b7
-    {0.397f,  0.324f,  -0.004f, 1.0f}   // b8
+    {-0.397f,  0.324f, 0.169f, 1.0f}, // b5
+    {-0.397f, -0.324f, 0.169f, 1.0f}, // b6
+    {0.397f, -0.324f,  0.169f, 1.0f},  // b7
+    {0.397f,  0.324f,  0.169f, 1.0f}   // b8
 };
 
 // 末端执行器附着点坐标(局部坐标系)
@@ -218,7 +218,15 @@ static void generate_trajectory_and_angles(float32_t t_start, float32_t t_end, f
 
             // 计算电机角度并存储(仅保留此结果)
             float32_t length_change = current_length - cable_initial_length[c];
-            motor_angle[c][i] = length_change / MOTOR_PULLEY_RADIUS / 3.1415926f * 180.0f;
+            
+						if(c != 2 && c != 3)
+						{
+							motor_angle[c][i] = length_change / MOTOR_PULLEY_RADIUS / 3.1415926f * 180.0f;
+						}
+						else
+						{
+							motor_angle[c][i] = length_change / GO_PULLEY_RADIUS / 3.1415926f * 180.0f;
+						}
 						
 						//        // 计算每个绳索的长度和速度
 						float32_t jaco[CABLE_NUM][6]; // 雅克比矩阵 (8x6)
@@ -336,8 +344,8 @@ static void generate_trajectory_and_angles(float32_t t_start, float32_t t_end, f
 
 // 初始化函数（需要传入完整的边界条件）
 void cdpr_init(const Pose *start_pose, const Velocity *start_vel, const Acceleration *start_acc,
-              const Pose *end_pose, const Velocity *end_vel, const Acceleration *end_acc) {
-    generate_trajectory_and_angles(0.0f, 5.0f, 0.01f,
+              const Pose *end_pose, const Velocity *end_vel, const Acceleration *end_acc, float time) {
+    generate_trajectory_and_angles(0.0f, time, 0.01f,
                        start_pose, start_vel, start_acc,
                        end_pose, end_vel, end_acc);
 }
