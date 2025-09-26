@@ -40,11 +40,11 @@ motor_recv_t MotorA1_recv_group2_id2 = {0};
 //motor_recv_t MotorA1_recv_group4_id1 = {0};
 
 // 接收缓冲区
-uint8_t Date_group1[78] = {0};
-uint8_t Date_group2[78] = {0};
+static uint8_t Date_group1[78] = {0};
+static uint8_t Date_group2[78] = {0};
 //uint8_t Date_group3[78] = {0};
 //uint8_t Date_group4[78] = {0};
-uint8_t Date_go_group3[16] = {0};  // go协议接收缓冲区（16字节）
+static uint8_t Date_go_group3[16] = {0};  // go协议接收缓冲区（16字节）
 
 // 通信状态
 HAL_StatusTypeDef rec_st[3] = {HAL_OK};

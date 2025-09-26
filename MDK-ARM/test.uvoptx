@@ -120,6 +120,7 @@
         <SetRegEntry>
           <Number>0</Number>
           <Key>DLGUARM</Key>
+          <Name>~</Name>
         </SetRegEntry>
         <SetRegEntry>
           <Number>0</Number>
@@ -295,6 +296,11 @@
           <count>13</count>
           <WinNumber>2</WinNumber>
           <ItemText>received</ItemText>
+        </Ww>
+        <Ww>
+          <count>14</count>
+          <WinNumber>2</WinNumber>
+          <ItemText>MotorA1_recv_group2_id0</ItemText>
         </Ww>
       </WatchWindow2>
       <MemoryWindow1>
